@@ -1,0 +1,61 @@
+SYSTEM = per
+#
+ISTART = 0        # 0 = new job, 1 = restart
+
+! Electronic Structure
+ISPIN  = 2        # spin polarisation 1 = no 2 = yes
+PREC   = Normal  # [Low/Medium/High/Accurate/Normal]
+ENCUT  = 450      # energy cutoff
+NELM   =  400     # max iteracions in SC loop
+NELMIN = 3        # min iterations in SC loop
+ISMEAR = 1 ; SIGMA = 0.1  #-5 for accurate total energy and DOS 0 for large cell 1 for metal
+LREAL = A         # F small molecule; A normal system
+#EDIFF  = 1.0E-5 # stopping-criterion for electronic upd.
+EDIFFG = -0.05    # convergence criterion for forces
+
+! PBE;PW91 pure DFT
+ALGO=Fast
+
+
+!HSE06
+#LHFCALC = .TRUE. ; HFSCREEN = 0.2
+#ALGO = Damped ; TIME = 0.5  # ALGO = Normal/ALL
+#ALGO=normal
+#PRECFOCK  = Fast  # used PRECFOCK = Normal for high quality calculations
+#NKRED     = 2     # omit flag for high quality calculations
+
+#PBE0
+#LHFCALC = .TRUE. ; ALGO = Damped ; TIME = 0.5
+#AEXX=0.25
+
+! Geometry
+ISIF   = 2       # [Stress tensor, 0 = not,2 = relax ions, 3 = relax latt+ions ] p. 60
+NSW = 900         # max steps
+IBRION = 1      # 0 MD 1 Brodyn (opt,TS) 2 CG (opt)  3 damped MD(opt) 5  FC
+POTIM=0.2         # ion step size/ time step (fs) for MD
+ISYM = 0        # symmetry: 0-off, 1-on, 2-for effcient memory conserving symmetrisation;default:1 if use US-PPs or 2 if use PAW
+#MAGMOM = 19*0 #magnetic
+
+NWRITE = 1        # how much is written out
+LCHARG = .False.  # write restart charge file
+LWAVE  = .False.  # write restart wf file
+#NPAR   = 4       # adjust to number of processors;  best on berni up to 8 CPUs
+#ICHARG = 11       # 0 = from initial wave, 1 = from CHGCAR, 2 = superpose atomic charge densities, +10 non-selfcon calc
+#LORBIT = 11     #IF >=10 RWIGS not read in INCAR
+NCORE = 4
+! GGA+U
+#LDAU= T
+#LDAUTYPE= 2
+#LDAUL= -1  2
+#LDAUU= 0  2.2
+#LDAUJ= 0  0.2
+
+
+
+
+
+
+
+
+
+

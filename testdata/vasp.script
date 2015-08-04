@@ -1,0 +1,43 @@
+#!/bin/bash 
+#PBS -N H_hcp_C_hcp_ts
+#PBS -r n 
+#PBS -j oe 
+#PBS -l walltime=72:00:00
+#PBS -l nodes=8:ppn=6
+#PBS -q bigmem
+
+source /data/intel2015.3.sh
+# go to work dir
+cd $PBS_O_WORKDIR
+# The program we want to execute (modify to suit your setup)
+#EXEC=/data/apps/vasp/5.3.5/vasp-TS
+EXEC=/data/apps/vasp/5.4.1/vtst-TS/vasp_std
+
+# setup mpd env (Of course use some other secret word than "dfadfs")
+if [ ! -f ~/.mpd.conf ]; then
+/bin/echo "secretword=dfadfs" >> ~/.mpd.conf
+/bin/chmod 600 ~/.mpd.conf
+fi
+
+##########################################################
+# The following should be no need to
+#       change any of these settings for normal use.
+##########################################################
+
+# setup Nums of Processor
+NP=`cat $PBS_NODEFILE|wc -l`
+echo "Numbers of Processors:  $NP"
+echo "---------------------------"
+echo `date`
+cat $PBS_NODEFILE | uniq
+
+# setup mpi env (em64t)
+export OMP_NUM_THREADS=1
+#export P4_GLOBMEMSIZE=1073741824
+export I_MPI_PIN_DOMAIN=auto
+export MPD_CON_EXT=$PBS_JOBID
+
+mpirun -r ssh -genv I_MPI_FABRICS shm:dapl -n $NP $EXEC 2>&1 > print-out
+
+echo `date` >> $HOME/finish
+echo `pwd` >>  $HOME/finish
