@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-from catplot import __version__ as version
+from vaspy import __version__ as version
 
 maintainer = 'Shao-Zheng-Jiang'
 maintainer_email = 'shaozhengjiang@gmail.com'
