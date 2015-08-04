@@ -17,12 +17,12 @@ license = 'LICENSE'
 #long_description = file('README.md').read()
 name = 'python-vaspy'
 packages = [
-    'catplot',
+    'vaspy',
     'scripts',
 ]
 data_files = []
 platforms = ['linux']
-url = ''
+url = 'https://github.com/PytLab/VASPy'
 download_url = ''
 
 setup(
