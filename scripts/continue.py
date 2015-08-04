@@ -1,3 +1,8 @@
+'''
+    在新的目录先自动生成相应步数的POSCAR, fort.188文件
+    以及其他vasp输入文件方便继续投作业的脚本。
+'''
+
 import sys
 import os
 
@@ -12,6 +17,7 @@ class ContinueError(Exception):
 
 if len(sys.argv) != 2:
     print 'Usage: %s *.xyz' % sys.argv[0]
+    exit(1)
 filename = sys.argv[1]
 
 a = XyzFile(filename=filename, contcar='POSCAR')
