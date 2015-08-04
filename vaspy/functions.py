@@ -1,4 +1,7 @@
+# -*- coding:utf-8 -*-
 #functions used in atomco
+
+
 def str2list(rawstr):
     import string
     rawlist = rawstr.strip(string.whitespace).split(' ')
