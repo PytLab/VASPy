@@ -1,0 +1,3 @@
+include *.md
+recursive-include vaspy *.py
+recursive-include scripts *.py
