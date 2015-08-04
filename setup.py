@@ -14,7 +14,7 @@ requires = [
 ]
 
 license = 'LICENSE'
-#long_description = file('README.md').read()
+long_description = file('README.md').read()
 name = 'python-vaspy'
 packages = [
     'vaspy',
@@ -30,7 +30,7 @@ setup(
     author_email=author_email,
     description=description,
     license=license,
-#    long_description=long_description,
+    long_description=long_description,
     maintainer=maintainer,
     name=name,
     packages=packages,
