@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 """
 ===============================================================================================
-A XyzFile class which do operations on .xyz files.
+Provide coordinate file class which do operations on these files.
 ===============================================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
 Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
@@ -20,11 +20,11 @@ class CarfileValueError(Exception):
 
 class XyzFile(object):
     """
-    Create a OUT.ANI-like file class
-    Data begins at 2nd line defaultly
+    Create a .xyz file class.
+
     Example:
 
-    >>> slab_xyz = XyzFile(filename='CONTCAR.xyz', data_begin=2, height=5.5, direction='z')
+    >>> a = XyzFile(filename='CONTCAR.xyz')
 
     Class attributes descriptions
     =======================================================================
@@ -32,13 +32,14 @@ class XyzFile(object):
       ============  =======================================================
       filename       string, name of the file the direct coordiante data
                      stored in
-      data_begin     int, the number of line from which the data begin
-      height         float, the slab height
-      direction      string, the direction the slab will move in
-      contcar        string, CONTCAR templates file name including axes
-                     informations
-      new_order      boolean, if the instance has a new order of atom,
-                     set new_order=True(False default)
+      ntot           int, the number of total atom number
+      step           int, STEP number in OUT.ANI file
+      atoms          list of strings, atom types
+      natoms         list of tuples, same shape with atoms.
+                     (atom name, atom number)
+                     atom number of atoms in atoms
+      atomco_dict    dict, {atom name: coordinates}
+      data           np.array, coordinates of atoms, dtype=float64
       ============  =======================================================
     """
     def __init__(self, filename):
@@ -116,6 +117,25 @@ class PosCar(object):
     def __init__(self, filename):
         """
         Class to generate POSCAR or CONTCAR-like objects.
+
+        Example:
+
+        >>> a = PosCar(filename='POSCAR')
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute      Description
+          ============  =======================================================
+          filename       string, name of the file the direct coordiante data
+                         stored in
+          axes_coeff     float, Scale Factor of axes
+          axes           np.array, axes of POSCAR
+          atoms          list of strings, atom types
+          natoms         list of int, same shape with atoms
+                         atom number of atoms in atoms
+          tf             list of list, T&F info of atoms
+          data           np.array, coordinates of atoms, dtype=float64
+          ============  =======================================================
         """
         self.filename = filename
         #load all data in file
@@ -131,7 +151,7 @@ class PosCar(object):
             axes = [str2list(axis) for axis in content_list[2:5]]
             #atom info
             atoms = str2list(content_list[5])
-            natoms = str2list(content_list[6])  # atom number
+            atoms_num = str2list(content_list[6])  # atom number
             #data
             data, tf = [], []  # data and T or F info
             for line_str in content_list[9:]:
@@ -141,13 +161,14 @@ class PosCar(object):
                     tf.append(line_list[3:])
         #data type convertion
         axes = np.float64(np.array(axes))  # to float
-        natoms = [int(i) for i in natoms]
+        atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
 
         #set class attrs
         self.axes_coeff = axes_coeff
         self.axes = axes
-        self.atoms = zip(atoms, natoms)
+        self.atoms = atoms
+        self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
 
@@ -168,9 +189,9 @@ class PosCar(object):
         for axis in axes_list:
             axes += "%14.8f%14.8f%14.8f\n" % tuple(axis)
         #atom info
-        atoms, natoms = zip(*self.atoms)
+        atoms, atoms_num = zip(*self.natoms)
         atoms = ("%5s"*len(atoms)+"\n") % atoms
-        natoms = ("%5d"*len(natoms)+"\n") % natoms
+        atoms_num = ("%5d"*len(atoms_num)+"\n") % atoms_num
         #string
         info = "Selective Dynamics\nDirect\n"
         #data and tf
@@ -178,7 +199,7 @@ class PosCar(object):
         for data, tf in zip(self.data.tolist(), self.tf):
             data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
         #merge all strings
-        content += axe_coeff+axes+atoms+natoms+info+data_tf
+        content += axe_coeff+axes+atoms+atoms_num+info+data_tf
 
         return content
 
