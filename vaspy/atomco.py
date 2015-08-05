@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 ===============================================================================================
 A XyzFile class which do operations on .xyz files.
@@ -433,3 +434,53 @@ class XyzFile(object):
                     tf.append(line_list[3:])
 
         return data, tf
+
+
+class PosCar(object):
+    def __init__(self, filename):
+        """
+        Class to generate POSCAR or CONTCAR-like objects.
+        """
+        self.filename = filename
+        #load all data in file
+        self.load()
+
+    def load(self):
+        "Load all information in POSCAR."
+        with open(self.filename, 'r') as f:
+            content_list = f.readlines()
+            #get scale factor
+            axes_coeff = float(content_list[1])
+            #axes
+            axes = [str2list(axis) for axis in content_list[2:5]]
+            #atom info
+            atoms = str2list(content_list[5])
+            natoms = str2list(content_list[6])  # atom number
+            #data
+            data, tf = [], []  # data and T or F info
+            for line_str in content_list[9:]:
+                line_list = str2list(line_str)
+                data.append(line_list[:3])
+                if len(line_list) > 3:
+                    tf.append(line_list[3:])
+        #data type convertion
+        axes = np.float64(np.array(axes))  # to float
+        natoms = [int(i) for i in natoms]
+        data = np.float64(np.array(data))
+
+        #set class attrs
+        self.axes_coeff = axes_coeff
+        self.axes = axes
+        self.atoms = zip(atoms, natoms)
+        self.data = data
+        self.tf = tf
+
+        return
+
+    def __repr__(self):
+        with open(self.filename, 'r') as f:
+            content = f.read()
+        return content
+
+    def __str__(self):
+        return self.__repr__()
