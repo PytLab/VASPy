@@ -46,11 +46,11 @@ def combine_atomco_dict(dict_1, dict_2):
     return new_atomco_dict
 
 
-def atomdict2str(atomco_dict):
+def atomdict2str(atomco_dict, keys):
     """
     Convert atomco_dict to content_str.
     from
-    {'C': [['2.01115823704755', '2.33265069974919', '10.54948252493041']],
+    {'C' : [['2.01115823704755', '2.33265069974919', '10.54948252493041']],
      'Co': [['0.28355818414485', '2.31976779057375', '2.34330019781397'],
             ['2.76900337448991', '0.88479534087197', '2.34330019781397']]}
     to
@@ -59,10 +59,10 @@ def atomdict2str(atomco_dict):
      Co  2.76900337448991   0.88479534087197   2.34330019781397 \n'
     """
     content_str = ''
-    for atom_str in atomco_dict:
-        atom_num_int = len(atomco_dict[atom_str])
-        for i in range(atom_num_int):
-            line_tuple = tuple([atom_str] + atomco_dict[atom_str][i])
+    for atom in keys:
+        n = len(atomco_dict[atom])
+        for i in xrange(n):
+            line_tuple = tuple([atom] + atomco_dict[atom][i])
             content_str += '%5s%20s%20s%20s\n' % line_tuple
 
     return content_str
