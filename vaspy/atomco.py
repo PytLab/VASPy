@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 """
-===============================================================================================
+===================================================================
 Provide coordinate file class which do operations on these files.
-===============================================================================================
+===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
 Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
 
@@ -24,7 +24,7 @@ class XyzFile(object):
 
     Example:
 
-    >>> a = XyzFile(filename='CONTCAR.xyz')
+    >>> a = XyzFile(filename='ts.xyz')
 
     Class attributes descriptions
     =======================================================================
@@ -114,7 +114,7 @@ class XyzFile(object):
 
 
 class PosCar(object):
-    def __init__(self, filename):
+    def __init__(self, filename='POSCAR'):
         """
         Class to generate POSCAR or CONTCAR-like objects.
 
