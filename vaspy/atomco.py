@@ -74,8 +74,7 @@ class XyzFile(object):
         self.atoms = atoms
         self.natoms = natoms
         self.atomco_dict = atomco_dict
-        self.data = data
-        self.data_array = np.float64(np.array(data))
+        self.data = np.float64(np.array(data))
 
         return
 
@@ -91,7 +90,7 @@ class XyzFile(object):
                                                   [0.0, 1.0, 0.0],
                                                   [0.0, 0.0, 1.0]])):
         "Use Ax=b to do coordinate transform."
-        b = np.matrix(self.data_array.T)
+        b = np.matrix(self.data.T)
         A = np.matrix(axes).T
         x = A.I*b
 
@@ -158,3 +157,30 @@ class PosCar(object):
 
     def __str__(self):
         return self.__repr__()
+
+    def tofile(self, filename='POSCAR_c'):
+        "PosCar object to POSCAR or CONTCAR."
+        content = 'Created by VASPy\n'
+        axe_coeff = " %.9f\n" % self.axes_coeff
+        #axes
+        axes_list = self.axes.tolist()
+        axes = ''
+        for axis in axes_list:
+            axes += "%14.8f%14.8f%14.8f\n" % tuple(axis)
+        #atom info
+        atoms, natoms = zip(*self.atoms)
+        atoms = ("%5s"*len(atoms)+"\n") % atoms
+        natoms = ("%5d"*len(natoms)+"\n") % natoms
+        #string
+        info = "Selective Dynamics\nDirect\n"
+        #data and tf
+        data_tf = ''
+        for data, tf in zip(self.data.tolist(), self.tf):
+            data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
+        #merge all strings
+        content += axe_coeff+axes+atoms+natoms+info+data_tf
+
+        with open(filename, 'w') as f:
+            f.write(content)
+
+        return
