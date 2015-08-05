@@ -82,9 +82,7 @@ class XyzFile(object):
         return self.__repr__()
 
     def __repr__(self):
-        with open(self.filename, 'r') as f:
-            content = f.read()
-        return content
+        return self.get_content()
 
     def coordinate_transfrom(self, axes=np.array([[1.0, 0.0, 0.0],
                                                   [0.0, 1.0, 0.0],
@@ -96,12 +94,17 @@ class XyzFile(object):
 
         return np.array(x.T)
 
-    def tofile(self, filename='atomco.xyz'):
-        "XyzFile object to .xyz file."
+    def get_content(self):
         ntot = "%12d\n" % self.ntot
         step = "STEP =%9d\n" % self.step
         data = atomdict2str(self.atomco_dict, self.atoms)
         content = ntot + step + data
+
+        return content
+
+    def tofile(self, filename='atomco.xyz'):
+        "XyzFile object to .xyz file."
+        content = self.get_content()
 
         with open(filename, 'w') as f:
             f.write(content)
@@ -151,15 +154,12 @@ class PosCar(object):
         return
 
     def __repr__(self):
-        with open(self.filename, 'r') as f:
-            content = f.read()
-        return content
+        return self.get_content()
 
     def __str__(self):
         return self.__repr__()
 
-    def tofile(self, filename='POSCAR_c'):
-        "PosCar object to POSCAR or CONTCAR."
+    def get_content(self):
         content = 'Created by VASPy\n'
         axe_coeff = " %.9f\n" % self.axes_coeff
         #axes
@@ -179,6 +179,12 @@ class PosCar(object):
             data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
         #merge all strings
         content += axe_coeff+axes+atoms+natoms+info+data_tf
+
+        return content
+
+    def tofile(self, filename='POSCAR_c'):
+        "PosCar object to POSCAR or CONTCAR."
+        content = self.get_content()
 
         with open(filename, 'w') as f:
             f.write(content)
