@@ -73,6 +73,7 @@ class XyzFile(object):
         self.ntot = ntot
         self.step = step
         self.atoms = atoms
+        self.atoms_num = atoms_num
         self.natoms = natoms
         self.atomco_dict = atomco_dict
         self.data = np.float64(np.array(data))
@@ -88,7 +89,7 @@ class XyzFile(object):
     def coordinate_transfrom(self, axes=np.array([[1.0, 0.0, 0.0],
                                                   [0.0, 1.0, 0.0],
                                                   [0.0, 0.0, 1.0]])):
-        "Use Ax=b to do coordinate transform."
+        "Use Ax=b to do coordinate transform. direct to cartesian"
         b = np.matrix(self.data.T)
         A = np.matrix(axes).T
         x = A.I*b
@@ -179,6 +180,7 @@ class PosCar(object):
         self.axes_coeff = axes_coeff
         self.axes = axes
         self.atoms = atoms
+        self.atoms_num = atoms_num
         self.ntot = sum(atoms_num)
         self.natoms = zip(atoms, atoms_num)
         self.data = data
