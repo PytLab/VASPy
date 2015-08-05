@@ -131,6 +131,7 @@ class PosCar(object):
           axes_coeff     float, Scale Factor of axes
           axes           np.array, axes of POSCAR
           atoms          list of strings, atom types
+          ntot           int, the number of total atom number
           natoms         list of int, same shape with atoms
                          atom number of atoms in atoms
           tf             list of list, T&F info of atoms
@@ -140,39 +141,55 @@ class PosCar(object):
         self.filename = filename
         #load all data in file
         self.load()
+        self.verify()
 
     def load(self):
         "Load all information in POSCAR."
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
-            #get scale factor
-            axes_coeff = float(content_list[1])
-            #axes
-            axes = [str2list(axis) for axis in content_list[2:5]]
-            #atom info
-            atoms = str2list(content_list[5])
-            atoms_num = str2list(content_list[6])  # atom number
-            #data
-            data, tf = [], []  # data and T or F info
-            for line_str in content_list[9:]:
-                line_list = str2list(line_str)
-                data.append(line_list[:3])
-                if len(line_list) > 3:
-                    tf.append(line_list[3:])
+        #get scale factor
+        axes_coeff = float(content_list[1])
+        #axes
+        axes = [str2list(axis) for axis in content_list[2:5]]
+        #atom info
+        atoms = str2list(content_list[5])
+        atoms_num = str2list(content_list[6])  # atom number
+        #data
+        data, tf = [], []  # data and T or F info
+        for line_str in content_list[9:]:
+            line_list = str2list(line_str)
+            data.append(line_list[:3])
+            if len(line_list) > 3:
+                tf.append(line_list[3:])
         #data type convertion
         axes = np.float64(np.array(axes))  # to float
         atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
 
+        #get atomco dict
+        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
+        idx_list = [sum(atoms_num[:i]) for i in xrange(1, len(atoms)+1)]
+        idx_list = [0] + idx_list
+        data_list = data.tolist()
+        atomco_dict = {}
+        for atom, idx, next_idx in zip(atoms, idx_list[:-1], idx_list[1:]):
+            atomco_dict.setdefault(atom, data_list[idx: next_idx])
+
         #set class attrs
         self.axes_coeff = axes_coeff
         self.axes = axes
         self.atoms = atoms
+        self.ntot = sum(atoms_num)
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
+        self.atomco_dict = atomco_dict
 
         return
+
+    def verify(self):
+        if len(self.data) != self.ntot:
+            raise CarfileValueError('Atom numbers mismatch!')
 
     def __repr__(self):
         return self.get_content()
