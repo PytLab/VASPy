@@ -131,6 +131,7 @@ class PosCar(object):
           axes_coeff     float, Scale Factor of axes
           axes           np.array, axes of POSCAR
           atoms          list of strings, atom types
+          ntot           int, the number of total atom number
           natoms         list of int, same shape with atoms
                          atom number of atoms in atoms
           tf             list of list, T&F info of atoms
@@ -140,6 +141,7 @@ class PosCar(object):
         self.filename = filename
         #load all data in file
         self.load()
+        self.verify()
 
     def load(self):
         "Load all information in POSCAR."
@@ -168,11 +170,16 @@ class PosCar(object):
         self.axes_coeff = axes_coeff
         self.axes = axes
         self.atoms = atoms
+        self.ntot = sum(atoms_num)
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
 
         return
+
+    def verify(self):
+        if len(self.data) != self.ntot:
+            raise CarfileValueError('Atom numbers mismatch!')
 
     def __repr__(self):
         return self.get_content()
