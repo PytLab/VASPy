@@ -21,6 +21,12 @@ class OsziCar(VasPy):
 
         self.load()
 
+    def __repr__(self):
+        return self.content
+
+    def __str__(self):
+        return self.__repr__()
+
     def match(self, line):
         m = self.regex.search(line)
         if m:
@@ -35,6 +41,7 @@ class OsziCar(VasPy):
     def load(self):
         with open(self.filename, 'r') as f:
             steps, Fs, E0s, dEs, mags = [], [], [], [], []
+            content = ''
             for line in f:
                 data = self.match(line)
                 if data:  # if matched
@@ -44,12 +51,14 @@ class OsziCar(VasPy):
                     E0s.append(E0)
                     dEs.append(dE)
                     mags.append(mag)
+                    content += line
         #set class attrs
         self.step = np.array(steps)
         self.F = np.array(Fs)
         self.E0 = np.array(E0s)
         self.dE = np.array(dEs)
         self.mags = np.array(mags)
+        self.content = content
 
         return
 
