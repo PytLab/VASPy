@@ -1,3 +1,7 @@
+# -*- coding:utf-8 -*-
+'''
+    OsziCar类单元测试.
+'''
 import unittest
 
 import numpy as np
@@ -12,13 +16,9 @@ class TestOsziCar(unittest.TestCase):
         self.x = OsziCar('../testdata/OSZICAR')
 
     def test_attrs(self):
-        "Make sure load() effects."
-        self.assertTrue(hasattr(self.x, 'E0'))
-        self.assertTrue(hasattr(self.x, 'dE'))
-        self.assertTrue(hasattr(self.x, 'F'))
-        self.assertTrue(hasattr(self.x, 'step'))
-        self.assertTrue(hasattr(self.x, 'mag'))
-        self.assertTrue(hasattr(self.x, 'content'))
+        "Make sure load() effects"
+        for var in self.x.vars:
+            self.assertTrue(hasattr(self.x, var))
 
         #should raise an exception for an AttributeError
         self.assertRaises(AttributeError)
