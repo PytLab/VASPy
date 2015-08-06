@@ -11,13 +11,8 @@ Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
 """
 import numpy as np
 
-from vaspy import VasPy
+from vaspy import VasPy, CarfileValueError
 from functions import *
-
-
-class CarfileValueError(Exception):
-    "Exception raised for errors in the CONTCAR-like file."
-    pass
 
 
 class AtomCo(VasPy):
