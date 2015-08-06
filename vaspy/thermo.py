@@ -11,13 +11,12 @@ class OsziCar(VasPy):
         VasPy.__init__(self, filename)
 
         #set regex patterns
-        float_regex = r'[\+|-]?\d*\.\d+(?:E[\+|-]?\d+)?'
-        step = r'\s*(\d+)\s*'
-        F = r'F\=\s*(' + float_regex + r')\s*'
-        E0 = r'E0\=\s*(' + float_regex + r')\s*'
-        dE = r'd\s*E\s*\=(' + float_regex + r')\s*'
-        mag = r'mag\=\s*(' + float_regex + r')\s*'
-        self.regex = re.compile(step + F + E0 + dE + mag)
+        float_regex = r'[\+|-]?\d*\.\d*(?:E[\+|-]?\d+)?'
+        eq_regex = r'\s*([\w|\d|\s]+)\=\s*(' + float_regex + r')\s*'
+        split_regex = r'^\s*(\d+)\s*((' + eq_regex + r')+)$'  # 将step和其余部分分开
+
+        self.eq_regex = re.compile(eq_regex)
+        self.split_regex = re.compile(split_regex)
 
         self.load()
 
@@ -28,37 +27,42 @@ class OsziCar(VasPy):
         return self.__repr__()
 
     def match(self, line):
-        m = self.regex.search(line)
+        m = self.split_regex.search(line)
         if m:
-            step, F, E0, dE, mag = m.groups()
-            #type convertion
-            step = int(step)
-            F, E0, dE, mag = [float(i) for i in m.groups()[1:]]
-            return step, F, E0, dE, mag
+            #get step
+            step = int(m.group(1))
+            #get other data
+            resid = m.group(2)
+            eq_tuples = self.eq_regex.findall(resid)  # list of tuples
+            names, numbers = zip(*eq_tuples)
+            #remove space in names
+            names = [name.replace(' ', '') for name in names]
+            #convert string to float
+            numbers = [float(number) for number in numbers]
+            eq_tuples = [('step', step)] + zip(names, numbers)
+            return eq_tuples
         else:
             return None
 
     def load(self):
         with open(self.filename, 'r') as f:
-            steps, Fs, E0s, dEs, mags = [], [], [], [], []
             content = ''
             for line in f:
-                data = self.match(line)
-                if data:  # if matched
-                    step, F, E0, dE, mag = data
-                    steps.append(step)
-                    Fs.append(F)
-                    E0s.append(E0)
-                    dEs.append(dE)
-                    mags.append(mag)
+                eq_tuples = self.match(line)
+                if eq_tuples:  # if matched
+                    if not hasattr(self, 'vars'):
+                        self.vars, numbers = zip(*eq_tuples)
+                    for name, number in eq_tuples:
+                        if not hasattr(self, name):
+                            setattr(self, name, [number])
+                        else:
+                            getattr(self, name).append(number)
                     content += line
-        #set class attrs
-        self.step = np.array(steps)
-        self.F = np.array(Fs)
-        self.E0 = np.array(E0s)
-        self.dE = np.array(dEs)
-        self.mag = np.array(mags)
-        self.content = content
+            self.content = content
+            #convert list to numpy array
+            for var in self.vars:
+                data = getattr(self, var)
+                setattr(self, var, np.array(data))
 
         return
 
