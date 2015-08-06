@@ -66,8 +66,8 @@ class XyzFile(object):
             else:
                 atomco_dict[atom].append(coordinate)
         #get atom number for each atom
-        atom_num = [len(atomco_dict[k]) for k in atoms]
-        natoms = zip(atoms, atom_num)
+        atoms_num = [len(atomco_dict[k]) for k in atoms]
+        natoms = zip(atoms, atoms_num)
 
         #set class attrs
         self.ntot = ntot
@@ -144,6 +144,16 @@ class PosCar(object):
         self.load()
         self.verify()
 
+    def __getattribute__(self, attr):
+        '''
+        每次获取atomco_dict属性值时, 都运行一次get_atomco_dict()
+        确保atomco_dict能够及时根据data值的变化更新.
+        '''
+        if attr == 'atomco_dict':
+            return self.get_atomco_dict(self.data)
+        else:
+            return object.__getattribute__(self, attr)
+
     def load(self):
         "Load all information in POSCAR."
         with open(self.filename, 'r') as f:
@@ -167,15 +177,6 @@ class PosCar(object):
         atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
 
-        #get atomco dict
-        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(atoms_num[:i]) for i in xrange(1, len(atoms)+1)]
-        idx_list = [0] + idx_list
-        data_list = data.tolist()
-        atomco_dict = {}
-        for atom, idx, next_idx in zip(atoms, idx_list[:-1], idx_list[1:]):
-            atomco_dict.setdefault(atom, data_list[idx: next_idx])
-
         #set class attrs
         self.axes_coeff = axes_coeff
         self.axes = axes
@@ -185,9 +186,25 @@ class PosCar(object):
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
-        self.atomco_dict = atomco_dict
+
+        #get atomco_dict
+        self.get_atomco_dict(data)
 
         return
+
+    def get_atomco_dict(self, data):
+        #get atomco dict
+        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
+        idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [0] + idx_list
+        data_list = data.tolist()
+        atomco_dict = {}
+        for atom, idx, next_idx in zip(self.atoms, idx_list[:-1], idx_list[1:]):
+            atomco_dict.setdefault(atom, data_list[idx: next_idx])
+
+        self.atomco_dict = atomco_dict
+
+        return atomco_dict
 
     def verify(self):
         if len(self.data) != self.ntot:
