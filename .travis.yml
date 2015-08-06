@@ -24,5 +24,4 @@ install:
   - python setup.py install  # install catplot
 # command to run tests
 script:
-  - cd testdata
-  - python ../scripts/continue.py ts.xyz
+  - ./testall.sh
