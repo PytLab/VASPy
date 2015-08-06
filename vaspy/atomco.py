@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 """
-===============================================================================================
+===================================================================
 Provide coordinate file class which do operations on these files.
-===============================================================================================
+===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
 Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
 
@@ -10,6 +10,8 @@ Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
 
 """
 import numpy as np
+
+from vaspy import VasPy
 from functions import *
 
 
@@ -18,13 +20,52 @@ class CarfileValueError(Exception):
     pass
 
 
-class XyzFile(object):
+class AtomCo(VasPy):
+    "Base class to be inherited by atomco classes."
+    def __init__(self, filename):
+        VasPy.__init__(self, filename)
+
+    def __repr__(self):
+        return self.get_content()
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __getattribute__(self, attr):
+        '''
+        确保atomco_dict能够及时根据data值的变化更新.
+        '''
+        if attr == 'atomco_dict':
+            return self.get_atomco_dict(self.data)
+        else:
+            return object.__getattribute__(self, attr)
+
+    def verify(self):
+        if len(self.data) != self.ntot:
+            raise CarfileValueError('Atom numbers mismatch!')
+
+    def get_atomco_dict(self, data):
+        #根据已获取的data和atoms, atoms_num, 获取atomco_dict
+        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
+        idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [0] + idx_list
+        data_list = data.tolist()
+        atomco_dict = {}
+        for atom, idx, next_idx in zip(self.atoms, idx_list[:-1], idx_list[1:]):
+            atomco_dict.setdefault(atom, data_list[idx: next_idx])
+
+        self.atomco_dict = atomco_dict
+
+        return atomco_dict
+
+
+class XyzFile(AtomCo):
     """
     Create a .xyz file class.
 
     Example:
 
-    >>> a = XyzFile(filename='CONTCAR.xyz')
+    >>> a = XyzFile(filename='ts.xyz')
 
     Class attributes descriptions
     =======================================================================
@@ -43,52 +84,47 @@ class XyzFile(object):
       ============  =======================================================
     """
     def __init__(self, filename):
-        self.filename = filename
+        AtomCo.__init__(self, filename)
         self.load()
+        self.verify()
 
     def load(self):
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
         ntot = int(content_list[0].strip())  # total atom number
         step = int(str2list(content_list[1])[-1])  # iter step number
-        data_list = [str2list(line) for line in content_list[2:]]
+
         #get atom coordinate and number info
+        data_list = [str2list(line) for line in content_list[2:]]
+        data_array = np.array(data_list)  # dtype=np.string
+        atoms_list = list(data_array[:, 0])  # 1st column
+        data = np.float64(data_array[:, 1:])  # rest columns
+
+        #get atom number for each atom
         atoms = []
-        atomco_dict = {}
-        data = []
-        for line_list in data_list:
-            atom = line_list[0]
-            coordinate = line_list[1:]
-            data.append(coordinate)
+        for atom in atoms_list:
             if atom not in atoms:
                 atoms.append(atom)
-                atomco_dict.setdefault(atom, [coordinate])
-            else:
-                atomco_dict[atom].append(coordinate)
-        #get atom number for each atom
-        atom_num = [len(atomco_dict[k]) for k in atoms]
-        natoms = zip(atoms, atom_num)
+        atoms_num = [atoms_list.count(atom) for atom in atoms]
+        natoms = zip(atoms, atoms_num)
 
         #set class attrs
         self.ntot = ntot
         self.step = step
         self.atoms = atoms
+        self.atoms_num = atoms_num
         self.natoms = natoms
-        self.atomco_dict = atomco_dict
-        self.data = np.float64(np.array(data))
+        self.data = data
+
+        #get atomco_dict
+        self.get_atomco_dict(data)
 
         return
-
-    def __str__(self):
-        return self.__repr__()
-
-    def __repr__(self):
-        return self.get_content()
 
     def coordinate_transfrom(self, axes=np.array([[1.0, 0.0, 0.0],
                                                   [0.0, 1.0, 0.0],
                                                   [0.0, 0.0, 1.0]])):
-        "Use Ax=b to do coordinate transform."
+        "Use Ax=b to do coordinate transform. direct to cartesian"
         b = np.matrix(self.data.T)
         A = np.matrix(axes).T
         x = A.I*b
@@ -113,8 +149,8 @@ class XyzFile(object):
         return
 
 
-class PosCar(object):
-    def __init__(self, filename):
+class PosCar(AtomCo):
+    def __init__(self, filename='POSCAR'):
         """
         Class to generate POSCAR or CONTCAR-like objects.
 
@@ -138,7 +174,7 @@ class PosCar(object):
           data           np.array, coordinates of atoms, dtype=float64
           ============  =======================================================
         """
-        self.filename = filename
+        AtomCo.__init__(self, filename)
         #load all data in file
         self.load()
         self.verify()
@@ -166,36 +202,20 @@ class PosCar(object):
         atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
 
-        #get atomco dict
-        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(atoms_num[:i]) for i in xrange(1, len(atoms)+1)]
-        idx_list = [0] + idx_list
-        data_list = data.tolist()
-        atomco_dict = {}
-        for atom, idx, next_idx in zip(atoms, idx_list[:-1], idx_list[1:]):
-            atomco_dict.setdefault(atom, data_list[idx: next_idx])
-
         #set class attrs
         self.axes_coeff = axes_coeff
         self.axes = axes
         self.atoms = atoms
+        self.atoms_num = atoms_num
         self.ntot = sum(atoms_num)
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
-        self.atomco_dict = atomco_dict
+
+        #get atomco_dict
+        self.get_atomco_dict(data)
 
         return
-
-    def verify(self):
-        if len(self.data) != self.ntot:
-            raise CarfileValueError('Atom numbers mismatch!')
-
-    def __repr__(self):
-        return self.get_content()
-
-    def __str__(self):
-        return self.__repr__()
 
     def get_content(self):
         content = 'Created by VASPy\n'
