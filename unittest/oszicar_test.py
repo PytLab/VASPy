@@ -25,9 +25,9 @@ class TestOsziCar(unittest.TestCase):
 
     def test_esort(self):
         "Make sure the esort() effects"
-        srted = self.x.esort(2)
+        srted = self.x.esort('E0', 2)
         shouldbe = np.array([(-101.21186, 326), (-101.21116, 324)],
-                            dtype=[('E0', '<f8'), ('step', '<i4')])
+                            dtype=[('var', '<f8'), ('step', '<i4')])
         self.assertTrue((srted == shouldbe).all())
 
 if __name__ == '__main__':
