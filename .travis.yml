@@ -24,5 +24,7 @@ install:
   - python setup.py install  # install catplot
 # command to run tests
 script:
-  - python ./scripts/continue.py ./testdata/ts.xyz  # test XyzFile, PosCar
-  - python ./unittest/oszicar_test.py  # test OsziCar
+  - cd ./testdata
+  - python ../scripts/continue.py ts.xyz  # test XyzFile, PosCar
+  - cd ../unittest
+  - python oszicar_test.py  # test OsziCar
