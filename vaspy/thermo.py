@@ -57,7 +57,7 @@ class OsziCar(VasPy):
         self.F = np.array(Fs)
         self.E0 = np.array(E0s)
         self.dE = np.array(dEs)
-        self.mags = np.array(mags)
+        self.mag = np.array(mags)
         self.content = content
 
         return
