@@ -128,7 +128,7 @@ class OsziCar(VasPy):
         if mode == 'show':
             plt.show()
         elif mode == 'save':
-            fname = "%s~%s" % (var, self.step)
+            fname = "%s_vs_%s.png" % (var, 'step')
             fig.savefig(fname)
         else:
             raise ValueError('Unrecognized show mode parameter : ' + mode)
