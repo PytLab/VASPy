@@ -39,7 +39,7 @@ class OsziCar(VasPy):
         VasPy.__init__(self, filename)
 
         #set regex patterns
-        float_regex = r'[\+|-]?\d*\.\d*(?:E[\+|-]?\d+)?'
+        float_regex = r'[\+|-]?\d*\.\d*(?:[e|E][\+|-]?\d+)?'
         eq_regex = r'\s*([\w|\d|\s]+)\=\s*(' + float_regex + r')\s*'
         split_regex = r'^\s*(\d+)\s*((' + eq_regex + r')+)$'  # 将step和其余部分分开
 
