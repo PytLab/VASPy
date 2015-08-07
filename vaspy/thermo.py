@@ -55,6 +55,7 @@ class OsziCar(VasPy):
         return self.__repr__()
 
     def match(self, line):
+        "匹配每一步迭代的数据"
         m = self.split_regex.search(line)
         if m:
             #get step
@@ -73,6 +74,7 @@ class OsziCar(VasPy):
             return None
 
     def load(self):
+        "加载文件数据信息"
         with open(self.filename, 'r') as f:
             content = ''
             for line in f:
