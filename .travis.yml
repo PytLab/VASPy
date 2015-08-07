@@ -21,7 +21,7 @@ before_install:
 # command to install dependencies
 install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy matplotlib
-  - python setup.py install  # install catplot
+  - python setup.py install  # install vaspy
 # command to run tests
 script:
   - cd ./testdata
