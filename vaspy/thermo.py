@@ -11,6 +11,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
 import re
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from vaspy import VasPy
 
@@ -32,8 +33,9 @@ class OsziCar(VasPy):
                          stored in
           vars           list of strings, 每次迭代得到的数据
           esort()        method, 对数据进行排序
+          plot()         method, 对数据绘图
           ============  =======================================================
-    """
+        """
         VasPy.__init__(self, filename)
 
         #set regex patterns
@@ -115,3 +117,20 @@ class OsziCar(VasPy):
             return srted[-n:]
         else:
             return srted[:n]
+
+    def plot(self, var, mode='show'):
+        "绘制不同变量随step的变化曲线"
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_ylabel(var)
+        ax.set_xlabel('step')
+        ax.plot(self.step, getattr(self, var))
+        if mode == 'show':
+            plt.show()
+        elif mode == 'save':
+            fname = "%s~%s" % (var, self.step)
+            fig.savefig(fname)
+        else:
+            raise ValueError('Unrecognized show mode parameter : ' + mode)
+
+        return fig
