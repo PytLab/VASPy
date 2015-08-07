@@ -57,3 +57,7 @@ docs/_build/
 target/
 
 MANIFEST
+
+# Pictures
+*.png
+*.jpeg

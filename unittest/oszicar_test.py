@@ -5,6 +5,7 @@
 import unittest
 
 import numpy as np
+import matplotlib
 
 from vaspy.thermo import OsziCar
 
@@ -25,10 +26,16 @@ class TestOsziCar(unittest.TestCase):
 
     def test_esort(self):
         "Make sure the esort() effects"
-        srted = self.x.esort(2)
+        srted = self.x.esort('E0', 2)
         shouldbe = np.array([(-101.21186, 326), (-101.21116, 324)],
-                            dtype=[('E0', '<f8'), ('step', '<i4')])
+                            dtype=[('var', '<f8'), ('step', '<i4')])
         self.assertTrue((srted == shouldbe).all())
+
+    def test_plot(self):
+        "Make sure object could plot"
+        plot = self.x.plot('E0', mode='save')
+        self.assertTrue(isinstance(plot, matplotlib.figure.Figure))
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestOsziCar)

@@ -1,13 +1,41 @@
 # -*- coding:utf-8 -*-
+"""
+=====================================================================
+Provide energy-related file class which do operations on these files.
+=====================================================================
+Written by PytLab <shaozhengjiang@gmail.com>, August 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
+==============================================================
+
+"""
 import re
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from vaspy import VasPy
 
 
 class OsziCar(VasPy):
     def __init__(self, filename='OSZICAR'):
+        """
+        Create a OSZICAR file class.
+
+        Example:
+
+        >>> a = OsziCar(filename='OSZICAR')
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute      Description
+          ============  =======================================================
+          filename       string, name of the file the direct coordiante data
+                         stored in
+          vars           list of strings, 每次迭代得到的数据
+          esort()        method, 对数据进行排序
+          plot()         method, 对数据绘图
+          ============  =======================================================
+        """
         VasPy.__init__(self, filename)
 
         #set regex patterns
@@ -66,16 +94,43 @@ class OsziCar(VasPy):
 
         return
 
-    def esort(self, n, reverse=False):
+    def esort(self, var, n, reverse=False):
         '''
-        进行能量排序, 获取排序后的前n个值.
+        进行数据var排序, 获取排序后的前n个值.
+
+        Example:
+        >>> esort('E0', 10, reverse=True)
+
+        Parameters
+        ----------
+        var: string, data to be sorted.
+
+        n: int, top numbers of sorted data.
+
         '''
-        zipped = zip(self.E0, self.step)  # (E0, step)
-        dtype = [('E0', float), ('step', int)]
+        zipped = zip(getattr(self, var), self.step)  # (E0, step)
+        dtype = [('var', float), ('step', int)]
         zipped = np.array(zipped, dtype=dtype)
-        srted = np.sort(zipped, order='E0')
+        srted = np.sort(zipped, order='var')
 
         if reverse:
             return srted[-n:]
         else:
             return srted[:n]
+
+    def plot(self, var, mode='show'):
+        "绘制不同变量随step的变化曲线"
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_ylabel(var)
+        ax.set_xlabel('step')
+        ax.plot(self.step, getattr(self, var))
+        if mode == 'show':
+            plt.show()
+        elif mode == 'save':
+            fname = "%s_vs_%s.png" % (var, 'step')
+            fig.savefig(fname)
+        else:
+            raise ValueError('Unrecognized show mode parameter : ' + mode)
+
+        return fig
