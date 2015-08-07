@@ -11,6 +11,7 @@ description = __doc__
 
 requires = [
     'numpy',
+    'matplotlib'
 ]
 
 license = 'LICENSE'
