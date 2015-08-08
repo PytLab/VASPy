@@ -40,7 +40,7 @@ class AtomCo(VasPy):
             raise CarfileValueError('Atom numbers mismatch!')
 
     def get_atomco_dict(self, data):
-        #根据已获取的data和atoms, atoms_num, 获取atomco_dict
+        "根据已获取的data和atoms, atoms_num, 获取atomco_dict"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
         idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
@@ -83,6 +83,7 @@ class XyzFile(AtomCo):
         self.load()
         self.verify()
 
+    # 加载文件内容
     def load(self):
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
@@ -119,6 +120,7 @@ class XyzFile(AtomCo):
     def coordinate_transfrom(self, axes=np.array([[1.0, 0.0, 0.0],
                                                   [0.0, 1.0, 0.0],
                                                   [0.0, 0.0, 1.0]])):
+        "相对坐标和实坐标转换"
         "Use Ax=b to do coordinate transform. direct to cartesian"
         b = np.matrix(self.data.T)
         A = np.matrix(axes).T
@@ -127,6 +129,7 @@ class XyzFile(AtomCo):
         return np.array(x.T)
 
     def get_content(self):
+        "获取最新文件内容字符串"
         ntot = "%12d\n" % self.ntot
         step = "STEP =%9d\n" % self.step
         data = atomdict2str(self.atomco_dict, self.atoms)
@@ -175,6 +178,7 @@ class PosCar(AtomCo):
         self.verify()
 
     def load(self):
+        "获取文件数据信息"
         "Load all information in POSCAR."
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
@@ -213,6 +217,7 @@ class PosCar(AtomCo):
         return
 
     def get_content(self):
+        "根据对象数据获取文件内容字符串"
         content = 'Created by VASPy\n'
         axe_coeff = " %.9f\n" % self.axes_coeff
         #axes
@@ -236,6 +241,7 @@ class PosCar(AtomCo):
         return content
 
     def tofile(self, filename='POSCAR_c'):
+        "生成文件"
         "PosCar object to POSCAR or CONTCAR."
         content = self.get_content()
 
