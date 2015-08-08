@@ -83,8 +83,8 @@ class XyzFile(AtomCo):
         self.load()
         self.verify()
 
-    # 加载文件内容
     def load(self):
+        "加载文件内容"
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
         ntot = int(content_list[0].strip())  # total atom number
