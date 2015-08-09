@@ -258,7 +258,7 @@ class PosCar(AtomCo):
         info = "Selective Dynamics\nDirect\n"
         #data and tf
         data_tf = ''
-        for data, tf in zip(self.data.tolist(), self.tf):
+        for data, tf in zip(self.data.tolist(), self.tf.tolist()):
             data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
         #merge all strings
         content += axe_coeff+axes+atoms+atoms_num+info+data_tf
