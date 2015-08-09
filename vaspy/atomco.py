@@ -83,8 +83,8 @@ class XyzFile(AtomCo):
         self.load()
         self.verify()
 
-    # 加载文件内容
     def load(self):
+        "加载文件内容"
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
         ntot = int(content_list[0].strip())  # total atom number
@@ -200,6 +200,7 @@ class PosCar(AtomCo):
         axes = np.float64(np.array(axes))  # to float
         atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
+        tf = np.array(tf)
 
         #set class attrs
         self.axes_coeff = axes_coeff
@@ -215,6 +216,30 @@ class PosCar(AtomCo):
         self.get_atomco_dict(data)
 
         return
+
+    def constrain_atom(self, atom, to='F', axis='all'):
+        "修改某一类型原子的FT信息"
+        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
+        idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [0] + idx_list
+
+        if to not in ['T', 'F']:
+            raise CarfileValueError('Variable to must be T or F.')
+
+        for atomtype, idx, next_idx in \
+                zip(self.atoms, idx_list[:-1], idx_list[1:]):
+            if atomtype == atom:
+                if axis == 'x' or axis == 'X':
+                    self.tf[idx:next_idx, 0] = to
+                elif axis == 'y' or axis == 'Y':
+                    self.tf[idx:next_idx, 1] = to
+                elif axis == 'z' or axis == 'Z':
+                    self.tf[idx:next_idx, 2] = to
+                else:
+                    self.tf[idx:next_idx, :] = to
+                break
+
+        return self.tf
 
     def get_content(self):
         "根据对象数据获取文件内容字符串"
@@ -233,7 +258,7 @@ class PosCar(AtomCo):
         info = "Selective Dynamics\nDirect\n"
         #data and tf
         data_tf = ''
-        for data, tf in zip(self.data.tolist(), self.tf):
+        for data, tf in zip(self.data.tolist(), self.tf.tolist()):
             data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
         #merge all strings
         content += axe_coeff+axes+atoms+atoms_num+info+data_tf
