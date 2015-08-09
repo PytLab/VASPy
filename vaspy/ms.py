@@ -12,12 +12,37 @@ import xml.etree.cElementTree as ET
 
 import numpy as np
 
-from vaspy import VasPy
+from atomco import AtomCo
 
 
-class XsdFile(VasPy):
+class XsdFile(AtomCo):
     def __init__(self, filename):
-        VasPy.__init__(self, filename)
+        """
+        Create a Material Studio *.xsd file class.
+
+        Example:
+
+        >>> a = XsdFile(filename='ts.xsd')
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute      Description
+          ============  =======================================================
+          filename       string, name of the file the direct coordiante data
+                         stored in
+          ntot           int, the number of total atom number
+          atoms          list of strings, atom types
+          natoms         list of tuples, same shape with atoms.
+                         (atom name, atom number)
+          atoms_num      list of int, atom number of atoms in atoms
+          atom_names     list of string,
+                         Value of attribute 'Name' in Atom3d tag.
+          tf             np.array, T & F info for atoms, dtype=np.string
+          data           np.array, coordinates of atoms, dtype=float64
+          bases          np.array, basis vectors of space, dtype=np.float64
+          ============  =======================================================
+        """
+        AtomCo.__init__(self, filename)
 
     def load(self):
         # get element tree
@@ -75,3 +100,5 @@ class XsdFile(VasPy):
                     bases.append(basis)
                 break
         self.bases = np.array(bases)
+
+        return
