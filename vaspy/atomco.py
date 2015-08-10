@@ -21,7 +21,10 @@ class AtomCo(VasPy):
         VasPy.__init__(self, filename)
 
     def __repr__(self):
-        return self.get_content()
+        if hasattr(self, 'get_content'):
+            return self.get_content()
+        else:
+            return self.filename
 
     def __str__(self):
         return self.__repr__()
@@ -42,16 +45,64 @@ class AtomCo(VasPy):
     def get_atomco_dict(self, data):
         "根据已获取的data和atoms, atoms_num, 获取atomco_dict"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [sum(self.atoms_num[:i])
+                    for i in xrange(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
         data_list = data.tolist()
         atomco_dict = {}
-        for atom, idx, next_idx in zip(self.atoms, idx_list[:-1], idx_list[1:]):
+        for atom, idx, next_idx in \
+                zip(self.atoms, idx_list[:-1], idx_list[1:]):
             atomco_dict.setdefault(atom, data_list[idx: next_idx])
 
         self.atomco_dict = atomco_dict
 
         return atomco_dict
+
+    # 装饰器
+    def content_decorator(func):
+        "在执行方法前, 给AtomCo对象必要的属性进行赋值"
+        def wrapper(self, **kwargs):
+            # set attrs before call func
+            for key in kwargs:
+                setattr(self, key, kwargs[key])
+            return func(self)
+
+        return wrapper
+
+    @content_decorator
+    def get_xyz_content(self):
+        "获取最新.xyz文件内容字符串"
+        ntot = "%12d\n" % self.ntot
+        step = "STEP =%9d\n" % self.step
+        data = atomdict2str(self.atomco_dict, self.atoms)
+        content = ntot + step + data
+
+        return content
+
+    @content_decorator
+    def get_poscar_content(self):
+        "根据对象数据获取poscar文件内容字符串"
+        content = 'Created by VASPy\n'
+        bases_const = " %.9f\n" % self.bases_const
+        # bases
+        bases_list = self.bases.tolist()
+        bases = ''
+        for basis in bases_list:
+            bases += "%14.8f%14.8f%14.8f\n" % tuple(basis)
+        # atom info
+        atoms, atoms_num = zip(*self.natoms)
+        atoms = ("%5s"*len(atoms)+"\n") % atoms
+        atoms_num = ("%5d"*len(atoms_num)+"\n") % atoms_num
+        #string
+        info = "Selective Dynamics\nDirect\n"
+        # data and tf
+        data_tf = ''
+        for data, tf in zip(self.data.tolist(), self.tf.tolist()):
+            data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
+        # merge all strings
+        content += bases_const+bases+atoms+atoms_num+info+data_tf
+
+        return content
 
 
 class XyzFile(AtomCo):
@@ -117,24 +168,20 @@ class XyzFile(AtomCo):
 
         return
 
-    def coordinate_transfrom(self, axes=np.array([[1.0, 0.0, 0.0],
-                                                  [0.0, 1.0, 0.0],
-                                                  [0.0, 0.0, 1.0]])):
+    def coordinate_transfrom(self, bases=np.array([[1.0, 0.0, 0.0],
+                                                   [0.0, 1.0, 0.0],
+                                                   [0.0, 0.0, 1.0]])):
         "相对坐标和实坐标转换"
         "Use Ax=b to do coordinate transform. direct to cartesian"
         b = np.matrix(self.data.T)
-        A = np.matrix(axes).T
+        A = np.matrix(bases).T
         x = A.I*b
 
         return np.array(x.T)
 
     def get_content(self):
         "获取最新文件内容字符串"
-        ntot = "%12d\n" % self.ntot
-        step = "STEP =%9d\n" % self.step
-        data = atomdict2str(self.atomco_dict, self.atoms)
-        content = ntot + step + data
-
+        content = self.get_xyz_content()
         return content
 
     def tofile(self, filename='atomco.xyz'):
@@ -162,8 +209,8 @@ class PosCar(AtomCo):
           ============  =======================================================
           filename       string, name of the file the direct coordiante data
                          stored in
-          axes_coeff     float, Scale Factor of axes
-          axes           np.array, axes of POSCAR
+          bases_const    float, lattice bases constant
+          bases          np.array, bases of POSCAR
           atoms          list of strings, atom types
           ntot           int, the number of total atom number
           natoms         list of int, same shape with atoms
@@ -183,9 +230,9 @@ class PosCar(AtomCo):
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
         #get scale factor
-        axes_coeff = float(content_list[1])
-        #axes
-        axes = [str2list(axis) for axis in content_list[2:5]]
+        bases_const = float(content_list[1])
+        #bases
+        bases = [str2list(basis) for basis in content_list[2:5]]
         #atom info
         atoms = str2list(content_list[5])
         atoms_num = str2list(content_list[6])  # atom number
@@ -197,14 +244,14 @@ class PosCar(AtomCo):
             if len(line_list) > 3:
                 tf.append(line_list[3:])
         #data type convertion
-        axes = np.float64(np.array(axes))  # to float
+        bases = np.float64(np.array(bases))  # to float
         atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
         tf = np.array(tf)
 
         #set class attrs
-        self.axes_coeff = axes_coeff
-        self.axes = axes
+        self.bases_const = bases_const
+        self.bases = bases
         self.atoms = atoms
         self.atoms_num = atoms_num
         self.ntot = sum(atoms_num)
@@ -212,7 +259,7 @@ class PosCar(AtomCo):
         self.data = data
         self.tf = tf
 
-        #get atomco_dict
+        # get atomco_dict
         self.get_atomco_dict(data)
 
         return
@@ -243,26 +290,7 @@ class PosCar(AtomCo):
 
     def get_content(self):
         "根据对象数据获取文件内容字符串"
-        content = 'Created by VASPy\n'
-        axe_coeff = " %.9f\n" % self.axes_coeff
-        #axes
-        axes_list = self.axes.tolist()
-        axes = ''
-        for axis in axes_list:
-            axes += "%14.8f%14.8f%14.8f\n" % tuple(axis)
-        #atom info
-        atoms, atoms_num = zip(*self.natoms)
-        atoms = ("%5s"*len(atoms)+"\n") % atoms
-        atoms_num = ("%5d"*len(atoms_num)+"\n") % atoms_num
-        #string
-        info = "Selective Dynamics\nDirect\n"
-        #data and tf
-        data_tf = ''
-        for data, tf in zip(self.data.tolist(), self.tf.tolist()):
-            data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
-        #merge all strings
-        content += axe_coeff+axes+atoms+atoms_num+info+data_tf
-
+        content = self.get_poscar_content()
         return content
 
     def tofile(self, filename='POSCAR_c'):
