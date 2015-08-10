@@ -107,8 +107,8 @@ class XsdFile(AtomCo):
 
         return
 
-    def get_content(self):
-        "根据最新数据获取相应xsd文件内容"
+    def update(self):
+        "根据最新数据获取更新ElementTree内容"
         if self.ntot != len(self.data):
             raise UnmatchedDataShape('length of data is not equal to atom number.')
         elif self.ntot != len(self.tf):
@@ -116,7 +116,7 @@ class XsdFile(AtomCo):
         elif self.ntot != len(self.atom_names):
             raise UnmatchedDataShape('length of atom names is not equal to atom number.')
 
-        idx = 0
+        idx = 0  # index for atom
         for elem in self.tree.iter('Atom3d'):
             # xyz value
             if 'XYZ' in elem.attrib:
@@ -149,4 +149,10 @@ class XsdFile(AtomCo):
             elem.set('CVector', bases_str[2])
             break
 
-        return ET.dump(self.tree)
+        return
+
+    def tofile(self, filename='./new.xsd'):
+        self.update()
+        self.tree.write(filename)
+
+        return
