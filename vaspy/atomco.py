@@ -56,6 +56,18 @@ class AtomCo(VasPy):
 
         return atomco_dict
 
+    # 装饰器
+    def content_decorator(func):
+        "在执行方法前, 给AtomCo对象必要的属性进行赋值"
+        def wrapper(self, **kwargs):
+            # set attrs before call func
+            for key in kwargs:
+                setattr(self, key, kwargs[key])
+            return func(self)
+
+        return wrapper
+
+    @content_decorator
     def get_xyz_content(self):
         "获取最新.xyz文件内容字符串"
         ntot = "%12d\n" % self.ntot
@@ -65,6 +77,7 @@ class AtomCo(VasPy):
 
         return content
 
+    @content_decorator
     def get_poscar_content(self):
         "根据对象数据获取poscar文件内容字符串"
         content = 'Created by VASPy\n'
