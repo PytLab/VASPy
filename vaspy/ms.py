@@ -52,9 +52,14 @@ class XsdFile(AtomCo):
         self.tree = tree
         # MS version info
         root = tree.getroot()
-        ms_version = root.attrib.get('Version')
+        ms_version = root.get('Version')
         if ms_version:
             self.ms_version = ms_version
+        # add WrittenBy attr
+        if 'WrittenBy' in root.attrib:
+            root.set('WrittenBy', 'VASPy')
+        else:
+            root.attrib.setdefault('WrittenBy', 'VASPy')
 
         # atom info
         coordinates = []
