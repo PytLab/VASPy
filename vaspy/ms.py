@@ -108,6 +108,7 @@ class XsdFile(AtomCo):
         return
 
     def get_content(self):
+        "根据最新数据获取相应xsd文件内容"
         if self.ntot != len(self.data):
             raise UnmatchedDataShape('length of data is not equal to atom number.')
         elif self.ntot != len(self.tf):
@@ -136,4 +137,16 @@ class XsdFile(AtomCo):
                 elem.set('Name', self.atom_names[idx])
             idx += 1
         # space group
+        bases = self.bases.tolist()
+        bases_str = []
+        # float -> string
+        for basis in bases:
+            xyz = ','.join([str(v) for v in basis])  # vector string
+            bases_str.append(xyz)
+        for elem in self.tree.iter('SpaceGroup'):
+            elem.set('AVector', bases_str[0])
+            elem.set('BVector', bases_str[1])
+            elem.set('CVector', bases_str[2])
+            break
+
         return ET.dump(self.tree)
