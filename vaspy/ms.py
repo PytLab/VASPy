@@ -13,6 +13,7 @@ import xml.etree.cElementTree as ET
 import numpy as np
 
 from atomco import AtomCo
+from __init__ import UnmatchedDataShape
 
 
 class XsdFile(AtomCo):
@@ -74,17 +75,18 @@ class XsdFile(AtomCo):
                     atoms.append(atom)
                 else:
                     natoms_dict[atom] += 1
-            # T&F info
-            if 'RestrictedProperties' in elem.attrib:
-                tf.append(['F', 'F', 'F'])
-            else:
-                tf.append(['T', 'T', 'T'])
-            # atom name
-            atom_name = elem.attrib.get('Name')
-            atom_names.append(atom_name)
+                # T&F info
+                if 'RestrictedProperties' in elem.attrib:
+                    tf.append(['F', 'F', 'F'])
+                else:
+                    tf.append(['T', 'T', 'T'])
+                # atom name
+                atom_name = elem.attrib.get('Name')
+                atom_names.append(atom_name)
         atoms_num = [natoms_dict[atm] for atm in atoms]
         natoms = zip(atoms, atoms_num)
         # set class attrs
+        self.ntot = len(atom_names)
         self.atoms_num = atoms_num
         self.atoms = atoms
         self.natoms = natoms
@@ -104,3 +106,34 @@ class XsdFile(AtomCo):
         self.bases = np.array(bases)
 
         return
+
+    def get_content(self):
+        if self.ntot != len(self.data):
+            raise UnmatchedDataShape('length of data is not equal to atom number.')
+        elif self.ntot != len(self.tf):
+            raise UnmatchedDataShape('length of tf is not equal to atom number.')
+        elif self.ntot != len(self.atom_names):
+            raise UnmatchedDataShape('length of atom names is not equal to atom number.')
+
+        idx = 0
+        for elem in self.tree.iter('Atom3d'):
+            # xyz value
+            if 'XYZ' in elem.attrib:
+                xyz = self.data[idx, :].tolist()  # list of float
+                xyz = ','.join([str(v) for v in xyz])
+                elem.set('XYZ', xyz)
+                # TF value
+                tf = self.tf[idx, :].tolist()
+                tf = ','.join(tf)
+                if tf == 'F,F,F':
+                    if 'RestrictedProperties' not in elem.attrib:
+                        elem.attrib.setdefault('RestrictedProperties',
+                                               'FractionalXYZ')
+                elif tf == 'T,T,T':
+                    if 'RestrictedProperties' in elem.attrib:
+                        elem.attrib.pop('RestrictedProperties')
+                #atom name
+                elem.set('Name', self.atom_names[idx])
+            idx += 1
+        # space group
+        return ET.dump(self.tree)
