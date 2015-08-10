@@ -45,11 +45,13 @@ class AtomCo(VasPy):
     def get_atomco_dict(self, data):
         "根据已获取的data和atoms, atoms_num, 获取atomco_dict"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [sum(self.atoms_num[:i])
+                    for i in xrange(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
         data_list = data.tolist()
         atomco_dict = {}
-        for atom, idx, next_idx in zip(self.atoms, idx_list[:-1], idx_list[1:]):
+        for atom, idx, next_idx in \
+                zip(self.atoms, idx_list[:-1], idx_list[1:]):
             atomco_dict.setdefault(atom, data_list[idx: next_idx])
 
         self.atomco_dict = atomco_dict
@@ -167,8 +169,8 @@ class XyzFile(AtomCo):
         return
 
     def coordinate_transfrom(self, bases=np.array([[1.0, 0.0, 0.0],
-                                                  [0.0, 1.0, 0.0],
-                                                  [0.0, 0.0, 1.0]])):
+                                                   [0.0, 1.0, 0.0],
+                                                   [0.0, 0.0, 1.0]])):
         "相对坐标和实坐标转换"
         "Use Ax=b to do coordinate transform. direct to cartesian"
         b = np.matrix(self.data.T)
