@@ -48,6 +48,7 @@ class XsdFile(AtomCo):
     def load(self):
         # get element tree
         tree = ET.ElementTree(file=self.filename)
+        self.tree = tree
         # MS version info
         root = tree.getroot()
         ms_version = root.attrib.get('Version')
@@ -101,6 +102,5 @@ class XsdFile(AtomCo):
                     bases.append(basis)
                 break
         self.bases = np.array(bases)
-        self.bases_const = 1.0
 
         return
