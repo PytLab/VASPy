@@ -43,6 +43,7 @@ class XsdFile(AtomCo):
           ============  =======================================================
         """
         AtomCo.__init__(self, filename)
+        self.load()
 
     def load(self):
         # get element tree
@@ -100,5 +101,6 @@ class XsdFile(AtomCo):
                     bases.append(basis)
                 break
         self.bases = np.array(bases)
+        self.bases_const = 1.0
 
         return
