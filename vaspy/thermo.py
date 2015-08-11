@@ -48,12 +48,6 @@ class OsziCar(VasPy):
 
         self.load()
 
-    def __repr__(self):
-        return self.content
-
-    def __str__(self):
-        return self.__repr__()
-
     def match(self, line):
         "匹配每一步迭代的数据"
         m = self.split_regex.search(line)

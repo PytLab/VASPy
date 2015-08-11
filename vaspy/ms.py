@@ -157,6 +157,8 @@ class XsdFile(AtomCo):
         return
 
     def tofile(self, filename='./new.xsd'):
+        "生成文件"
+        "XsdFile object to .xsd file."
         self.update()
         self.tree.write(filename)
 
