@@ -60,14 +60,37 @@ class XsdFile(AtomCo):
             root.set('WrittenBy', 'VASPy')
         else:
             root.attrib.setdefault('WrittenBy', 'VASPy')
+        # atom info
+        self.get_atom_info()
+        # lattice parameters
+        self.bases = self.get_bases()
 
+        return
+
+    def get_bases(self):
+        "get bases from SpaceGroup element"
+        # lattice parameters
+        bases = []
+        for elem in self.tree.iter():
+            if elem.tag == 'SpaceGroup':
+                for attr in ['AVector', 'BVector', 'CVector']:
+                    basis = elem.attrib[attr]  # string
+                    basis = [float(i.strip()) for i in basis.split(',')]
+                    bases.append(basis)
+                break
+        bases = np.array(bases)
+
+        return bases
+
+    def get_atom_info(self):
+        "获取和原子相关的信息, 直接进行属性赋值"
         # atom info
         coordinates = []
         natoms_dict = {}
         atoms = []
         tf = []
         atom_names = []
-        for elem in root.iter('Atom3d'):
+        for elem in self.tree.iter('Atom3d'):
             if 'XYZ' in elem.attrib:
                 # coordinates
                 xyz = elem.attrib['XYZ']  # string
@@ -99,28 +122,30 @@ class XsdFile(AtomCo):
         self.atom_names = atom_names
         self.data = np.array(coordinates)
 
-        # lattice parameters
-        bases = []
-        for elem in root.iter():
-            if elem.tag == 'SpaceGroup':
-                for attr in ['AVector', 'BVector', 'CVector']:
-                    basis = elem.attrib[attr]  # string
-                    basis = [float(i.strip()) for i in basis.split(',')]
-                    bases.append(basis)
-                break
-        self.bases = np.array(bases)
-
         return
 
     def update(self):
         "根据最新数据获取更新ElementTree内容"
         if self.ntot != len(self.data):
-            raise UnmatchedDataShape('length of data is not equal to atom number.')
+            raise UnmatchedDataShape(
+                'length of data is not equal to atom number.')
         elif self.ntot != len(self.tf):
-            raise UnmatchedDataShape('length of tf is not equal to atom number.')
+            raise UnmatchedDataShape(
+                'length of tf is not equal to atom number.')
         elif self.ntot != len(self.atom_names):
-            raise UnmatchedDataShape('length of atom names is not equal to atom number.')
+            raise UnmatchedDataShape(
+                'length of atom names is not equal to atom number.')
 
+        # atoms info
+        self.update_atoms()
+        # space group
+        self.update_bases()
+
+        return
+
+    def update_atoms(self):
+        "更新ElementTree原子相关的值"
+        "update attribute values about atoms in element tree."
         idx = 0  # index for atom
         for elem in self.tree.iter('Atom3d'):
             # xyz value
@@ -141,7 +166,11 @@ class XsdFile(AtomCo):
                 #atom name
                 elem.set('Name', self.atom_names[idx])
             idx += 1
-        # space group
+
+        return
+
+    def update_bases(self):
+        "update bases value in ElementTree"
         bases = self.bases.tolist()
         bases_str = []
         # float -> string
