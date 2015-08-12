@@ -171,7 +171,7 @@ class XyzFile(AtomCo):
     def coordinate_transfrom(self, bases=np.array([[1.0, 0.0, 0.0],
                                                    [0.0, 1.0, 0.0],
                                                    [0.0, 0.0, 1.0]])):
-        "相对坐标和实坐标转换"
+        "分数坐标和实坐标转换"
         "Use Ax=b to do coordinate transform. direct to cartesian"
         b = np.matrix(self.data.T)
         A = np.matrix(bases).T
