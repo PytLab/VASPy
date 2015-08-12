@@ -13,7 +13,7 @@ import xml.etree.cElementTree as ET
 import numpy as np
 
 from atomco import AtomCo
-from __init__ import UnmatchedDataShape
+from vaspy import UnmatchedDataShape
 
 
 class XsdFile(AtomCo):
