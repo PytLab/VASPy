@@ -276,11 +276,11 @@ class PosCar(AtomCo):
         for atomtype, idx, next_idx in \
                 zip(self.atoms, idx_list[:-1], idx_list[1:]):
             if atomtype == atom:
-                if axis == 'x' or axis == 'X':
+                if axis in ['x', 'X']:
                     self.tf[idx:next_idx, 0] = to
-                elif axis == 'y' or axis == 'Y':
+                elif axis in ['y', 'Y']:
                     self.tf[idx:next_idx, 1] = to
-                elif axis == 'z' or axis == 'Z':
+                elif axis in ['z', 'Z']:
                     self.tf[idx:next_idx, 2] = to
                 else:
                     self.tf[idx:next_idx, :] = to
