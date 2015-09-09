@@ -120,7 +120,7 @@ class OsziCar(VasPy):
         ax = fig.add_subplot(111)
         ax.set_ylabel(var)
         ax.set_xlabel('step')
-        ax.plot(self.step, getattr(self, var))
+        ax.plot(self.step, getattr(self, var), linewidth=2.5)
         if mode == 'show':
             plt.show()
         elif mode == 'save':

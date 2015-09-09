@@ -236,16 +236,22 @@ class PosCar(AtomCo):
         #atom info
         atoms = str2list(content_list[5])
         atoms_num = str2list(content_list[6])  # atom number
+        if content_list[7][0] in 'Ss':
+            data_begin = 9
+        else:
+            data_begin = 8
+        #get total number before load data
+        atoms_num = [int(i) for i in atoms_num]
+        ntot = sum(atoms_num)
         #data
         data, tf = [], []  # data and T or F info
-        for line_str in content_list[9:]:
+        for line_str in content_list[data_begin: data_begin+ntot]:
             line_list = str2list(line_str)
             data.append(line_list[:3])
             if len(line_list) > 3:
                 tf.append(line_list[3:])
         #data type convertion
         bases = np.float64(np.array(bases))  # to float
-        atoms_num = [int(i) for i in atoms_num]
         data = np.float64(np.array(data))
         tf = np.array(tf)
 
@@ -254,7 +260,7 @@ class PosCar(AtomCo):
         self.bases = bases
         self.atoms = atoms
         self.atoms_num = atoms_num
-        self.ntot = sum(atoms_num)
+        self.ntot = ntot
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
