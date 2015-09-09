@@ -61,3 +61,7 @@ MANIFEST
 # Pictures
 *.png
 *.jpeg
+
+#test data file
+vaspy/*CAR
+vaspy/*.xsd
