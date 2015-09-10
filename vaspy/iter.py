@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from vaspy import VasPy
+from functions import line2list
 
 
 class OsziCar(VasPy):
@@ -130,3 +131,66 @@ class OsziCar(VasPy):
             raise ValueError('Unrecognized show mode parameter : ' + mode)
 
         return fig
+
+
+class OutCar(VasPy):
+    def __init__(self, filename='OUTCAR'):
+        """
+        Create a OUTCAR file class.
+
+        Example:
+
+        >>> a = OsziCar(filename='OUTCAR')
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute           Description
+          ===============    ==================================================
+          filename            string, name of OUTCAR file
+          total_forces        1d array, 每个离子步迭代原子受到的总力
+          atom_forces         2d array, 最近一次离子步迭代每个原子的受力数据
+          max_force_atom      int, 最近一次离子步迭代受力最大原子序数
+          ===============    ==================================================
+        """
+        VasPy.__init__(self, filename)
+
+    def load(self):
+        #locate informations
+        with open(self.filename, 'r') as f:
+            total_forces = []
+            tforce_regex = \
+                re.compile(r'FORCES: max atom, RMS\s+\d\.\d+\s+(\d\.\d+)\s*')
+            max_regex = re.compile(r'Number: max atom\s+(\d+)\s*')
+            for i, line in enumerate(f):
+                #locate force infomation
+                if 'TOTAL-FORCE' in line:  # force info begins
+                    fbegin = i
+                elif 'RMS' in line:  # total force
+                    m = tforce_regex.search(line)
+                    total_force = float(m.group(1))
+                    total_forces.append(total_force)
+                elif 'Number' in line:
+                    m = max_regex.search(line)
+                    max_force_atom = int(m.group(1))  # atom number with max force on it
+        #get information details
+        #----------------- force info -------------------
+        #total force
+        total_forces = np.array(total_forces)
+        #atom forces
+        atom_forces = []
+        with open(self.filename, 'r') as f:
+            for i, line in enumerate(f):
+                if i > fbegin+2:
+#                    print line
+                    if '-'*10 in line:
+                        break
+                    atom_force = line2list(line)
+                    atom_forces.append(atom_force)
+        atom_forces = np.array(atom_forces)
+
+        #set attrs
+        self.total_forces = total_forces
+        self.atom_forces = atom_forces
+        self.max_force_atom = max_force_atom
+
+        return
