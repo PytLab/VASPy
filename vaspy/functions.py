@@ -10,6 +10,16 @@ def str2list(rawstr):
     return cleanlist
 
 
+def line2list(line, field=' ', dtype=float):
+    "Convert text data in a line to data object list."
+    strlist = line.strip().split(field)
+    if type(dtype) != type:
+        raise TypeError('Illegal dtype.')
+    datalist = [dtype(i) for i in strlist if i != '']
+
+    return datalist
+
+
 def array2str(raw_array):
     """
     convert 2d array -> string
