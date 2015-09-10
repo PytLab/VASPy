@@ -180,7 +180,7 @@ class OutCar(VasPy):
         atom_forces = []
         with open(self.filename, 'r') as f:
             for i, line in enumerate(f):
-                if i > fbegin+2:
+                if i > fbegin+1:
 #                    print line
                     if '-'*10 in line:
                         break
