@@ -153,6 +153,7 @@ class OutCar(VasPy):
           ===============    ==================================================
         """
         VasPy.__init__(self, filename)
+        self.load()
 
     def load(self):
         #locate informations

@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 import matplotlib
 
-from vaspy.thermo import OsziCar
+from vaspy.iter import OsziCar
 
 
 class TestOsziCar(unittest.TestCase):
