@@ -35,3 +35,24 @@ Make it **easier** to process VASP files.
 绘制结果:
 
 ![](https://github.com/PytLab/VASPy/blob/dev/pic/pDOS.png)
+
+###更新日志
+<table>
+    <tbody>
+        <tr>
+            <td><strong>日期</strong></td>
+            <td><strong>版本</strong></td>
+            <td><strong>内容</strong></td>
+        </tr>
+        <tr>
+            <td>2015-09-10</td>
+            <td>0.0.3</td>
+            <td>新增outcar类, 提供分析原子的受力数据</td>
+        </tr>
+        <tr>
+            <td>2015-09-11</td>
+            <td>0.1.0</td>
+            <td>新增DosX类,处理分割后的DOS文件</td>
+        </tr>
+    </tbody>
+</table>
