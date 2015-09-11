@@ -12,7 +12,7 @@ Make it **easier** to process VASP files.
 
 处理VASP文件从未如此 **灵活** **简单**
 
-命令行使用举例：
+命令行处理DOS文件使用举例：
 
     #处理分割好的DOS文件
     >>> from vaspy.electro import DosX
@@ -36,6 +36,8 @@ Make it **easier** to process VASP files.
 
 ![](https://github.com/PytLab/VASPy/blob/dev/pic/pDOS.png)
 
+使用者可以编写自己的脚本来批处理VASP文件
+
 ###更新日志
 <table>
     <tbody>
@@ -45,14 +47,28 @@ Make it **easier** to process VASP files.
             <td><strong>内容</strong></td>
         </tr>
         <tr>
-            <td>2015-09-10</td>
-            <td>0.0.3</td>
-            <td>新增outcar类, 提供分析原子的受力数据</td>
-        </tr>
-        <tr>
             <td>2015-09-11</td>
             <td>0.1.0</td>
             <td>新增DosX类,处理分割后的DOS文件</td>
+        </tr>
+        <tr>
+            <td>2015-09-10</td>
+            <td>0.0.3</td>
+            <td>新增OutCar类,提供分析原子的受力数据</td>
+        </tr>
+        <tr>
+            <td>2015-08-11</td>
+            <td>0.0.2</td>
+            <td>新增XsdFile类,处理material studio的xsd文件</td>
+        </tr>
+        <tr>
+            <td>2015-08-04</td>
+            <td>0.0.1</td>
+            <td>初始版本, 提供的功能:<br>
+                1.处理cartisan坐标文件<br>
+                2.处理POSCAR,CONTCAR文件中的数据<br>
+                3.处理OSZAICAR，处理每步迭代数据<br>
+            </td>
         </tr>
     </tbody>
 </table>
