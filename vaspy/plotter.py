@@ -29,7 +29,10 @@ class DataPlotter(object):
             for line in f:
                 line = line.strip()
                 if not line[0].isdigit():  # comment line or not
-                    continue
+                    if not line.startswith('-'):
+                        continue
+                    elif not line[1].isdigit():
+                        continue
                 linedata = line2list(line, field=self.field,
                                      dtype=self.dtype)
                 data.append(linedata)
