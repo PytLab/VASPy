@@ -59,7 +59,6 @@ target/
 MANIFEST
 
 # Pictures
-*.png
 *.jpeg
 
 #test data file
