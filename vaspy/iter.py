@@ -27,15 +27,14 @@ class OsziCar(VasPy):
         >>> a = OsziCar(filename='OSZICAR')
 
         Class attributes descriptions
-        =======================================================================
+        =======================================================
           Attribute      Description
-          ============  =======================================================
-          filename       string, name of the file the direct coordiante data
-                         stored in
+          ============  =======================================
+          filename       string, name of the SPLITED DOS file
           vars           list of strings, 每次迭代得到的数据
           esort()        method, 对数据进行排序
           plot()         method, 对数据绘图
-          ============  =======================================================
+          ============  =======================================
         """
         VasPy.__init__(self, filename)
 
@@ -171,8 +170,9 @@ class OutCar(VasPy):
                     total_force = float(m.group(1))
                     total_forces.append(total_force)
                 elif 'Number' in line:
+                    #atom number with max force on it
                     m = max_regex.search(line)
-                    max_force_atom = int(m.group(1))  # atom number with max force on it
+                    max_force_atom = int(m.group(1))
         #get information details
         #----------------- force info -------------------
         #total force
