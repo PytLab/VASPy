@@ -34,4 +34,4 @@ Make it **easier** to process VASP files.
     
 绘制结果:
 
-![](https://github.com/PytLab/catplot/blob/master/pic/energy_profilered_trans.png)
+![](https://github.com/PytLab/VASPy/blob/dev/pic/pDOS.png)
