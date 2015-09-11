@@ -65,9 +65,11 @@ Make it **easier** to process VASP files.
             <td>2015-08-04</td>
             <td>0.0.1</td>
             <td>初始版本, 提供的功能:<br>
+                <ul>
                 1.处理cartisan坐标文件<br>
                 2.处理POSCAR,CONTCAR文件中的数据<br>
                 3.处理OSZAICAR，处理每步迭代数据<br>
+                </ul>
             </td>
         </tr>
     </tbody>
