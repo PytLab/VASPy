@@ -52,7 +52,7 @@ class DosX(DataPlotter):
 
     def reset_data(self):
         "Reset data array to zeros."
-        self.data = np.zeros(self.data.shape)
+        self.data[:, 1:] = 0.0
 
     def plotsum(self, xcol, ycols):
         '''
