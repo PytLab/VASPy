@@ -77,12 +77,18 @@ class DosX(DataPlotter):
             start, stop, step = ycols
         ys = self.data[:, start:stop:step]
         y = np.sum(ys, axis=1)
+        #Fermi verical line
+        ymax = np.max(y)
+        xfermi = np.array([0.0]*50)
+        yfermi = np.linspace(0, int(ymax+1), 50)
         #plot
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(x, y, linewidth=3, color='#104E8B')
-        ax.set_xlabel('Energy/eV')
-        ax.set_ylabel('pDOS(arb. unit)')
+        ax.plot(x, y, linewidth=5, color='#104E8B')
+        #plot fermi energy auxiliary line
+        ax.plot(xfermi, yfermi, linestyle='dashed', color='#000000')
+        ax.set_xlabel(r'$\bf{E-E_F(eV)}$', fontdict={'fontsize': 20})
+        ax.set_ylabel(r'$\bf{pDOS(arb. unit)}$', fontdict={'fontsize': 20})
         fig.show()
 
         return
