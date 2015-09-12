@@ -80,9 +80,9 @@ class DosX(DataPlotter):
         #plot
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(x, y, linewidth=3, color='#104E8B')
-        ax.set_xlabel('Energy/eV')
-        ax.set_ylabel('pDOS(arb. unit)')
+        ax.plot(x, y, linewidth=5, color='#104E8B')
+        ax.set_xlabel(r'$\bf{Energy/eV}$')
+        ax.set_ylabel(r'$\bf{pDOS(arb. unit)}$')
         fig.show()
 
         return
