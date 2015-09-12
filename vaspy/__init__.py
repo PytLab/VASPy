@@ -1,4 +1,4 @@
-__version__ = '0.1.0'  # add electro module
+__version__ = '0.1.1'  # add d-band center calculation
 
 
 class VasPy(object):
