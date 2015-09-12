@@ -49,7 +49,7 @@ Make it **easier** to process VASP files.
         <tr>
             <td>2015-09-12</td>
             <td>0.1.1</td>
-            <td>新增计算d-band center方法</td>
+            <td>新增d-band center计算</td>
         </tr>
         <tr>
             <td>2015-09-11</td>
