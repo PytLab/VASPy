@@ -198,8 +198,8 @@ class ElfCar(PosCar):
         elif axis_cut in ['Z', 'z']:
             nlayer = int(self.grid[2]*distance)
             z = self.elf_data[:, :, nlayer]
-            ndim0 = self.grid[1]
-            ndim1 = self.grid[2]
+            ndim0 = self.grid[0]
+            ndim1 = self.grid[1]
 
         #do 2d interpolation
         #get slice object
@@ -272,8 +272,8 @@ class ElfCar(PosCar):
         elif axis_cut in ['Z', 'z']:
             nlayer = int(self.grid[2]*distance)
             z = self.elf_data[:, :, nlayer]
-            ndim0 = self.grid[1]
-            ndim1 = self.grid[2]
+            ndim0 = self.grid[0]
+            ndim1 = self.grid[1]
 
         #do 2d interpolation
         #get slice object
