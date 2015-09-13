@@ -13,10 +13,14 @@ from string import whitespace
 
 import numpy as np
 from scipy.integrate import simps
-from scipy.interpolate import interp2d, interpnd
+from scipy.interpolate import interp2d
 import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d as p3
-from mayavi import mlab
+#whether mayavi installed
+try:
+    from mayavi import mlab
+    mayavi_installed = True
+except ImportError:
+    mayavi_installed = False
 
 from plotter import DataPlotter
 from atomco import PosCar
@@ -235,11 +239,6 @@ class ElfCar(PosCar):
             raise ValueError('Unrecognized show mode parameter : ' +
                              show_mode)
 
-        #mlab
-        #face = mlab.surf(newx, newy, newz, warp_scale=2)
-        #mlab.axes(xlabel='x', ylabel='y', zlabel='z')
-        #mlab.outline(face)
-
         #3d plot by mlab
         #xyz = get_combinations(24, 24, 24)
         #data = self.elf_data.reshape(-1)
@@ -248,5 +247,54 @@ class ElfCar(PosCar):
         #surface = mlab.contour3d(self.elf_data)
         #surface.actor.property.opacity = 0.4
         #mlab.show()
+
+        return
+
+    def plot_mcontour(self, axis_cut='z', distance=0.5, show_mode='show'):
+        "use mayavi.mlab to plot contour."
+        if not mayavi_installed:
+            print "Mayavi is not installed on your device."
+            return
+        #cope parameters
+        if abs(distance) > 1:
+            raise ValueError('Distance must be between 0 and 1.')
+        if axis_cut in ['X', 'x']:  # cut vertical to x axis
+            nlayer = int(self.grid[0]*distance)
+            z = self.elf_data[nlayer, :, :]
+            ndim0 = self.grid[1]
+            ndim1 = self.grid[2]
+        elif axis_cut in ['Y', 'y']:
+            nlayer = int(self.grid[1]*distance)
+            z = self.elf_data[:, nlayer, :]
+            ndim0 = self.grid[0]
+            ndim1 = self.grid[2]
+        elif axis_cut in ['Z', 'z']:
+            nlayer = int(self.grid[2]*distance)
+            z = self.elf_data[:, :, nlayer]
+            ndim0 = self.grid[1]
+            ndim1 = self.grid[2]
+
+        #do 2d interpolation
+        #get slice object
+        s = np.s_[0:ndim0:1, 0:ndim1:1]
+        x, y = np.ogrid[s]
+        mx, my = np.mgrid[s]
+        #use cubic 2d interpolation
+        interpfunc = interp2d(x, y, z, kind='cubic')
+        newx = np.linspace(0, ndim0, 600)
+        newy = np.linspace(0, ndim1, 600)
+        newz = interpfunc(newx, newy)
+        #mlab
+        face = mlab.surf(newx, newy, newz, warp_scale=2)
+        mlab.axes(xlabel='x', ylabel='y', zlabel='z')
+        mlab.outline(face)
+        #save or show
+        if show_mode == 'show':
+            mlab.show()
+        elif show_mode == 'save':
+            mlab.savefig('mlab_contour3d.png')
+        else:
+            raise ValueError('Unrecognized show mode parameter : ' +
+                             show_mode)
 
         return

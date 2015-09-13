@@ -1,4 +1,4 @@
-__version__ = '0.2.0'  # add ELFCAR plotting
+__version__ = '0.2.1'  # add mlab contour plotting
 
 
 class VasPy(object):
