@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 #functions used in atomco
+import numpy as np
 
 
 def str2list(rawstr):
@@ -76,3 +77,15 @@ def atomdict2str(atomco_dict, keys):
             content_str += '%-3s%16s%16s%16s\n' % line_tuple
 
     return content_str
+
+
+def get_combinations(x, y, z):
+    "get all combiantions 0~x, 0~y, 0~z, then zip it"
+    combinations = []
+    for i in np.linspace(0, 10, z):
+        for j in np.linspace(0, 10, y):
+            for k in np.linspace(0, 10, x):
+                combinations.append((k, j, i))
+    xyz = zip(*combinations)
+    xyz = np.array(xyz)
+    return xyz
