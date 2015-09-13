@@ -4,7 +4,7 @@ VASPy
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.2.0-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.2.1-blue.svg)](https://github.com/PytLab/VASPy)
 
 ###An **object-oriented** VASP file processing library.
 
@@ -39,8 +39,9 @@ Make it **easier** to process VASP files.
 处理ELFCAR举例:
 
     >>> from vaspy.electro import ElfCar
-    >>> a = ElfCar()
-    >>> a.plot_contour()
+    >>> a = ElfCar() 
+    >>> a.plot_contour()   # 绘制等高线图
+    >>> a.plot_mcontour()  # 使用mlab绘制等高线图
 
 绘制结果:
 
@@ -57,6 +58,11 @@ Make it **easier** to process VASP files.
             <td><strong>日期</strong></td>
             <td><strong>版本</strong></td>
             <td><strong>内容</strong></td>
+        </tr>
+        <tr>
+            <td>2015-09-13</td>
+            <td>0.2.1</td>
+            <td>新增mlab绘制contour</td>
         </tr>
         <tr>
             <td>2015-09-13</td>
