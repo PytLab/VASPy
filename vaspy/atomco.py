@@ -266,6 +266,7 @@ class PosCar(AtomCo):
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
+        self.totline = data_begin + ntot  # total number of line
 
         # get atomco_dict
         self.get_atomco_dict(data)
