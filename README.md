@@ -4,7 +4,7 @@ VASPy
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.1.1-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.2.0-blue.svg)](https://github.com/PytLab/VASPy)
 
 ###An **object-oriented** VASP file processing library.
 
@@ -36,6 +36,17 @@ Make it **easier** to process VASP files.
 
 ![](https://github.com/PytLab/VASPy/blob/dev/pic/pDOS.png)
 
+处理ELFCAR举例:
+    >>> from vaspy.electro import ElfCar
+    >>> a = ElfCar()
+    >>> a.plot_contour()
+
+绘制结果:
+
+![](https://github.com/PytLab/VASPy/blob/dev/pic/contour2d.png)
+
+![](https://github.com/PytLab/VASPy/blob/dev/pic/surface3d.png)
+
 使用者可以编写自己的脚本来批处理VASP文件
 
 ###更新日志
@@ -45,6 +56,11 @@ Make it **easier** to process VASP files.
             <td><strong>日期</strong></td>
             <td><strong>版本</strong></td>
             <td><strong>内容</strong></td>
+        </tr>
+        <tr>
+            <td>2015-09-13</td>
+            <td>0.2.0</td>
+            <td>新增ELFCAR图像绘制</td>
         </tr>
         <tr>
             <td>2015-09-12</td>
