@@ -9,12 +9,18 @@ Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
 
 """
 import copy
+from string import whitespace
 
 import numpy as np
 from scipy.integrate import simps
+from scipy.interpolate import interp2d, interpnd
 import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d as p3
+from mayavi import mlab
 
 from plotter import DataPlotter
+from atomco import PosCar
+from functions import line2list, get_combinations
 
 
 class DosX(DataPlotter):
@@ -127,3 +133,120 @@ class DosX(DataPlotter):
         self.dband_center = dband_center
 
         return dband_center
+
+
+class ElfCar(PosCar):
+    def __init__(self, filename='ELFCAR'):
+        PosCar.__init__(self, filename=filename)
+
+    def load(self):
+        "Rewrite load method"
+        PosCar.load(self)
+        with open(self.filename, 'r') as f:
+            for i in xrange(self.totline):
+                f.readline()
+            #get dimension of 3d array
+            grid = f.readline().strip(whitespace)
+            empty = not grid  # empty row
+            while empty:
+                grid = f.readline().strip(whitespace)
+                empty = not grid
+            x, y, z = line2list(grid, dtype=int)
+            #read electron localization function data
+            elf_data = []
+            for line in f:
+                datalist = line2list(line)
+                elf_data.extend(datalist)
+        #reshape to 3d array
+        elf_data = np.array(elf_data).reshape((x, y, z), order='F')
+        #set attrs
+        self.grid = x, y, z
+        self.elf_data = elf_data
+
+        return
+
+    def plot_contour(self, axis_cut='z', distance=0.5, show_mode='show'):
+        '''
+        绘制ELF等值线图
+        Parameter
+        ---------
+        axis_cut: str
+            ['x', 'X', 'y', 'Y', 'z', 'Z'], axis which will be cut.
+        distance: float
+            (0.0 ~ 1.0), distance to origin
+        show_mode: str
+            'save' or 'show'
+        '''
+        #cope parameters
+        if abs(distance) > 1:
+            raise ValueError('Distance must be between 0 and 1.')
+        if axis_cut in ['X', 'x']:  # cut vertical to x axis
+            nlayer = int(self.grid[0]*distance)
+            z = self.elf_data[nlayer, :, :]
+            ndim0 = self.grid[1]
+            ndim1 = self.grid[2]
+        elif axis_cut in ['Y', 'y']:
+            nlayer = int(self.grid[1]*distance)
+            z = self.elf_data[:, nlayer, :]
+            ndim0 = self.grid[0]
+            ndim1 = self.grid[2]
+        elif axis_cut in ['Z', 'z']:
+            nlayer = int(self.grid[2]*distance)
+            z = self.elf_data[:, :, nlayer]
+            ndim0 = self.grid[1]
+            ndim1 = self.grid[2]
+
+        #do 2d interpolation
+        #get slice object
+        s = np.s_[0:ndim0:1, 0:ndim1:1]
+        x, y = np.ogrid[s]
+        mx, my = np.mgrid[s]
+        #use cubic 2d interpolation
+        interpfunc = interp2d(x, y, z, kind='cubic')
+        newx = np.linspace(0, ndim0, 600)
+        newy = np.linspace(0, ndim1, 600)
+        #-----------for plot3d---------------------
+        ms = np.s_[0:ndim0:600j, 0:ndim1:600j]  # |
+        newmx, newmy = np.mgrid[ms]             # |
+        #-----------for plot3d---------------------
+        newz = interpfunc(newx, newy)
+
+        #plot 2d contour map
+        fig2d = plt.figure(figsize=(17, 7))
+        ax1 = fig2d.add_subplot(1, 2, 1)
+        extent = [np.min(newx), np.max(newx), np.min(newy), np.max(newy)]
+        ax1.imshow(newz, extent=extent, origin='lower')
+        #plt.colorbar()
+        #coutour plot
+        ax2 = fig2d.add_subplot(1, 2, 2)
+        cs = ax2.contour(newz, 10, extent=extent)
+        ax2.clabel(cs)
+        #3d plot
+        fig3d = plt.figure(figsize=(12, 8))
+        ax3d = fig3d.add_subplot(111, projection='3d')
+        ax3d.plot_surface(newmx, newmy, newz, cmap=plt.cm.RdBu_r)
+        #save or show
+        if show_mode == 'show':
+            plt.show()
+        elif show_mode == 'save':
+            fig2d.savefig('contour2d.png', dpi=500)
+            fig3d.savefig('surface3d.png', dpi=500)
+        else:
+            raise ValueError('Unrecognized show mode parameter : ' +
+                             show_mode)
+
+        #mlab
+        #face = mlab.surf(newx, newy, newz, warp_scale=2)
+        #mlab.axes(xlabel='x', ylabel='y', zlabel='z')
+        #mlab.outline(face)
+
+        #3d plot by mlab
+        #xyz = get_combinations(24, 24, 24)
+        #data = self.elf_data.reshape(-1)
+        #mlab.points3d(xyz[0, :], xyz[1, :], xyz[2, :], data)
+
+        #surface = mlab.contour3d(self.elf_data)
+        #surface.actor.property.opacity = 0.4
+        #mlab.show()
+
+        return

@@ -250,6 +250,8 @@ class PosCar(AtomCo):
             data.append(line_list[:3])
             if len(line_list) > 3:
                 tf.append(line_list[3:])
+            else:
+                tf.append(['T', 'T', 'T'])
         #data type convertion
         bases = np.float64(np.array(bases))  # to float
         data = np.float64(np.array(data))
@@ -264,6 +266,7 @@ class PosCar(AtomCo):
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
+        self.totline = data_begin + ntot  # total number of line
 
         # get atomco_dict
         self.get_atomco_dict(data)

@@ -1,4 +1,4 @@
-__version__ = '0.1.1'  # add d-band center calculation
+__version__ = '0.2.0'  # add ELFCAR plotting
 
 
 class VasPy(object):
