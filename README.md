@@ -41,7 +41,7 @@ Make it **easier** to process VASP files.
     >>> from vaspy.electro import ElfCar
     >>> a = ElfCar() 
     >>> a.plot_contour()   # 绘制等高线图
-    >>> a.plot_mcontour()  # 使用mlab绘制等高线图
+    >>> a.plot_mcontour()  # 使用mlab绘制等高线图(需安装Mayavi)
 
 绘制结果:
 
