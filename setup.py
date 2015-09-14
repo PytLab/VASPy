@@ -20,6 +20,7 @@ name = 'python-vaspy'
 packages = [
     'vaspy',
     'scripts',
+    'unittest',
 ]
 data_files = []
 platforms = ['linux']
