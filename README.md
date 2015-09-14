@@ -45,10 +45,9 @@ Make it **easier** to process VASP files.
 
 绘制结果:
 
-![](https://github.com/PytLab/VASPy/blob/dev/pic/contour2d.png)
+![](https://github.com/PytLab/VASPy/blob/master/pic/contour2d.png)
 
-![](https://github.com/PytLab/VASPy/blob/dev/pic/surface3d.png)
-![](https://github.com/PytLab/VASPy/blob/dev/pic/mcontour3d.png)
+![](https://github.com/PytLab/VASPy/blob/master/pic/contours.png)
 
 使用者可以编写自己的脚本来批处理VASP文件
 

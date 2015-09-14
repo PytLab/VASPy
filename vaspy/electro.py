@@ -240,15 +240,6 @@ class ElfCar(PosCar):
             raise ValueError('Unrecognized show mode parameter : ' +
                              show_mode)
 
-        #3d plot by mlab
-        #xyz = get_combinations(24, 24, 24)
-        #data = self.elf_data.reshape(-1)
-        #mlab.points3d(xyz[0, :], xyz[1, :], xyz[2, :], data)
-
-        #surface = mlab.contour3d(self.elf_data)
-        #surface.actor.property.opacity = 0.4
-        #mlab.show()
-
         return
 
     def plot_mcontour(self, axis_cut='z', distance=0.5, show_mode='show'):
@@ -297,5 +288,21 @@ class ElfCar(PosCar):
         else:
             raise ValueError('Unrecognized show mode parameter : ' +
                              show_mode)
+
+        return
+
+    def plot_contour3d(self, maxct=1.0, nct=5, opacity=0.4):
+        "use mayavi.mlab to plot 3d contour"
+        if not mayavi_installed:
+            print "Mayavi is not installed on your device."
+            return
+        surface = mlab.contour3d(self.elf_data)
+        #set surface attrs
+        surface.actor.property.opacity = opacity
+        surface.contour.maximum_contour = maxct
+        surface.contour.number_of_contours = nct
+        mlab.axes(xlabel='x', ylabel='y', zlabel='z')
+        mlab.outline()
+        mlab.show()
 
         return
