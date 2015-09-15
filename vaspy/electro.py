@@ -25,7 +25,7 @@ except ImportError:
 
 from plotter import DataPlotter
 from atomco import PosCar
-from functions import line2list, get_combinations
+from functions import line2list
 
 
 class DosX(DataPlotter):
@@ -35,7 +35,7 @@ class DosX(DataPlotter):
 
         Example:
 
-        >>> a = DataPlotter(filename='DOS1')
+        >>> a = DosX(filename='DOS1')
 
         Class attributes descriptions
         =======================================================
@@ -142,6 +142,35 @@ class DosX(DataPlotter):
 
 class ElfCar(PosCar):
     def __init__(self, filename='ELFCAR'):
+        """
+        Create a ELFCAR file class.
+
+        Example:
+
+        >>> a = ElfCar()
+
+        Class attributes descriptions
+        ==============================================================
+          Attribute       Description
+          ==============   =============================================
+          filename         string, name of the ELFCAR file
+          -------------    ame as PosCar ------------
+          bases_const      float, lattice bases constant
+          bases            np.array, bases of POSCAR
+          atoms            list of strings, atom types
+          ntot             int, the number of total atom number
+          natoms           list of int, same shape with atoms
+                           atom number of atoms in atoms
+          tf               list of list, T&F info of atoms
+          data             np.array, coordinates of atoms, dtype=float64
+          -------------    ame as PosCar ------------
+          elf_data         3d array
+          plot_contour     method, use matplotlib to plot contours
+          plot_mcontours   method, use Mayavi.mlab to plot beautiful contour
+          plot_contour3d   method, use mayavi.mlab to plot 3d contour
+          plot_field       method, plot scalar field for elf data
+          ==============  =============================================
+        """
         PosCar.__init__(self, filename=filename)
 
     def load(self):
@@ -291,11 +320,30 @@ class ElfCar(PosCar):
 
         return
 
-    def plot_contour3d(self, maxct=1.0, nct=5, opacity=0.4):
-        "use mayavi.mlab to plot 3d contour"
+    def plot_contour3d(self, **kwargs):
+        '''
+        use mayavi.mlab to plot 3d contour.
+
+        Parameter
+        ---------
+        kwargs: {
+            'maxct'   : float, max contour number,
+            'nct'     : int, number of contours,
+            'opacity' : float, opacity of contour,
+        }
+        '''
         if not mayavi_installed:
             print "Mayavi is not installed on your device."
             return
+        #set parameters
+        maxdata = np.max(self.elf_data)
+        maxct = kwargs['maxct'] if 'maxct' in kwargs else maxdata
+        #check maxct
+        if maxct > maxdata:
+            print "maxct is larger than %f" % maxdata
+        opacity = kwargs['opacity'] if 'opacity' in kwargs else 0.6
+        nct = kwargs['nct'] if 'nct' in kwargs else 5
+        #plot surface
         surface = mlab.contour3d(self.elf_data)
         #set surface attrs
         surface.actor.property.opacity = opacity
@@ -304,5 +352,29 @@ class ElfCar(PosCar):
         mlab.axes(xlabel='x', ylabel='y', zlabel='z')
         mlab.outline()
         mlab.show()
+
+        return
+
+    def plot_field(self, vmin=0.0, vmax=1.0, axis_cut='z', nct=5):
+        "plot scalar field for elf data"
+        if not mayavi_installed:
+            print "Mayavi is not installed on your device."
+            return
+        #create pipeline
+        field = mlab.pipeline.scalar_field(self.elf_data)  # data source
+        mlab.pipeline.volume(field, vmin=vmin, vmax=vmax)  # put data into volumn to visualize
+        #cut plane
+        if axis_cut in ['Z', 'z']:
+            plane_orientation = 'z_axes'
+        elif axis_cut in ['Y', 'y']:
+            plane_orientation = 'y_axes'
+        elif axis_cut in ['X', 'x']:
+            plane_orientation = 'x_axes'
+        cut = mlab.pipeline.scalar_cut_plane(
+            field.children[0], plane_orientation=plane_orientation)
+        cut.enable_contours = True  # 开启等值线显示
+        cut.contour.number_of_contours = nct
+        mlab.show()
+        #mlab.savefig('field.png', size=(2000, 2000))
 
         return
