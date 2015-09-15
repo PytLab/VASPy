@@ -85,17 +85,17 @@ class XsdFile(AtomCo):
     def get_atom_info(self):
         "获取和原子相关的信息, 直接进行属性赋值"
         # atom info
-        coordinates = []
+        atomco_dict = {}
         natoms_dict = {}
         atoms = []
         tf = []
+        tf_dict = {}
         atom_names = []
+        atom_name_dict = {}
+
         for elem in self.tree.iter('Atom3d'):
             if 'XYZ' in elem.attrib:
-                # coordinates
-                xyz = elem.attrib['XYZ']  # string
-                coordinate = [float(i.strip()) for i in xyz.split(',')]
-                coordinates.append(coordinate)
+
                 # atom name and number
                 atom = elem.attrib['Components']
                 if atom not in natoms_dict:
@@ -103,24 +103,55 @@ class XsdFile(AtomCo):
                     atoms.append(atom)
                 else:
                     natoms_dict[atom] += 1
+
+                # coordinates
+                xyz = elem.attrib['XYZ']  # string
+                coordinate = [float(i.strip()) for i in xyz.split(',')]
+                if atom not in atomco_dict:
+                    atomco_dict.setdefault(atom, [coordinate])
+                else:
+                    atomco_dict[atom].append(coordinate)
+
                 # T&F info
                 if 'RestrictedProperties' in elem.attrib:
-                    tf.append(['F', 'F', 'F'])
+                    tf_info = ['F', 'F', 'F']
                 else:
-                    tf.append(['T', 'T', 'T'])
+                    tf_info = ['T', 'T', 'T']
+                if atom not in tf_dict:
+                    tf_dict.setdefault(atom, [tf_info])
+                else:
+                    tf_dict[atom].append(tf_info)
+
                 # atom name
                 atom_name = elem.attrib.get('Name')
-                atom_names.append(atom_name)
+                if atom not in atom_name_dict:
+                    atom_name_dict.setdefault(atom, [atom_name])
+                else:
+                    atom_name_dict[atom].append(atom_name)
+
         atoms_num = [natoms_dict[atm] for atm in atoms]
         natoms = zip(atoms, atoms_num)
+
+        coordinates = []
+        for atom in atoms:  # sorted by atoms
+            # combine all coordinates
+            coordinates += atomco_dict[atom]
+            # combine all tf info
+            tf += tf_dict[atom]
+            # combine all atom_names
+            atom_names += atom_name_dict[atom]
+
         # set class attrs
         self.ntot = len(atom_names)
         self.atoms_num = atoms_num
         self.atoms = atoms
         self.natoms = natoms
         self.tf = np.array(tf)
+        self.tf_dict = tf_dict
         self.atom_names = atom_names
+        self.atom_names_dict = atom_name_dict
         self.data = np.array(coordinates)
+        self.atomco_dict = atomco_dict
 
         return
 
@@ -146,26 +177,27 @@ class XsdFile(AtomCo):
     def update_atoms(self):
         "更新ElementTree原子相关的值"
         "update attribute values about atoms in element tree."
-        idx = 0  # index for atom
-        for elem in self.tree.iter('Atom3d'):
-            # xyz value
-            if 'XYZ' in elem.attrib:
-                xyz = self.data[idx, :].tolist()  # list of float
-                xyz = ','.join([str(v) for v in xyz])
-                elem.set('XYZ', xyz)
-                # TF value
-                tf = self.tf[idx, :].tolist()
-                tf = ','.join(tf)
-                if tf == 'F,F,F':
-                    if 'RestrictedProperties' not in elem.attrib:
-                        elem.attrib.setdefault('RestrictedProperties',
-                                               'FractionalXYZ')
-                elif tf == 'T,T,T':
-                    if 'RestrictedProperties' in elem.attrib:
-                        elem.attrib.pop('RestrictedProperties')
-                #atom name
-                elem.set('Name', self.atom_names[idx])
-            idx += 1
+        for atom in self.atoms:
+            idx = 0  # index for coordinate
+            for elem in self.tree.iter('Atom3d'):
+                # xyz value
+                if 'XYZ' in elem.attrib and elem.attrib['Components'] == atom:
+                    xyz = self.atomco_dict[atom][idx]  # list of float
+                    xyz = ','.join([str(v) for v in xyz])
+                    elem.set('XYZ', xyz)
+                    # TF value
+                    tf = self.tf_dict[atom][idx]
+                    tf = ','.join(tf)
+                    if tf == 'F,F,F':
+                        if 'RestrictedProperties' not in elem.attrib:
+                            elem.attrib.setdefault('RestrictedProperties',
+                                                   'FractionalXYZ')
+                    elif tf == 'T,T,T':
+                        if 'RestrictedProperties' in elem.attrib:
+                            elem.attrib.pop('RestrictedProperties')
+                    #atom name
+                    elem.set('Name', self.atom_name_dict[atom][idx])
+                    idx += 1
 
         return
 

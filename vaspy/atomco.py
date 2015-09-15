@@ -31,10 +31,12 @@ class AtomCo(VasPy):
 
     def __getattribute__(self, attr):
         '''
-        确保atomco_dict能够及时根据data值的变化更新.
+        确保dict能够及时根据data, tf值的变化更新.
         '''
         if attr == 'atomco_dict':
             return self.get_atomco_dict(self.data)
+        elif attr == 'tf_dict':
+            return self.get_tf_dict(self.tf)
         else:
             return object.__getattribute__(self, attr)
 
@@ -48,6 +50,7 @@ class AtomCo(VasPy):
         idx_list = [sum(self.atoms_num[:i])
                     for i in xrange(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
+
         data_list = data.tolist()
         atomco_dict = {}
         for atom, idx, next_idx in \
@@ -57,6 +60,22 @@ class AtomCo(VasPy):
         self.atomco_dict = atomco_dict
 
         return atomco_dict
+
+    def get_tf_dict(self, tf):
+        "根据已获取的tf和atoms, atoms_num, 获取tf_dict"
+        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
+        idx_list = [sum(self.atoms_num[:i])
+                    for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [0] + idx_list
+
+        tf_list = tf.tolist()
+        tf_dict = {}
+        for atom, idx, next_idx in \
+                zip(self.atoms, idx_list[:-1], idx_list[1:]):
+            tf_dict.setdefault(atom, tf_list[idx: next_idx])
+        self.tf_dict = tf_dict
+
+        return tf_dict
 
     # 装饰器
     def content_decorator(func):
@@ -245,13 +264,26 @@ class PosCar(AtomCo):
         ntot = sum(atoms_num)
         #data
         data, tf = [], []  # data and T or F info
+        tf_dict = {}  # {tf: atom number}
         for line_str in content_list[data_begin: data_begin+ntot]:
             line_list = str2list(line_str)
             data.append(line_list[:3])
             if len(line_list) > 3:
-                tf.append(line_list[3:])
+                tf_list = line_list[3:]
+                tf.append(tf_list)
+                #gather tf info to tf_dict
+                tf_str = ','.join(tf_list)
+                if tf_str not in tf_dict:
+                    tf_dict[tf_str] = 1
+                else:
+                    tf_dict[tf_str] += 1
             else:
                 tf.append(['T', 'T', 'T'])
+                #gather tf info to tf_dict
+                if tf_str not in tf_dict:
+                    tf_dict['T,T,T'] = 1
+                else:
+                    tf_dict['T,T,T'] += 1
         #data type convertion
         bases = np.float64(np.array(bases))  # to float
         data = np.float64(np.array(data))
@@ -266,6 +298,7 @@ class PosCar(AtomCo):
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
+        self.tf_dict = tf_dict
         self.totline = data_begin + ntot  # total number of line
 
         # get atomco_dict
