@@ -31,10 +31,12 @@ class AtomCo(VasPy):
 
     def __getattribute__(self, attr):
         '''
-        确保atomco_dict能够及时根据data值的变化更新.
+        确保dict能够及时根据data, tf值的变化更新.
         '''
         if attr == 'atomco_dict':
             return self.get_atomco_dict(self.data)
+        elif attr == 'tf_dict':
+            return self.get_tf_dict(self.tf)
         else:
             return object.__getattribute__(self, attr)
 
@@ -48,6 +50,7 @@ class AtomCo(VasPy):
         idx_list = [sum(self.atoms_num[:i])
                     for i in xrange(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
+
         data_list = data.tolist()
         atomco_dict = {}
         for atom, idx, next_idx in \
@@ -57,6 +60,22 @@ class AtomCo(VasPy):
         self.atomco_dict = atomco_dict
 
         return atomco_dict
+
+    def get_tf_dict(self, tf):
+        "根据已获取的tf和atoms, atoms_num, 获取tf_dict"
+        # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
+        idx_list = [sum(self.atoms_num[:i])
+                    for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [0] + idx_list
+
+        tf_list = tf.tolist()
+        tf_dict = {}
+        for atom, idx, next_idx in \
+                zip(self.atoms, idx_list[:-1], idx_list[1:]):
+            tf_dict.setdefault(atom, tf_list[idx: next_idx])
+        self.tf_dict = tf_dict
+
+        return tf_dict
 
     # 装饰器
     def content_decorator(func):
