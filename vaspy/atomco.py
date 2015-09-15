@@ -245,13 +245,26 @@ class PosCar(AtomCo):
         ntot = sum(atoms_num)
         #data
         data, tf = [], []  # data and T or F info
+        tf_dict = {}  # {tf: atom number}
         for line_str in content_list[data_begin: data_begin+ntot]:
             line_list = str2list(line_str)
             data.append(line_list[:3])
             if len(line_list) > 3:
-                tf.append(line_list[3:])
+                tf_list = line_list[3:]
+                tf.append(tf_list)
+                #gather tf info to tf_dict
+                tf_str = ','.join(tf_list)
+                if tf_str not in tf_dict:
+                    tf_dict[tf_str] = 1
+                else:
+                    tf_dict[tf_str] += 1
             else:
                 tf.append(['T', 'T', 'T'])
+                #gather tf info to tf_dict
+                if tf_str not in tf_dict:
+                    tf_dict['T,T,T'] = 1
+                else:
+                    tf_dict['T,T,T'] += 1
         #data type convertion
         bases = np.float64(np.array(bases))  # to float
         data = np.float64(np.array(data))
@@ -266,6 +279,7 @@ class PosCar(AtomCo):
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
+        self.tf_dict = tf_dict
         self.totline = data_begin + ntot  # total number of line
 
         # get atomco_dict
