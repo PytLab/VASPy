@@ -12,7 +12,7 @@ Make it **easier** to process VASP files.
 
 处理VASP文件从未如此 **灵活** **简单**
 
-命令行处理DOS文件使用举例：
+###命令行处理DOS文件使用举例：
 
     #处理分割好的DOS文件
     >>> from vaspy.electro import DosX
@@ -32,7 +32,7 @@ Make it **easier** to process VASP files.
     #绘图
     >>> c.plotsum(0, (5, 10))       # 绘制d轨道pDOS图
     
-绘制结果:
+####绘制结果:
 
 ![](https://github.com/PytLab/VASPy/blob/dev/pic/pDOS.png)
 
@@ -40,14 +40,24 @@ Make it **easier** to process VASP files.
 
     >>> from vaspy.electro import ElfCar
     >>> a = ElfCar() 
-    >>> a.plot_contour()   # 绘制等高线图
-    >>> a.plot_mcontour()  # 使用mlab绘制等高线图(需安装Mayavi)
+    >>> a.plot_contour()   # 绘制等值线图
+    >>> a.plot_mcontour()  # 使用mlab绘制等值线图(需安装Mayavi)
+    >>> a.plot_contour3d() # 绘制3d等值线图
+    >>> a.plot_field()     # 绘制标量场
 
-绘制结果:
+####绘制结果:
 
 ![](https://github.com/PytLab/VASPy/blob/master/pic/contour2d.png)
 
 ![](https://github.com/PytLab/VASPy/blob/master/pic/contours.png)
+
+3D 等值线图
+
+![](https://github.com/PytLab/VASPy/blob/master/pic/contour3d.png)
+
+scalar field
+
+![](https://github.com/PytLab/VASPy/blob/master/pic/field.png)
 
 使用者可以编写自己的脚本来批处理VASP文件
 
@@ -58,6 +68,11 @@ Make it **easier** to process VASP files.
             <td><strong>日期</strong></td>
             <td><strong>版本</strong></td>
             <td><strong>内容</strong></td>
+        </tr>
+        <tr>
+            <td>2015-09-15</td>
+            <td>0.2.2</td>
+            <td>新增3d等值线图和标量场绘制</td>
         </tr>
         <tr>
             <td>2015-09-13</td>

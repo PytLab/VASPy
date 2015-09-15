@@ -1,4 +1,4 @@
-__version__ = '0.2.1'  # add mlab contour plotting
+__version__ = '0.2.2'  # add mlab 3d contour and scalar field plotting
 
 
 class VasPy(object):
