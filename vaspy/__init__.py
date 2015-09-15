@@ -1,4 +1,4 @@
-__version__ = '0.2.2'  # add mlab 3d contour and scalar field plotting
+__version__ = '0.2.3'  # complete XsdFile class
 
 
 class VasPy(object):
