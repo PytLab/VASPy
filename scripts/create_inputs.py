@@ -9,6 +9,7 @@ import numpy as np
 
 from vaspy.matstudio import XsdFile
 
+#create POSCAR
 status, output = commands.getstatusoutput('ls *.xsd | head -1')
 xsd = XsdFile(filename=output)
 poscar_content = xsd.get_poscar_content(bases_const=1.0)
@@ -40,3 +41,11 @@ with open('KPOINTS', 'w') as f:
 
 #copy INCAR vasp.script
 commands.getstatusoutput('cp $HOME/example/INCAR $HOME/example/vasp.script ./')
+#change jobname
+jobname = output.split('.')[0]
+with open('vasp.script', 'r') as f:
+    content_list = f.readlines()
+
+content_list[1] = '#PBS -N ' + jobname + '\n'
+with open('vasp.script', 'w') as f:
+    f.writelines(content_list)
