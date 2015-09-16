@@ -1,4 +1,4 @@
-__version__ = '0.2.3'  # complete XsdFile class
+__version__ = '0.2.4'  # add VASP input files creating script
 
 
 class VasPy(object):

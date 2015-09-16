@@ -196,7 +196,7 @@ class XsdFile(AtomCo):
                         if 'RestrictedProperties' in elem.attrib:
                             elem.attrib.pop('RestrictedProperties')
                     #atom name
-                    elem.set('Name', self.atom_name_dict[atom][idx])
+                    elem.set('Name', self.atom_names_dict[atom][idx])
                     idx += 1
 
         return
