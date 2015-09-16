@@ -72,7 +72,7 @@ scalar field
         <tr>
             <td>2015-09-16</td>
             <td>0.2.4</td>
-            <td>新增根绝VASPy所写的生成VASP输入文件的脚本以及CONTAR生成xsd文件的脚本</td>
+            <td>新增根绝VASPy所写的生成VASP输入文件的脚本<br>以及CONTAR生成xsd文件的脚本</td>
         </tr>
         <tr>
             <td>2015-09-15</td>
