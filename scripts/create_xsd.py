@@ -1,6 +1,7 @@
 '''
     Script to convert CONTCAR to .xsd file
 '''
+import commands
 from vaspy.matstudio import XsdFile
 from vaspy.atomco import PosCar
 
