@@ -78,6 +78,7 @@ class AtomCo(VasPy):
         return tf_dict
 
     # 装饰器
+    # decorator for get_**_content methods
     def content_decorator(func):
         "在执行方法前, 给AtomCo对象必要的属性进行赋值"
         def wrapper(self, **kwargs):
@@ -344,3 +345,19 @@ class PosCar(AtomCo):
             f.write(content)
 
         return
+
+
+class ContCar(PosCar):
+    def __init__(self, filename='CONTCAR'):
+        '''
+        Class to generate POSCAR or CONTCAR-like objects.
+        Totally same as PosCar class.
+
+        Example:
+
+        >>> a = ContCar(filename='POSCAR')
+        '''
+        PosCar.__init__(self, filename=filename)
+
+    def tofile(self, filename='CONTCAR_c'):
+        PosCar.tofile(self, filename=filename)
