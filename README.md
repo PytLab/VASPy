@@ -1,10 +1,10 @@
-VASPy
+ clVASPy
 ========
 [![Build Status](https://travis-ci.org/PytLab/VASPy.svg?branch=master)](https://travis-ci.org/PytLab/VASPy)
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.2.4-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.2.5-blue.svg)](https://github.com/PytLab/VASPy)
 
 ###An **object-oriented** VASP file processing library.
 
@@ -59,7 +59,7 @@ scalar field
 
 ![](https://github.com/PytLab/VASPy/blob/master/pic/field.png)
 
-使用者可以编写自己的脚本来批处理VASP文件
+**使用者可以编写自己的脚本来批处理VASP文件**
 
 ###更新日志
 <table>
@@ -70,9 +70,14 @@ scalar field
             <td><strong>内容</strong></td>
         </tr>
         <tr>
+            <td>2015-09-17</td>
+            <td>0.2.5</td>
+            <td>新增ContCar类</td>
+        </tr>
+        <tr>
             <td>2015-09-16</td>
             <td>0.2.4</td>
-            <td>新增根绝VASPy所写的生成VASP输入文件的脚本<br>以及CONTAR生成xsd文件的脚本</td>
+            <td>新增利用VASPy所写的生成VASP输入文件的脚本<br>以及由CONTAR生成xsd文件的脚本</td>
         </tr>
         <tr>
             <td>2015-09-15</td>
