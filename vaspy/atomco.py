@@ -281,7 +281,7 @@ class PosCar(AtomCo):
             else:
                 tf.append(['T', 'T', 'T'])
                 #gather tf info to tf_dict
-                if tf_str not in tf_dict:
+                if 'T,T,T' not in tf_dict:
                     tf_dict['T,T,T'] = 1
                 else:
                     tf_dict['T,T,T'] += 1
