@@ -191,20 +191,31 @@ class ElfCar(PosCar):
             for line in f:
                 datalist = line2list(line)
                 elf_data.extend(datalist)
+        #########################################
+        #                                       #
+        #           !!! Notice !!!              #
+        # NGX is the length of the **2nd** axis #
+        # NGY is the length of the **1st** axis #
+        # NGZ is the length of the **0th** axis #
+        #                                       #
+        #########################################
         #reshape to 3d array
-        elf_data = np.array(elf_data).reshape((x, y, z), order='F')
+        elf_data = np.array(elf_data).reshape((z, y, x), order='F')
         #set attrs
         self.grid = x, y, z
         self.elf_data = elf_data
 
         return
 
+    # 装饰器
     def contour_decorator(func):
         '''
-        decorator for contour plot methods.
-        set ndim on x, y axis and z values.
+        等值线作图方法装饰器.
+        Decorator for contour plot methods.
+        Set ndim on x, y axis and z values.
         '''
-        def wrapper(self, axis_cut='z', distance=0.5, show_mode='show'):
+        def contour_wrapper(self, axis_cut='z', distance=0.5,
+                            show_mode='show', widths=(1, 1, 1)):
             '''
             绘制ELF等值线图
             Parameter in kwargs
@@ -215,33 +226,57 @@ class ElfCar(PosCar):
                 (0.0 ~ 1.0), distance to origin
             show_mode: str
                 'save' or 'show'
+            widths: tuple of int,
+                number of replication on x, y, z axis
             '''
+            # expand grid
+            widths = np.array(widths)
+            grid = np.array(self.grid)*widths  # expanded grid
+            # expand eld_data matrix
+            elf_data = copy.deepcopy(self.elf_data)
+            nx, ny, nz = widths
+            # expand x axis
+            added_elf_data = copy.deepcopy(elf_data)
+            for i in xrange(nx - 1):
+                elf_data = np.append(elf_data, added_elf_data, axis=2)
+            # expand y axis
+            added_elf_data = copy.deepcopy(elf_data)
+            for i in xrange(ny - 1):
+                elf_data = np.append(elf_data, added_elf_data, axis=1)
+            # expand z axis
+            added_elf_data = copy.deepcopy(elf_data)
+            for i in xrange(nz - 1):
+                elf_data = np.append(elf_data, added_elf_data, axis=0)
+            # now cut the cube
             if abs(distance) > 1:
                 raise ValueError('Distance must be between 0 and 1.')
             if axis_cut in ['X', 'x']:  # cut vertical to x axis
                 nlayer = int(self.grid[0]*distance)
-                z = self.elf_data[nlayer, :, :]
-                ndim0 = self.grid[1]
-                ndim1 = self.grid[2]
+                z = elf_data[:, :, nlayer]
+                ndim0, ndim1 = grid[1], grid[2]  # y, z
             elif axis_cut in ['Y', 'y']:
                 nlayer = int(self.grid[1]*distance)
-                z = self.elf_data[:, nlayer, :]
-                ndim0 = self.grid[0]
-                ndim1 = self.grid[2]
+                z = elf_data[:, nlayer, :]
+                ndim0, ndim1 = grid[0], grid[2]  # x, z
             elif axis_cut in ['Z', 'z']:
                 nlayer = int(self.grid[2]*distance)
-                z = self.elf_data[:, :, nlayer]
-                ndim0 = self.grid[0]
-                ndim1 = self.grid[1]
+                z = elf_data[nlayer, :, :]
+                ndim0, ndim1 = grid[0], grid[1]  # x, y
             return func(self, ndim0, ndim1, z, show_mode=show_mode)
-        return wrapper
+        return contour_wrapper
 
     @contour_decorator
     def plot_contour(self, ndim0, ndim1, z, show_mode):
+        '''
+        ndim0: int, point number on x-axis
+        ndim1: int, point number on y-axis
+        z    : 2darray, values on plane perpendicular to z axis
+        '''
         #do 2d interpolation
         #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
         x, y = np.ogrid[s]
+        print z.shape, x.shape, y.shape
         mx, my = np.mgrid[s]
         #use cubic 2d interpolation
         interpfunc = interp2d(x, y, z, kind='cubic')
@@ -296,8 +331,8 @@ class ElfCar(PosCar):
         newy = np.linspace(0, ndim1, 600)
         newz = interpfunc(newx, newy)
         #mlab
-        face = mlab.surf(newx, newy, newz, warp_scale=2)
-        mlab.axes(xlabel='x', ylabel='y', zlabel='z')
+        face = mlab.surf(newy, newx, newz, warp_scale=2)
+        mlab.axes(xlabel='y', ylabel='x', zlabel='z')
         mlab.outline(face)
         #save or show
         if show_mode == 'show':
