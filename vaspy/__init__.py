@@ -1,4 +1,4 @@
-__version__ = '0.2.6'  # fix var undefined bug
+__version__ = '0.2.7'  # ad extension for contour plotting
 
 
 class VasPy(object):
