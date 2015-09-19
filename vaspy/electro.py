@@ -207,6 +207,32 @@ class ElfCar(PosCar):
 
         return
 
+    @staticmethod
+    def expand_data(data, grid, widths):
+        '''
+        根据widths, 将三维矩阵沿着x, y, z轴方向进行扩展.
+        '''
+        # expand grid
+        widths = np.array(widths)
+        expanded_grid = np.array(grid)*widths  # expanded grid
+        # expand eld_data matrix
+        expanded_data = copy.deepcopy(data)
+        nx, ny, nz = widths
+        # x axis
+        added_data = copy.deepcopy(expanded_data)
+        for i in xrange(nx - 1):
+            expanded_data = np.append(expanded_data, added_data, axis=2)
+        # y axis
+        added_data = copy.deepcopy(expanded_data)
+        for i in xrange(ny - 1):
+            expanded_data = np.append(expanded_data, added_data, axis=1)
+        # z axis
+        added_data = copy.deepcopy(expanded_data)
+        for i in xrange(nz - 1):
+            expanded_data = np.append(expanded_data, added_data, axis=0)
+
+        return expanded_data, expanded_grid
+
     # 装饰器
     def contour_decorator(func):
         '''
@@ -229,24 +255,9 @@ class ElfCar(PosCar):
             widths: tuple of int,
                 number of replication on x, y, z axis
             '''
-            # expand grid
-            widths = np.array(widths)
-            grid = np.array(self.grid)*widths  # expanded grid
-            # expand eld_data matrix
-            elf_data = copy.deepcopy(self.elf_data)
-            nx, ny, nz = widths
-            # expand x axis
-            added_elf_data = copy.deepcopy(elf_data)
-            for i in xrange(nx - 1):
-                elf_data = np.append(elf_data, added_elf_data, axis=2)
-            # expand y axis
-            added_elf_data = copy.deepcopy(elf_data)
-            for i in xrange(ny - 1):
-                elf_data = np.append(elf_data, added_elf_data, axis=1)
-            # expand z axis
-            added_elf_data = copy.deepcopy(elf_data)
-            for i in xrange(nz - 1):
-                elf_data = np.append(elf_data, added_elf_data, axis=0)
+            #expand elf_data and grid
+            elf_data, grid = self.expand_data(self.elf_data, self.grid,
+                                              widths=widths)
             # now cut the cube
             if abs(distance) > 1:
                 raise ValueError('Distance must be between 0 and 1.')
@@ -262,7 +273,9 @@ class ElfCar(PosCar):
                 nlayer = int(self.grid[2]*distance)
                 z = elf_data[nlayer, :, :]
                 ndim0, ndim1 = grid[0], grid[1]  # x, y
+
             return func(self, ndim0, ndim1, z, show_mode=show_mode)
+
         return contour_wrapper
 
     @contour_decorator
@@ -352,41 +365,54 @@ class ElfCar(PosCar):
         Parameter
         ---------
         kwargs: {
-            'maxct'   : float, max contour number,
+            'maxct'   : float,max contour number,
             'nct'     : int, number of contours,
             'opacity' : float, opacity of contour,
+            'widths'   : tuple of int
+                        number of replication on x, y, z axis,
         }
         '''
         if not mayavi_installed:
             print "Mayavi is not installed on your device."
             return
-        #set parameters
-        maxdata = np.max(self.elf_data)
+        # set parameters
+        widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
+        elf_data, grid = self.expand_data(self.elf_data, self.grid, widths)
+#        import pdb; pdb.set_trace()
+        maxdata = np.max(elf_data)
         maxct = kwargs['maxct'] if 'maxct' in kwargs else maxdata
-        #check maxct
+        # check maxct
         if maxct > maxdata:
             print "maxct is larger than %f" % maxdata
         opacity = kwargs['opacity'] if 'opacity' in kwargs else 0.6
         nct = kwargs['nct'] if 'nct' in kwargs else 5
-        #plot surface
-        surface = mlab.contour3d(self.elf_data)
-        #set surface attrs
+        # plot surface
+        surface = mlab.contour3d(elf_data)
+        # set surface attrs
         surface.actor.property.opacity = opacity
         surface.contour.maximum_contour = maxct
         surface.contour.number_of_contours = nct
-        mlab.axes(xlabel='x', ylabel='y', zlabel='z')
+        # reverse axes labels
+        mlab.axes(xlabel='z', ylabel='y', zlabel='x')  # 是mlab参数顺序问题?
         mlab.outline()
         mlab.show()
 
         return
 
-    def plot_field(self, vmin=0.0, vmax=1.0, axis_cut='z', nct=5):
+    def plot_field(self, **kwargs):
         "plot scalar field for elf data"
         if not mayavi_installed:
             print "Mayavi is not installed on your device."
             return
+        # set parameters
+        vmin = kwargs['vmin'] if 'vmin' in kwargs else 0.0
+        vmax = kwargs['vmax'] if 'vmax' in kwargs else 1.0
+        axis_cut = kwargs['axis_cut'] if 'axis_cut' in kwargs else 'z'
+        nct = kwargs['nct'] if 'nct' in kwargs else 5
+        widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
+        elf_data, grid = self.expand_data(self.elf_data, self.grid, widths)
         #create pipeline
-        field = mlab.pipeline.scalar_field(self.elf_data)  # data source
+        field = mlab.pipeline.scalar_field(elf_data)  # data source
         mlab.pipeline.volume(field, vmin=vmin, vmax=vmax)  # put data into volumn to visualize
         #cut plane
         if axis_cut in ['Z', 'z']:
