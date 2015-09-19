@@ -199,37 +199,45 @@ class ElfCar(PosCar):
 
         return
 
-    def plot_contour(self, axis_cut='z', distance=0.5, show_mode='show'):
+    def contour_decorator(func):
         '''
-        绘制ELF等值线图
-        Parameter
-        ---------
-        axis_cut: str
-            ['x', 'X', 'y', 'Y', 'z', 'Z'], axis which will be cut.
-        distance: float
-            (0.0 ~ 1.0), distance to origin
-        show_mode: str
-            'save' or 'show'
+        decorator for contour plot methods.
+        set ndim on x, y axis and z values.
         '''
-        #cope parameters
-        if abs(distance) > 1:
-            raise ValueError('Distance must be between 0 and 1.')
-        if axis_cut in ['X', 'x']:  # cut vertical to x axis
-            nlayer = int(self.grid[0]*distance)
-            z = self.elf_data[nlayer, :, :]
-            ndim0 = self.grid[1]
-            ndim1 = self.grid[2]
-        elif axis_cut in ['Y', 'y']:
-            nlayer = int(self.grid[1]*distance)
-            z = self.elf_data[:, nlayer, :]
-            ndim0 = self.grid[0]
-            ndim1 = self.grid[2]
-        elif axis_cut in ['Z', 'z']:
-            nlayer = int(self.grid[2]*distance)
-            z = self.elf_data[:, :, nlayer]
-            ndim0 = self.grid[0]
-            ndim1 = self.grid[1]
+        def wrapper(self, axis_cut='z', distance=0.5, show_mode='show'):
+            '''
+            绘制ELF等值线图
+            Parameter in kwargs
+            -------------------
+            axis_cut: str
+                ['x', 'X', 'y', 'Y', 'z', 'Z'], axis which will be cut.
+            distance: float
+                (0.0 ~ 1.0), distance to origin
+            show_mode: str
+                'save' or 'show'
+            '''
+            if abs(distance) > 1:
+                raise ValueError('Distance must be between 0 and 1.')
+            if axis_cut in ['X', 'x']:  # cut vertical to x axis
+                nlayer = int(self.grid[0]*distance)
+                z = self.elf_data[nlayer, :, :]
+                ndim0 = self.grid[1]
+                ndim1 = self.grid[2]
+            elif axis_cut in ['Y', 'y']:
+                nlayer = int(self.grid[1]*distance)
+                z = self.elf_data[:, nlayer, :]
+                ndim0 = self.grid[0]
+                ndim1 = self.grid[2]
+            elif axis_cut in ['Z', 'z']:
+                nlayer = int(self.grid[2]*distance)
+                z = self.elf_data[:, :, nlayer]
+                ndim0 = self.grid[0]
+                ndim1 = self.grid[1]
+            return func(self, ndim0, ndim1, z, show_mode=show_mode)
+        return wrapper
 
+    @contour_decorator
+    def plot_contour(self, ndim0, ndim1, z, show_mode):
         #do 2d interpolation
         #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
@@ -271,30 +279,12 @@ class ElfCar(PosCar):
 
         return
 
-    def plot_mcontour(self, axis_cut='z', distance=0.5, show_mode='show'):
+    @contour_decorator
+    def plot_mcontour(self, ndim0, ndim1, z, show_mode):
         "use mayavi.mlab to plot contour."
         if not mayavi_installed:
             print "Mayavi is not installed on your device."
             return
-        #cope parameters
-        if abs(distance) > 1:
-            raise ValueError('Distance must be between 0 and 1.')
-        if axis_cut in ['X', 'x']:  # cut vertical to x axis
-            nlayer = int(self.grid[0]*distance)
-            z = self.elf_data[nlayer, :, :]
-            ndim0 = self.grid[1]
-            ndim1 = self.grid[2]
-        elif axis_cut in ['Y', 'y']:
-            nlayer = int(self.grid[1]*distance)
-            z = self.elf_data[:, nlayer, :]
-            ndim0 = self.grid[0]
-            ndim1 = self.grid[2]
-        elif axis_cut in ['Z', 'z']:
-            nlayer = int(self.grid[2]*distance)
-            z = self.elf_data[:, :, nlayer]
-            ndim0 = self.grid[0]
-            ndim1 = self.grid[1]
-
         #do 2d interpolation
         #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
