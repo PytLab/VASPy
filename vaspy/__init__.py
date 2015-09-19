@@ -1,4 +1,4 @@
-__version__ = '0.2.4'  # add VASP input files creating script
+__version__ = '0.2.7'  # ad extension for contour plotting
 
 
 class VasPy(object):
