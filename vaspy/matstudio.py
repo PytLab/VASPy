@@ -124,6 +124,11 @@ class XsdFile(AtomCo):
 
                 # atom name
                 atom_name = elem.attrib.get('Name')
+                # Damn, sometimes tag has no Name attr,
+                # so customize it
+                # 有可能个别原子是从其他文件复制过来的原因
+                if not atom_name:
+                    atom_name = atom + '_custom'
                 if atom not in atom_name_dict:
                     atom_name_dict.setdefault(atom, [atom_name])
                 else:

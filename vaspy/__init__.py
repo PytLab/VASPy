@@ -1,4 +1,4 @@
-__version__ = '0.2.7'  # ad extension for contour plotting
+__version__ = '0.2.8'  # deal with tag without Name attribute in .xsd file
 
 
 class VasPy(object):
