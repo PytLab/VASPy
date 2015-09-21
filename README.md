@@ -131,7 +131,7 @@ scalar field
                 <ul>
                 1.处理cartisan坐标文件<br>
                 2.处理POSCAR,CONTCAR文件中的数据<br>
-                3.处理OSZAICAR，处理每步迭代数据<br>
+                3.处理OSZICAR，处理每步迭代数据<br>
                 </ul>
             </td>
         </tr>
