@@ -124,6 +124,17 @@ class AtomCo(VasPy):
 
         return content
 
+    def get_volume(self):
+        "Get volume of slab(Angstrom^3)"
+        if hasattr(self, 'bases_const') and hasattr(self, 'bases'):
+            bases = self.bases_const*self.bases
+            volume = np.linalg.det(bases)
+            self.volume = volume
+        else:
+            raise AttributeError("Object has no bases and bases_const")
+
+        return volume
+
 
 class XyzFile(AtomCo):
     """

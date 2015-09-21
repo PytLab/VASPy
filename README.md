@@ -4,7 +4,7 @@
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.2.8-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.2.9-blue.svg)](https://github.com/PytLab/VASPy)
 
 ###An **object-oriented** VASP file processing library.
 
@@ -131,7 +131,7 @@ scalar field
                 <ul>
                 1.处理cartisan坐标文件<br>
                 2.处理POSCAR,CONTCAR文件中的数据<br>
-                3.处理OSZAICAR，处理每步迭代数据<br>
+                3.处理OSZICAR，处理每步迭代数据<br>
                 </ul>
             </td>
         </tr>
