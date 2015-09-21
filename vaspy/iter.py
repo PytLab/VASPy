@@ -159,7 +159,7 @@ class OutCar(VasPy):
         with open(self.filename, 'r') as f:
             total_forces = []
             tforce_regex = \
-                re.compile(r'FORCES: max atom, RMS\s+\d\.\d+\s+(\d\.\d+)\s*')
+                re.compile(r'FORCES: max atom, RMS\s+(\d+\.\d+)\s+\d+\.\d+\s*')
             max_regex = re.compile(r'Number: max atom\s+(\d+)\s*')
             for i, line in enumerate(f):
                 #locate force infomation
@@ -174,7 +174,7 @@ class OutCar(VasPy):
                     m = max_regex.search(line)
                     max_force_atom = int(m.group(1))
         #get information details
-        #----------------- force info -------------------
+        #----------------- force info -------------------#
         #total force
         total_forces = np.array(total_forces)
         #atom forces
