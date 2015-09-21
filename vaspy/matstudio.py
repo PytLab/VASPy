@@ -79,6 +79,8 @@ class XsdFile(AtomCo):
                     bases.append(basis)
                 break
         bases = np.array(bases)
+        #set base constant as 1.0
+        self.bases_const = 1.0
 
         return bases
 
