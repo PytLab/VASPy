@@ -1,4 +1,4 @@
-__version__ = '0.2.8'  # deal with tag without Name attribute in .xsd file
+__version__ = '0.2.9'  # get volume of slab
 
 
 class VasPy(object):
