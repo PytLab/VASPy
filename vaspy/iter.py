@@ -175,23 +175,27 @@ class OutCar(VasPy):
                     max_force_atom = int(m.group(1))
         #get information details
         #----------------- force info -------------------#
-        #total force
-        total_forces = np.array(total_forces)
-        #atom forces
-        atom_forces = []
-        with open(self.filename, 'r') as f:
-            for i, line in enumerate(f):
-                if i > fbegin+1:
-#                    print line
-                    if '-'*10 in line:
-                        break
-                    atom_force = line2list(line)
-                    atom_forces.append(atom_force)
-        atom_forces = np.array(atom_forces)
+        if 'fbegin' in dir():
+            #total force
+            total_forces = np.array(total_forces)
+            #atom forces
+            atom_forces = []
+            with open(self.filename, 'r') as f:
+                for i, line in enumerate(f):
+                    if i > fbegin+1:
+                        if '-'*10 in line:
+                            break
+                        atom_force = line2list(line)
+                        atom_forces.append(atom_force)
+            atom_forces = np.array(atom_forces)
 
-        #set attrs
-        self.total_forces = total_forces
-        self.atom_forces = atom_forces
-        self.max_force_atom = max_force_atom
+            #set attrs
+            self.total_forces = total_forces
+            self.atom_forces = atom_forces
+            self.max_force_atom = max_force_atom
+        else:
+            print ("Warning: " +
+                   "the first electronic iteration is running, " +
+                   "no force information is loaded.")
 
         return
