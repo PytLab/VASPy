@@ -71,8 +71,8 @@ scalar field
         </tr>
         <tr>
             <td>2015-09-22</td>
-            <td>0.2.7</td>
-            <td>新增绘制TOTAL-FORCEe曲线的脚本</td>
+            <td>0.2.10</td>
+            <td>新增绘制TOTAL-FORCE曲线的脚本</td>
         </tr>
         <tr>
             <td>2015-09-19</td>
