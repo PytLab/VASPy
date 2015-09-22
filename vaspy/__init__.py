@@ -1,4 +1,4 @@
-__version__ = '0.2.9'  # get volume of slab
+__version__ = '0.2.10'
 
 
 class VasPy(object):
