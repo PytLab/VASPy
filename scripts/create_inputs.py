@@ -56,9 +56,9 @@ with open('vasp.script', 'w') as f:
 #create fort.188
 atom_idxs = []
 atom_names = []
-for atom_name in xsd.atom_names:
+for idx, atom_name in enumerate(xsd.atom_names):
     if atom_name.endswith('_c'):
-        atom_idxs.append(xsd.atom_names.index(atom_name))
+        atom_idxs.append(idx)
         atom_names.append(atom_name)
 # if constrained get distance and create fort.188
 if atom_idxs:
