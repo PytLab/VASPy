@@ -56,9 +56,9 @@ with open('vasp.script', 'w') as f:
 #create fort.188
 atom_idxs = []
 atom_names = []
-for atom_name in xsd.atom_names:
+for idx, atom_name in enumerate(xsd.atom_names):
     if atom_name.endswith('_c'):
-        atom_idxs.append(xsd.atom_names.index(atom_name))
+        atom_idxs.append(idx)
         atom_names.append(atom_name)
 # if constrained get distance and create fort.188
 if atom_idxs:
@@ -69,10 +69,10 @@ if atom_idxs:
     distance = np.linalg.norm(pt1 - pt2)
     # create fort.188
     content = '1\n3\n6\n4\n0.04\n%-5d%-5d%f\n0\n' % \
-        (atom_idxs[0], atom_idxs[1], distance)
+        (atom_idxs[0]+1, atom_idxs[1]+1, distance)
     with open('fort.188', 'w') as f:
         f.write(content)
     print "fort.188 has been created."
-    print "atom number: %-5d%-5d" % tuple(atom_idxs)
+    print "atom number: %-5d%-5d" % (atom_idxs[0]+1, atom_idxs[1]+1)
     print "atom name: %s %s" % tuple(atom_names)
     print "distance: %f" % distance
