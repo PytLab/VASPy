@@ -18,10 +18,13 @@ with open('POSCAR', 'w') as f:
 
 #create POTCAR
 potdir = r'/data/pot/vasp/potpaw_PBE2010/'
+#delete old POTCAR
+if os.path.exists('./POTCAR'):
+    os.remove('./POTCAR')
 for elem in xsd.atoms:
-    if os.path.exists(potdir + elem + '_new/'):
-        potcar = potdir + elem + '_new/POTCAR'
-    elif os.path.exists(potdir + elem):
+#    if os.path.exists(potdir + elem + '_new/'):
+#        potcar = potdir + elem + '_new/POTCAR'
+    if os.path.exists(potdir + elem):
         potcar = potdir + elem + '/POTCAR'
     else:
         print 'No POTCAR for ' + elem
@@ -49,3 +52,27 @@ with open('vasp.script', 'r') as f:
 content_list[1] = '#PBS -N ' + jobname + '\n'
 with open('vasp.script', 'w') as f:
     f.writelines(content_list)
+
+#create fort.188
+atom_idxs = []
+atom_names = []
+for atom_name in xsd.atom_names:
+    if atom_name.endswith('_c'):
+        atom_idxs.append(xsd.atom_names.index(atom_name))
+        atom_names.append(atom_name)
+# if constrained get distance and create fort.188
+if atom_idxs:
+    pt1, pt2 = [xsd.data[idx, :] for idx in atom_idxs]
+    # convert to cartisan coordinate
+    pt1 = np.dot(xsd.bases, pt1)
+    pt2 = np.dot(xsd.bases, pt2)
+    distance = np.linalg.norm(pt1 - pt2)
+    # create fort.188
+    content = '1\n3\n6\n4\n0.04\n%-5d%-5d%f\n0\n' % \
+        (atom_idxs[0], atom_idxs[1], distance)
+    with open('fort.188', 'w') as f:
+        f.write(content)
+    print "fort.188 has been created."
+    print "atom number: %-5d%-5d" % tuple(atom_idxs)
+    print "atom name: %s %s" % tuple(atom_names)
+    print "distance: %f" % distance
