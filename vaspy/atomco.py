@@ -199,11 +199,10 @@ class XyzFile(AtomCo):
 
         return
 
-    def coordinate_transfrom(self, bases=np.array([[1.0, 0.0, 0.0],
+    def coordinate_transform(self, bases=np.array([[1.0, 0.0, 0.0],
                                                    [0.0, 1.0, 0.0],
                                                    [0.0, 0.0, 1.0]])):
-        "分数坐标和实坐标转换"
-        "Use Ax=b to do coordinate transform. direct to cartesian"
+        "Use Ax=b to do coordinate transform cartesian to direct"
         b = np.matrix(self.data.T)
         A = np.matrix(bases).T
         x = A.I*b
