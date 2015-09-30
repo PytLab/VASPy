@@ -62,6 +62,8 @@ for idx, atom_name in enumerate(xsd.atom_names):
         atom_names.append(atom_name)
 # if constrained get distance and create fort.188
 if atom_idxs:
+    if len(atom_idxs) > 2:
+        raise ValueError("More than two atoms end with '_c'")
     pt1, pt2 = [xsd.data[idx, :] for idx in atom_idxs]
     # convert to cartisan coordinate
     pt1 = np.dot(xsd.bases, pt1)
