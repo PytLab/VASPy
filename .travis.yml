@@ -20,7 +20,7 @@ before_install:
   - sudo ln -s /run/shm /dev/shm
 # command to install dependencies
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy matplotlib
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib
   - python setup.py install  # install vaspy
 # command to run tests
 script:
