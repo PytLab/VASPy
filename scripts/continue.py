@@ -52,6 +52,6 @@ else:
     raise ContinueError('Failed to create continue dir.')
 
 #add new POSCAR
-data_trans = a.coordinate_transfrom(bases=b.bases)
+data_trans = a.coordinate_transform(bases=b.bases)
 b.data = data_trans
 b.tofile('./continue/POSCAR')
