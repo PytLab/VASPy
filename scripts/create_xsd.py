@@ -23,6 +23,7 @@ if len(sys.argv) > 1:
                 for i in xrange(natom):
                     content += f.readline()
                 break
+            line = f.readline()
         if not content:
             print 'Step: %s is out of range.' % step
             sys.exit(1)
@@ -36,7 +37,7 @@ if len(sys.argv) > 1:
     xyz = vaspy.atomco.XyzFile('ts.xyz')
     poscar = vaspy.atomco.PosCar()
     direct_coordinates = xyz.coordinate_transform(poscar.bases)
-    suffix = '-' + step + ' .xsd'
+    suffix = '-' + step + '.xsd'
 else:  # the last step data
     contcar = vaspy.atomco.ContCar()
     direct_coordinates = contcar.data
