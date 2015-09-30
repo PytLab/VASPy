@@ -224,8 +224,47 @@ class XsdFile(AtomCo):
 
         return
 
+    def modify_color(self, atom_number, color=(255, 117, 51)):
+        '''
+        Modify color of atom.
+
+        Parameters
+        ----------
+        atom_number: int, number of atom
+        color: tuple of int, RGB value of color
+
+        Example
+        -------
+        >>> a.modify_color(99, color=(255, 255, 255))
+        '''
+        # get atom type and number of this type
+        # [48, 48, 30, 14] -> [48, 96, 126, 140]
+        atoms_num_sum = [sum(self.atoms_num[: i+1])
+                         for i in xrange(len(self.atoms))]
+        for idx, n in enumerate(atoms_num_sum):
+            if atom_number <= n:
+                atom_idx = idx
+                break
+        atom_type = self.atoms[atom_idx]
+        type_atom_number = atom_number - atoms_num_sum[atom_idx-1]  # start from 1
+
+        # go through tags to modify atom color
+        color_attr = '%d,%d,%d, 255' % color
+        i = 0  # atom number counter
+        for elem in self.tree.iter('Atom3d'):
+            if 'XYZ' in elem.attrib and elem.attrib['Components'] == atom_type:
+                i += 1
+                # locate tag
+                if i == type_atom_number:
+                    # modify color attribute
+                    if 'Color' not in elem.attrib:
+                        elem.attrib.setdefault('Color', color_attr)
+                    else:
+                        elem.set('Color', color_attr)
+                    break
+        return
+
     def tofile(self, filename='./new.xsd'):
-        "生成文件"
         "XsdFile object to .xsd file."
         self.update()
         self.tree.write(filename)
