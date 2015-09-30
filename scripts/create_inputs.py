@@ -65,10 +65,12 @@ if atom_idxs:
     if len(atom_idxs) > 2:
         raise ValueError("More than two atoms end with '_c'")
     pt1, pt2 = [xsd.data[idx, :] for idx in atom_idxs]
-    # convert to cartisan coordinate
-    pt1 = np.dot(xsd.bases, pt1)
-    pt2 = np.dot(xsd.bases, pt2)
-    distance = np.linalg.norm(pt1 - pt2)
+    # use Ax=b convert to cartisan coordinate
+    diff = pt1 - pt2
+    A = np.matrix(xsd.bases.T)
+    x = np.matrix(diff).T
+    b = A*x
+    distance = np.linalg.norm(b)
     # create fort.188
     content = '1\n3\n6\n4\n0.04\n%-5d%-5d%f\n0\n' % \
         (atom_idxs[0]+1, atom_idxs[1]+1, distance)
