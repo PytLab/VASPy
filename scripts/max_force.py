@@ -2,25 +2,29 @@ import sys
 import os
 import commands
 
+import numpy as np
+
 from vaspy.iter import OutCar
 from vaspy.matstudio import XsdFile
+from vaspy.functions import str2list
 
 outcar = OutCar()
 max_num = outcar.max_force_atom
 force_info = outcar.atom_forces[max_num-1, :]
 pos = force_info[: 3].tolist()
 forces = force_info[3:].tolist()
-print "max force atom: %d" % max_num
-print "atom position: (%f, %f, %f)" % tuple(pos)
-print "forces: %f, %f, %f" % tuple(forces)
+print "\nmax force atom: %d" % max_num
+print " atom position: (%f, %f, %f)" % tuple(pos)
+print "        forces: %f, %f, %f" % tuple(forces)
+print "   total-force: %f\n" % np.linalg.norm(forces)
 
 # get fort.188 info
 if os.path.exists('./fort.188'):
     with open('fort.188', 'r') as f:
-        atom_info = f.readlines()[5].strip()
-    print "Atom1    Atom2    DISTANCE"
-    print "--------------------------"
-    print atom_info + '\n'
+        atom_info = f.readlines()[5]
+    print "%10s%10s%15s" % ('Atom1', 'Atom2', 'DISTANCE')
+    print "-"*35
+    print "%10s%10s%15s\n" % tuple(str2list(atom_info))
 
 # create .xsd file
 if '--xsd' in sys.argv:
