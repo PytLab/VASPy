@@ -4,7 +4,7 @@
 Provide Material Studio markup file class which do operations on these files.
 =============================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
 ==============================================================
 
 """
@@ -230,7 +230,7 @@ class XsdFile(AtomCo):
 
         Parameters
         ----------
-        atom_number: int, number of atom
+        atom_number: int, number of atom(start from 1)
         color: tuple of int, RGB value of color
 
         Example
