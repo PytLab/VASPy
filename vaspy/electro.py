@@ -66,7 +66,8 @@ class DosX(DataPlotter):
         "Reset data array to zeros."
         self.data[:, 1:] = 0.0
 
-    def plotsum(self, xcol, ycols):
+    def plotsum(self, xcol, ycols, fill=True,
+                show_dbc=True, show_fermi=True):
         '''
         绘制多列加合的图像.
 
@@ -89,16 +90,32 @@ class DosX(DataPlotter):
             start, stop, step = ycols
         ys = self.data[:, start:stop:step]
         y = np.sum(ys, axis=1)
-        #Fermi verical line
         ymax = np.max(y)
-        xfermi = np.array([0.0]*50)
-        yfermi = np.linspace(0, int(ymax+1), 50)
         #plot
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.plot(x, y, linewidth=5, color='#104E8B')
         #plot fermi energy auxiliary line
-        ax.plot(xfermi, yfermi, linestyle='dashed', color='#000000')
+        if show_fermi:
+            #Fermi verical line
+            xfermi = np.array([0.0]*50)
+            yfermi = np.linspace(0, int(ymax+1), 50)
+            ax.plot(xfermi, yfermi, linestyle='dashed',
+                    color='#4A708B', linewidth=3)
+        # fill area from minus infinit to 0
+        if fill:
+            minus_x = np.array([i for i in x if i <= 0])
+            minus_y = y[: len(minus_x)]
+            ax.fill_between(minus_x, minus_y, facecolor='#B9D3EE',
+                            interpolate=True)
+        # show d band center line
+        if show_dbc:
+            dbc = self.get_dband_center()
+            x_dbc = np.array([dbc]*50)
+            y_dbc = np.linspace(0, int(ymax+1), 50)
+            ax.plot(x_dbc, y_dbc, linestyle='dashed',
+                    color='#C67171', linewidth=3)
+
         ax.set_xlabel(r'$\bf{E - E_F(eV)}$', fontdict={'fontsize': 20})
         ax.set_ylabel(r'$\bf{pDOS(arb. unit)}$', fontdict={'fontsize': 20})
         fig.show()
