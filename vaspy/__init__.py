@@ -1,4 +1,4 @@
-__version__ = '0.2.11'  # add modify color method
+__version__ = '0.2.12'
 __all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter']
 
 
