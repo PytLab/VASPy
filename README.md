@@ -4,7 +4,7 @@
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.2.12-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.3.0-blue.svg)](https://github.com/PytLab/VASPy)
 
 ###An **object-oriented** VASP file processing library.
 
@@ -68,6 +68,11 @@ scalar field
             <td><strong>日期</strong></td>
             <td><strong>版本</strong></td>
             <td><strong>内容</strong></td>
+        </tr>
+        <tr>
+            <td>2015-10-09</td>
+            <td>0.3.0</td>
+            <td>新增InCar类</td>
         </tr>
         <tr>
             <td>2015-10-07</td>

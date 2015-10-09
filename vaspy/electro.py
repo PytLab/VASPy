@@ -4,7 +4,7 @@
 Provide electro-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, September 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, October 2015
 ========================================================================
 
 """
