@@ -8,6 +8,7 @@ import sys
 import numpy as np
 
 from vaspy.matstudio import XsdFile
+from vaspy.incar import InCar
 
 #create POSCAR
 status, output = commands.getstatusoutput('ls *.xsd | head -1')
@@ -80,3 +81,9 @@ if atom_idxs:
     print "atom number: %-5d%-5d" % (atom_idxs[0]+1, atom_idxs[1]+1)
     print "atom name: %s %s" % tuple(atom_names)
     print "distance: %f" % distance
+
+    # set IBRION = 1
+    incar = InCar()
+    incar.set('IBRION', 1)
+    incar.tofile()
+    print "IBRION is setted to 1."
