@@ -135,6 +135,22 @@ class AtomCo(VasPy):
 
         return volume
 
+    @staticmethod
+    def dir2cart(bases, data):
+        A = np.matrix(bases).T
+        x = np.matrix(data).T
+        b = A*x
+
+        return b.T
+
+    @staticmethod
+    def cart2dir(bases, data):
+        b = np.matrix(data.T)
+        A = np.matrix(bases).T
+        x = A.I*b
+
+        return x.T
+
 
 class XyzFile(AtomCo):
     """
@@ -417,3 +433,20 @@ class XdatCar(AtomCo):
             atoms_num = str2list(f.readline())
             self.atoms_num = [int(i) for i in atoms_num]
             self.ntot = sum(self.atoms_num)
+
+    def __iter__(self):
+        "generator which yield step number and iterative data."
+        with open(self.filename, 'r') as f:
+            # pass info lines
+            for i in xrange(self.info_nline):
+                f.readline()
+            prompt = f.readline().strip()
+            while '=' in prompt:
+                step = int(prompt.split('=')[-1])
+                data = []
+                for i in xrange(self.ntot):
+                    data_line = f.readline()
+                    data.append(line2list(data_line))
+                prompt = f.readline().strip()
+
+                yield step, np.array(data)
