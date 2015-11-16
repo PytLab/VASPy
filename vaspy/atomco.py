@@ -371,3 +371,49 @@ class ContCar(PosCar):
 
     def tofile(self, filename='CONTCAR_c'):
         PosCar.tofile(self, filename=filename)
+
+
+class XdatCar(AtomCo):
+    def __init__(self, filename='XDATCAR'):
+        """
+        Class to generate XDATCAR objects.
+
+        Example:
+
+        >>> a = XdatCar()
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute      Description
+          ============  =======================================================
+          filename       string, name of the file the direct coordiante data
+                         stored in
+          bases_const    float, lattice bases constant
+          bases          np.array, bases of POSCAR
+          atoms          list of strings, atom types
+          ntot           int, the number of total atom number
+          natoms         list of int, same shape with atoms
+                         atom number of atoms in atoms
+          tf             list of list, T&F info of atoms
+          info_nline     int, line numbers of lattice info
+          ============  =======================================================
+        """
+        AtomCo.__init__(self, filename)
+        self.info_nline = 7  # line numbers of lattice info
+        self.load()
+
+    def load(self):
+        with open(self.filename, 'r') as f:
+            # read lattice info
+            self.system = f.readline().strip()
+            self.bases_const = float(f.readline().strip())
+            # lattice basis
+            self.bases = []
+            for i in xrange(3):
+                basis = str2list(f.readline())
+                self.bases.append(basis)
+            # atom info
+            self.atoms = str2list(f.readline())
+            atoms_num = str2list(f.readline())
+            self.atoms_num = [int(i) for i in atoms_num]
+            self.ntot = sum(self.atoms_num)
