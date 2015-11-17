@@ -9,6 +9,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, October 2015
 
 """
 import copy
+import logging
 from string import whitespace
 
 import numpy as np
@@ -211,13 +212,13 @@ class ElfCar(PosCar):
         #########################################
         #                                       #
         #           !!! Notice !!!              #
-        # NGX is the length of the **2nd** axis #
+        # NGX is the length of the **0th** axis #
         # NGY is the length of the **1st** axis #
-        # NGZ is the length of the **0th** axis #
+        # NGZ is the length of the **2nd** axis #
         #                                       #
         #########################################
         #reshape to 3d array
-        elf_data = np.array(elf_data).reshape((z, y, x), order='F')
+        elf_data = np.array(elf_data).reshape((x, y, z), order='F')
         #set attrs
         self.grid = x, y, z
         self.elf_data = elf_data
@@ -238,7 +239,7 @@ class ElfCar(PosCar):
         # x axis
         added_data = copy.deepcopy(expanded_data)
         for i in xrange(nx - 1):
-            expanded_data = np.append(expanded_data, added_data, axis=2)
+            expanded_data = np.append(expanded_data, added_data, axis=0)
         # y axis
         added_data = copy.deepcopy(expanded_data)
         for i in xrange(ny - 1):
@@ -246,7 +247,7 @@ class ElfCar(PosCar):
         # z axis
         added_data = copy.deepcopy(expanded_data)
         for i in xrange(nz - 1):
-            expanded_data = np.append(expanded_data, added_data, axis=0)
+            expanded_data = np.append(expanded_data, added_data, axis=2)
 
         return expanded_data, expanded_grid
 
@@ -275,21 +276,22 @@ class ElfCar(PosCar):
             #expand elf_data and grid
             elf_data, grid = self.expand_data(self.elf_data, self.grid,
                                               widths=widths)
+            logging.info('data shape = %s', str(elf_data.shape))
             # now cut the cube
             if abs(distance) > 1:
                 raise ValueError('Distance must be between 0 and 1.')
             if axis_cut in ['X', 'x']:  # cut vertical to x axis
                 nlayer = int(self.grid[0]*distance)
-                z = elf_data[:, :, nlayer]
-                ndim0, ndim1 = grid[1], grid[2]  # y, z
+                z = elf_data[nlayer, :, :]
+                ndim0, ndim1 = grid[2], grid[1]  # y, z
             elif axis_cut in ['Y', 'y']:
                 nlayer = int(self.grid[1]*distance)
                 z = elf_data[:, nlayer, :]
-                ndim0, ndim1 = grid[0], grid[2]  # x, z
+                ndim0, ndim1 = grid[2], grid[0]  # x, z
             elif axis_cut in ['Z', 'z']:
                 nlayer = int(self.grid[2]*distance)
-                z = elf_data[nlayer, :, :]
-                ndim0, ndim1 = grid[0], grid[1]  # x, y
+                z = elf_data[:, :, nlayer]
+                ndim0, ndim1 = grid[1], grid[0]  # x, y
 
             return func(self, ndim0, ndim1, z, show_mode=show_mode)
 
@@ -306,7 +308,8 @@ class ElfCar(PosCar):
         #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
         x, y = np.ogrid[s]
-        print z.shape, x.shape, y.shape
+        logging.info('z shape = %s, x shape = %s, y shape = %s',
+                     str(z.shape), str(x.shape), str(y.shape))
         mx, my = np.mgrid[s]
         #use cubic 2d interpolation
         interpfunc = interp2d(x, y, z, kind='cubic')
@@ -319,24 +322,31 @@ class ElfCar(PosCar):
         newz = interpfunc(newx, newy)
 
         #plot 2d contour map
-        fig2d = plt.figure(figsize=(17, 7))
-        ax1 = fig2d.add_subplot(1, 2, 1)
+        fig2d_1, fig2d_2, fig2d_3 = plt.figure(), plt.figure(), plt.figure()
+        ax1 = fig2d_1.add_subplot(1, 1, 1)
         extent = [np.min(newx), np.max(newx), np.min(newy), np.max(newy)]
-        ax1.imshow(newz, extent=extent, origin='lower')
-        #plt.colorbar()
+        img = ax1.imshow(newz, extent=extent, origin='lower')
         #coutour plot
-        ax2 = fig2d.add_subplot(1, 2, 2)
-        cs = ax2.contour(newz, 10, extent=extent)
+        ax2 = fig2d_2.add_subplot(1, 1, 1)
+        cs = ax2.contour(newx.reshape(-1), newy.reshape(-1), newz, 20, extent=extent)
         ax2.clabel(cs)
+        plt.colorbar(mappable=img)
+        # contourf plot
+        ax3 = fig2d_3.add_subplot(1, 1, 1)
+        ax3.contourf(newx.reshape(-1), newy.reshape(-1), newz, 20, extent=extent)
+
         #3d plot
         fig3d = plt.figure(figsize=(12, 8))
         ax3d = fig3d.add_subplot(111, projection='3d')
         ax3d.plot_surface(newmx, newmy, newz, cmap=plt.cm.RdBu_r)
+
         #save or show
         if show_mode == 'show':
             plt.show()
         elif show_mode == 'save':
-            fig2d.savefig('contour2d.png', dpi=500)
+            fig2d_1.savefig('surface2d.png', dpi=500)
+            fig2d_2.savefig('contour2d.png', dpi=500)
+            fig2d_3.savefig('contourf2d.png', dpi=500)
             fig3d.savefig('surface3d.png', dpi=500)
         else:
             raise ValueError('Unrecognized show mode parameter : ' +
@@ -348,7 +358,7 @@ class ElfCar(PosCar):
     def plot_mcontour(self, ndim0, ndim1, z, show_mode):
         "use mayavi.mlab to plot contour."
         if not mayavi_installed:
-            print "Mayavi is not installed on your device."
+            logging.info("Mayavi is not installed on your device.")
             return
         #do 2d interpolation
         #get slice object
@@ -361,8 +371,8 @@ class ElfCar(PosCar):
         newy = np.linspace(0, ndim1, 600)
         newz = interpfunc(newx, newy)
         #mlab
-        face = mlab.surf(newy, newx, newz, warp_scale=2)
-        mlab.axes(xlabel='y', ylabel='x', zlabel='z')
+        face = mlab.surf(newx, newy, newz, warp_scale=2)
+        mlab.axes(xlabel='x', ylabel='y', zlabel='z')
         mlab.outline(face)
         #save or show
         if show_mode == 'show':
@@ -390,7 +400,7 @@ class ElfCar(PosCar):
         }
         '''
         if not mayavi_installed:
-            print "Mayavi is not installed on your device."
+            logging.warning("Mayavi is not installed on your device.")
             return
         # set parameters
         widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
@@ -400,7 +410,7 @@ class ElfCar(PosCar):
         maxct = kwargs['maxct'] if 'maxct' in kwargs else maxdata
         # check maxct
         if maxct > maxdata:
-            print "maxct is larger than %f" % maxdata
+            logging.warning("maxct is larger than %f", maxdata)
         opacity = kwargs['opacity'] if 'opacity' in kwargs else 0.6
         nct = kwargs['nct'] if 'nct' in kwargs else 5
         # plot surface
@@ -419,7 +429,7 @@ class ElfCar(PosCar):
     def plot_field(self, **kwargs):
         "plot scalar field for elf data"
         if not mayavi_installed:
-            print "Mayavi is not installed on your device."
+            logging.warning("Mayavi is not installed on your device.")
             return
         # set parameters
         vmin = kwargs['vmin'] if 'vmin' in kwargs else 0.0
@@ -446,3 +456,15 @@ class ElfCar(PosCar):
         #mlab.savefig('field.png', size=(2000, 2000))
 
         return
+
+
+class ChgCar(ElfCar):
+    def __init__(self, filename='CHGCAR'):
+        '''
+        Create a CHGCAR file class.
+
+        Example:
+
+        >>> a = ChgCar()
+        '''
+        ElfCar.__init__(self, filename)
