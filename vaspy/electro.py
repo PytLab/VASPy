@@ -9,6 +9,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, October 2015
 
 """
 import copy
+import logging
 from string import whitespace
 
 import numpy as np
@@ -275,7 +276,7 @@ class ElfCar(PosCar):
             #expand elf_data and grid
             elf_data, grid = self.expand_data(self.elf_data, self.grid,
                                               widths=widths)
-            print elf_data.shape
+            logging.info('data shape = %s', str(elf_data.shape))
             # now cut the cube
             if abs(distance) > 1:
                 raise ValueError('Distance must be between 0 and 1.')
@@ -307,7 +308,8 @@ class ElfCar(PosCar):
         #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
         x, y = np.ogrid[s]
-        print z.shape, x.shape, y.shape
+        logging.info('z shape = %s, x shape = %s, y shape = %s',
+                     str(z.shape), str(x.shape), str(y.shape))
         mx, my = np.mgrid[s]
         #use cubic 2d interpolation
         interpfunc = interp2d(x, y, z, kind='cubic')
@@ -356,7 +358,7 @@ class ElfCar(PosCar):
     def plot_mcontour(self, ndim0, ndim1, z, show_mode):
         "use mayavi.mlab to plot contour."
         if not mayavi_installed:
-            print "Mayavi is not installed on your device."
+            logging.info("Mayavi is not installed on your device.")
             return
         #do 2d interpolation
         #get slice object
@@ -398,7 +400,7 @@ class ElfCar(PosCar):
         }
         '''
         if not mayavi_installed:
-            print "Mayavi is not installed on your device."
+            logging.warning("Mayavi is not installed on your device.")
             return
         # set parameters
         widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
@@ -408,7 +410,7 @@ class ElfCar(PosCar):
         maxct = kwargs['maxct'] if 'maxct' in kwargs else maxdata
         # check maxct
         if maxct > maxdata:
-            print "maxct is larger than %f" % maxdata
+            logging.warning("maxct is larger than %f", maxdata)
         opacity = kwargs['opacity'] if 'opacity' in kwargs else 0.6
         nct = kwargs['nct'] if 'nct' in kwargs else 5
         # plot surface
@@ -427,7 +429,7 @@ class ElfCar(PosCar):
     def plot_field(self, **kwargs):
         "plot scalar field for elf data"
         if not mayavi_installed:
-            print "Mayavi is not installed on your device."
+            logging.warning("Mayavi is not installed on your device.")
             return
         # set parameters
         vmin = kwargs['vmin'] if 'vmin' in kwargs else 0.0
@@ -454,3 +456,15 @@ class ElfCar(PosCar):
         #mlab.savefig('field.png', size=(2000, 2000))
 
         return
+
+
+class ChgCar(ElfCar):
+    def __init__(self, filename='CHGCAR'):
+        '''
+        Create a CHGCAR file class.
+
+        Example:
+
+        >>> a = ChgCar()
+        '''
+        ElfCar.__init__(self, filename)

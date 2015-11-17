@@ -17,4 +17,8 @@ class UnmatchedDataShape(Exception):
     "Exception raised for errors in unmatched data shape."
     pass
 
-from . import *
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M')
