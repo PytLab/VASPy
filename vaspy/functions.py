@@ -89,3 +89,12 @@ def get_combinations(x, y, z):
     xyz = zip(*combinations)
     xyz = np.array(xyz)
     return xyz
+
+
+def get_angle(v1, v2):
+    "Get included angle of vectors v1 and v2."
+    l1, l2 = np.linalg.norm(v1), np.linalg.norm(v2)
+    cos_angle = np.dot(v1, v2)/(l1*l2)
+    angle = np.arccos(cos_angle)*180/np.pi
+
+    return angle

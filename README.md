@@ -4,7 +4,7 @@
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.3.0-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.4.1-blue.svg)](https://github.com/PytLab/VASPy)
 
 ###An **object-oriented** VASP file processing library.
 
@@ -59,6 +59,21 @@ scalar field
 
 ![](https://github.com/PytLab/VASPy/blob/master/pic/field.png)
 
+操作XDATCAR举例
+
+    >>> from vaspy.atomco import XdatCar
+    >>> xdatcar = XdatCar()
+    >>> # 输出xdatcar相应Cartesian坐标
+    >>> for step, data in xdatcar:
+    >>>     print step
+    >>>     print xdatcar.dir2cart(xdatcar.bases, data)
+    >>> # 可直接运行script/中脚本生成相应.arc文件用于MaterialStudio显示动画
+    >>> python xdatcar_to_arc.py
+
+动画实例
+
+![](https://github.com/PytLab/VASPy/blob/master/pic/sn2_my.png)
+
 **使用者可以编写自己的脚本来批处理VASP文件**
 
 ###重要更新日志
@@ -68,6 +83,11 @@ scalar field
             <td><strong>日期</strong></td>
             <td><strong>版本</strong></td>
             <td><strong>内容</strong></td>
+        </tr>
+        <tr>
+            <td>2015-11-17</td>
+            <td>0.4.1</td>
+            <td>XdatCar类实现迭代协议</td>
         </tr>
         <tr>
             <td>2015-10-09</td>

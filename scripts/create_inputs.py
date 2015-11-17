@@ -78,12 +78,14 @@ if atom_idxs:
     with open('fort.188', 'w') as f:
         f.write(content)
     print "fort.188 has been created."
+    print '-'*20
     print "atom number: %-5d%-5d" % (atom_idxs[0]+1, atom_idxs[1]+1)
     print "atom name: %s %s" % tuple(atom_names)
     print "distance: %f" % distance
+    print '-'*20
 
     # set IBRION = 1
     incar = InCar()
     incar.set('IBRION', 1)
     incar.tofile()
-    print "IBRION is setted to 1."
+    print "IBRION is set to 1."
