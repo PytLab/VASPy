@@ -72,7 +72,7 @@ scalar field
 
 动画实例
 
-![](https://github.com/PytLab/VASPy/blob/master/pic/sn2_my.png)
+![](https://github.com/PytLab/VASPy/blob/master/pic/sn2_my.gif)
 
 **使用者可以编写自己的脚本来批处理VASP文件**
 
