@@ -426,7 +426,7 @@ class XdatCar(AtomCo):
             # lattice basis
             self.bases = []
             for i in xrange(3):
-                basis = str2list(f.readline())
+                basis = line2list(f.readline())
                 self.bases.append(basis)
             # atom info
             self.atoms = str2list(f.readline())
