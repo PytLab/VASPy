@@ -2,6 +2,7 @@
     Script to plot total force trend.
 '''
 import sys
+import logging
 
 import numpy as np
 from matplotlib import animation
@@ -21,19 +22,26 @@ ax.set_ylabel(r'$\bf{Total Force(eV/Angst)}$')
 ax.set_ylim(0.0, np.max(forces)+0.5)
 
 if len(sys.argv) > 1 and 'movie' in sys.argv[1]:
-    line, = ax.plot([], [], linewidth=5, color='#CD6889')
+    ax.plot([], [], linewidth=3, color='#CD6889')  # line below forces
+    ax.plot([], [], linewidth=3, color='#668B8B')  # line above forces
+    line_below, line_above = ax.lines[1:]
 
     def init():
-        line.set_data([], [])
-        return line,
+        line_below.set_data([], [])
+        line_above.set_data([], [])
+        return line_below, line_above
 
     def animate(i):
-        y = np.linspace(0, np.max(forces)+0.5, 100)
+        logging.info('frame %d', i)
+        y_below = np.linspace(0, forces[i], 100)
         x = np.array([1.0*i]*100)
-        line.set_data(x, y)
-        return line,
+        y_above = np.linspace(forces[i], np.max(forces)+0.5, 100)
+        line_below.set_data(x, y_below)
+        line_above.set_data(x, y_above)
 
-    anim = animation.FuncAnimation(fig, animate, init_func=init, frames=step-2,
+        return line_below, line_above
+
+    anim = animation.FuncAnimation(fig, animate, init_func=init, frames=forces.shape[0],
                                    interval=1.0/16*1000, blit=True)
     anim.save('max_forces.MP4')
 
