@@ -59,6 +59,10 @@ scalar field
 
 ![](https://github.com/PytLab/VASPy/blob/master/pic/field.png)
 
+charge difference(use ChgCar class)
+
+![](https://github.com/PytLab/VASPy/blob/master/pic/contourf.png)
+
 操作XDATCAR举例
 
     >>> from vaspy.atomco import XdatCar
