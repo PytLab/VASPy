@@ -219,11 +219,7 @@ class XyzFile(AtomCo):
                                                    [0.0, 1.0, 0.0],
                                                    [0.0, 0.0, 1.0]])):
         "Use Ax=b to do coordinate transform cartesian to direct"
-        b = np.matrix(self.data.T)
-        A = np.matrix(bases).T
-        x = A.I*b
-
-        return np.array(x.T)
+        return self.cart2dir(bases, self.data)
 
     def get_content(self):
         "获取最新文件内容字符串"
