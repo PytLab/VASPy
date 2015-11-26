@@ -28,6 +28,8 @@ class DataPlotter(object):
         with open(self.filename, 'r') as f:
             for line in f:
                 line = line.strip()
+                if not line:  # blank line
+                    continue
                 if not line[0].isdigit():  # comment line or not
                     if not line.startswith('-'):
                         continue
