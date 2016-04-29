@@ -1,3 +1,4 @@
+import argparse
 import sys
 import os
 import commands
@@ -7,6 +8,12 @@ import numpy as np
 from vaspy.iter import OutCar
 from vaspy.matstudio import XsdFile
 from vaspy.functions import str2list
+
+# Set arguments parser.
+parser = argparse.ArgumentParser()
+parser.add_argument("--xsd", help="create MaterStudio .xsd file",
+                    action="store_true")
+args = parser.parse_args()
 
 outcar = OutCar()
 max_num = outcar.max_force_atom
@@ -18,7 +25,7 @@ print " atom position: (%f, %f, %f)" % tuple(pos)
 print "        forces: %f, %f, %f" % tuple(forces)
 print "   total-force: %f\n" % np.linalg.norm(forces)
 
-# get fort.188 info
+# Get fort.188 info.
 if os.path.exists('./fort.188'):
     with open('fort.188', 'r') as f:
         atom_info = f.readlines()[5]
@@ -26,8 +33,8 @@ if os.path.exists('./fort.188'):
     print "-"*35
     print "%10s%10s%15s\n" % tuple(str2list(atom_info))
 
-# create .xsd file
-if '--xsd' in sys.argv:
+# Create .xsd file.
+if args.xsd:
     status, output = commands.getstatusoutput('ls *.xsd | head -1')
     if not output.endswith('.xsd'):
         print "No .xsd file in current directory."
