@@ -4,7 +4,7 @@
 Provide coordinate file class which do operations on these files.
 ===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
-Updated by PytLab <shaozhengjiang@gmail.com>, August 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, November 2015
 
 ==============================================================
 
