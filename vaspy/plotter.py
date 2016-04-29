@@ -33,7 +33,7 @@ class DataPlotter(object):
                 if not line[0].isdigit():  # comment line or not
                     if not line.startswith('-'):
                         continue
-                    elif not line[1].isdigit():
+                    elif not line[1].isdigit() and line[1] != '.':
                         continue
                 linedata = line2list(line, field=self.field,
                                      dtype=self.dtype)
