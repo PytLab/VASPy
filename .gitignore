@@ -66,3 +66,7 @@ vaspy/*CAR
 vaspy/*.xsd
 OUTCAR
 vaspy/DOS/*
+
+# Vim temp files
+*.swp
+*.swo
