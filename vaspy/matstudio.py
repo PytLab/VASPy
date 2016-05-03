@@ -4,7 +4,7 @@
 Provide Material Studio markup file class which do operations on these files.
 =============================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
 ==============================================================
 
 """
@@ -43,12 +43,12 @@ class XsdFile(AtomCo):
           bases          np.array, basis vectors of space, dtype=np.float64
           ============  =======================================================
         """
-        AtomCo.__init__(self, filename)
+        super(self.__class__, self).__init__(filename)
         self.load()
 
     def load(self):
         # get element tree
-        tree = ET.ElementTree(file=self.filename)
+        tree = ET.ElementTree(file=self.filename())
         self.tree = tree
         # MS version info
         root = tree.getroot()

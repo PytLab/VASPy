@@ -4,7 +4,7 @@
 Provide iteration-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
 ========================================================================
 
 """
@@ -36,7 +36,7 @@ class OsziCar(VasPy):
           plot()         method, 对数据绘图
           ============  =======================================
         """
-        VasPy.__init__(self, filename)
+        super(self.__class__, self).__init__(filename)
 
         #set regex patterns
         float_regex = r'[\+|-]?\d*\.\d*(?:[e|E][\+|-]?\d+)?'
@@ -69,7 +69,7 @@ class OsziCar(VasPy):
 
     def load(self):
         "加载文件数据信息"
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             content = ''
             for line in f:
                 eq_tuples = self.match(line)
@@ -156,7 +156,7 @@ class OutCar(VasPy):
 
     def load(self):
         #locate informations
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             total_forces = []
             tforce_regex = \
                 re.compile(r'FORCES: max atom, RMS\s+(\d+\.\d+)\s+\d+\.\d+\s*')
@@ -180,7 +180,7 @@ class OutCar(VasPy):
             total_forces = np.array(total_forces)
             #atom forces
             atom_forces = []
-            with open(self.filename, 'r') as f:
+            with open(self.filename(), 'r') as f:
                 for i, line in enumerate(f):
                     if i > fbegin+1:
                         if '-'*10 in line:

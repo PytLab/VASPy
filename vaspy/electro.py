@@ -4,7 +4,7 @@
 Provide electro-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, September 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, October 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
 ========================================================================
 
 """
@@ -131,7 +131,7 @@ class DosX(DataPlotter):
         content = ''
         for datalist in data:
             content += ('%12.8f'*ndata + '\n') % tuple(datalist)
-        with open(self.filename, 'w') as f:
+        with open(self.filename(), 'w') as f:
             f.write(content)
 
         return
@@ -189,12 +189,12 @@ class ElfCar(PosCar):
           plot_field       method, plot scalar field for elf data
           ==============  =============================================
         """
-        PosCar.__init__(self, filename=filename)
+        super(self.__class__, self).__init__(filename)
 
     def load(self):
         "Rewrite load method"
         PosCar.load(self)
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             for i in xrange(self.totline):
                 f.readline()
             #get dimension of 3d array

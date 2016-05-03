@@ -27,13 +27,14 @@ class InCar(VasPy):
           filename       string, name of INCAR file
           ============  =======================================
         """
-        VasPy.__init__(self, filename)
+        super(self.__class__, self).__init__(filename)
+        self.__filename = filename
         self.load()
 
     def load(self):
         "Load all data in INCAR."
         tot_pnames, tot_datas = [], []
-        with open(self.filename, 'r') as f:
+        with open(self.__filename, 'r') as f:
             for line in f:
                 matched = self.rdata(line)
                 if matched:
@@ -43,9 +44,21 @@ class InCar(VasPy):
         # set attrs
         for pname, data in zip(tot_pnames, tot_datas):
             setattr(self, pname, data)
-        self.pnames = tot_pnames
+        self.__pnames = tot_pnames
 
         return
+
+    def pnames(self):
+        """
+        Query function for all parameter names.
+        """
+        return self.__pnames
+
+    def file_name(self):
+        """
+        Query function for all INCAR path names.
+        """
+        return self.__filename
 
     @staticmethod
     def rdata(line):
@@ -75,7 +88,7 @@ class InCar(VasPy):
 
     def set(self, pname, data):
         """
-        Set a named property of InCar object.
+        Set a named parameter of InCar object.
 
         Example:
         --------
@@ -89,7 +102,7 @@ class InCar(VasPy):
 
     def add(self, pname, data):
         """
-        Add a new property name to InCar object.
+        Add a new parameter name to InCar object.
 
         Example:
         --------
@@ -100,7 +113,7 @@ class InCar(VasPy):
             print ("Waring: %s is already in INCAR, " +
                    "set to %s" % (pname, data))
         else:
-            self.pnames.append(pname)
+            self.__pnames.append(pname)
         setattr(self, pname, data)
 
         return
@@ -108,12 +121,12 @@ class InCar(VasPy):
     def tofile(self):
         "Create INCAR file."
         content = '# Created by VASPy\n'
-        for pname in self.pnames:
+        for pname in self.__pnames:
             if not hasattr(self, pname):
                 raise ValueError('Unknown parameter: %s' % pname)
             data = str(getattr(self, pname))
             content += '%s = %s\n' % (pname, data)
-        with open('INCAR', 'w') as f:
+        with open(self.__filename, 'w') as f:
             f.write(content)
 
         return

@@ -4,7 +4,7 @@
 Provide coordinate file class which do operations on these files.
 ===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
-Updated by PytLab <shaozhengjiang@gmail.com>, November 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
 
 ==============================================================
 
@@ -18,13 +18,13 @@ from functions import *
 class AtomCo(VasPy):
     "Base class to be inherited by atomco classes."
     def __init__(self, filename):
-        VasPy.__init__(self, filename)
+        super(self.__class__, self).__init__(filename)
 
     def __repr__(self):
         if hasattr(self, 'get_content'):
             return self.get_content()
         else:
-            return self.filename
+            return self.filename()
 
     def __str__(self):
         return self.__repr__()
@@ -177,13 +177,13 @@ class XyzFile(AtomCo):
       ============  =======================================================
     """
     def __init__(self, filename):
-        AtomCo.__init__(self, filename)
+        super(self.__class__, self).__init__(filename)
         self.load()
         self.verify()
 
     def load(self):
         "加载文件内容"
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             content_list = f.readlines()
         ntot = int(content_list[0].strip())  # total atom number
         step = int(str2list(content_list[1])[-1])  # iter step number
@@ -269,7 +269,7 @@ class PosCar(AtomCo):
     def load(self):
         "获取文件数据信息"
         "Load all information in POSCAR."
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             content_list = f.readlines()
         #get scale factor
         bases_const = float(content_list[1])
@@ -415,7 +415,7 @@ class XdatCar(AtomCo):
         self.load()
 
     def load(self):
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             # read lattice info
             self.system = f.readline().strip()
             self.bases_const = float(f.readline().strip())
@@ -432,7 +432,7 @@ class XdatCar(AtomCo):
 
     def __iter__(self):
         "generator which yield step number and iterative data."
-        with open(self.filename, 'r') as f:
+        with open(self.filename(), 'r') as f:
             # pass info lines
             for i in xrange(self.info_nline):
                 f.readline()
