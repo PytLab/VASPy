@@ -74,6 +74,13 @@ class InCar(VasPy):
             return pnames, datas
 
     def set(self, pname, data):
+        """
+        Set a named property of InCar object.
+
+        Example:
+        --------
+        >>> incar_obj.set("ISIF", 2)
+        """
         if not hasattr(self, pname):
             raise ValueError('%s is not in INCAR, ' +
                              'Use add() instead.' % pname)
@@ -81,6 +88,13 @@ class InCar(VasPy):
         return
 
     def add(self, pname, data):
+        """
+        Add a new property name to InCar object.
+
+        Example:
+        --------
+        >>> incar_obj.add("ISIF", 2)
+        """
         data = str(data)
         if hasattr(self, pname):
             print ("Waring: %s is already in INCAR, " +
