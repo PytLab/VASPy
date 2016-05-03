@@ -1,11 +1,15 @@
-__version__ = '0.4.3'
-__all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter']
+__version__ = '0.5.3'
+__all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter', 'incar']
 
 
 class VasPy(object):
     def __init__(self, filename):
         "Base class to be inherited by all classes in VASPy."
-        self.filename = filename
+        self.__filename = filename
+
+    def filename(self):
+        " Query function for bounded filename."
+        return self.__filename
 
 
 class CarfileValueError(Exception):
