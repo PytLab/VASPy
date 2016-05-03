@@ -18,7 +18,7 @@ from functions import *
 class AtomCo(VasPy):
     "Base class to be inherited by atomco classes."
     def __init__(self, filename):
-        super(self.__class__, self).__init__(filename)
+        VasPy.__init__(self, filename)
 
     def __repr__(self):
         if hasattr(self, 'get_content'):
@@ -38,7 +38,7 @@ class AtomCo(VasPy):
         elif attr == 'tf_dict':
             return self.get_tf_dict(self.tf)
         else:
-            return object.__getattribute__(self, attr)
+            return VasPy.__getattribute__(self, attr)
 
     def verify(self):
         if len(self.data) != self.ntot:
