@@ -32,4 +32,4 @@ script:
   - cd unittest/testdata
   - python ../../scripts/continue.py ts.xyz  # test XyzFile, PosCar
   - cd ..
-  - python vaspy_test.py  # test OsziCar
+  - python vaspy_tests.py  # test OsziCar
