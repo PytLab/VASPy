@@ -15,7 +15,7 @@ class OsziCarTest(unittest.TestCase):
 
     def setUp(self):
         #create an instance of OSZICAR file
-        self.x = OsziCar('../testdata/OSZICAR')
+        self.x = OsziCar('./testdata/OSZICAR')
 
     def test_attrs(self):
         "Make sure load() effects"

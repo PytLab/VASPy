@@ -10,7 +10,7 @@ class InCarTest(unittest.TestCase):
 
     def setUp(self):
         # Create an InCar object.
-        self.incar = InCar("../testdata/INCAR")
+        self.incar = InCar("./testdata/INCAR")
 
     def test_rdata(self):
         " Test data line in INCAR can be read correctly. "
