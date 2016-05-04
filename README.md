@@ -4,15 +4,15 @@
 [![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.4.3-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.5.5-blue.svg)](https://github.com/PytLab/VASPy)
 
-###An **object-oriented** VASP file processing library.
+### An **object-oriented** VASP file processing library.
 
 Make it **easier** to process VASP files.
 
 处理VASP文件从未如此 **灵活** **简单**
 
-###命令行处理DOS文件使用举例：
+### 命令行处理DOS文件使用举例：
 
     #处理分割好的DOS文件
     >>> from vaspy.electro import DosX
@@ -32,7 +32,7 @@ Make it **easier** to process VASP files.
     #绘图
     >>> c.plotsum(0, (5, 10))       # 绘制d轨道pDOS图
     
-####绘制结果:
+#### 绘制结果:
 
 ![](https://github.com/PytLab/VASPy/blob/dev/pic/pDOS.png)
 
@@ -45,7 +45,7 @@ Make it **easier** to process VASP files.
     >>> a.plot_contour3d() # 绘制3d等值线图
     >>> a.plot_field()     # 绘制标量场
 
-####绘制结果:
+#### 绘制结果:
 
 ![](https://github.com/PytLab/VASPy/blob/master/pic/contour2d.png)
 
@@ -80,7 +80,7 @@ charge difference(use ChgCar class)
 
 **使用者可以编写自己的脚本来批处理VASP文件**
 
-###重要更新日志
+### 重要更新日志
 <table>
     <tbody>
         <tr>

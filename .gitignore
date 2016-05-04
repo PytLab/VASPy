@@ -70,3 +70,6 @@ vaspy/DOS/*
 # Vim temp files
 *.swp
 *.swo
+
+# Pictures
+*.png

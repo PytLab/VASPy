@@ -45,6 +45,7 @@ class InCar(VasPy):
         for pname, data in zip(tot_pnames, tot_datas):
             setattr(self, pname, data)
         self.__pnames = tot_pnames
+        self.__datas = tot_datas
 
         return
 
@@ -53,6 +54,12 @@ class InCar(VasPy):
         Query function for all parameter names.
         """
         return self.__pnames
+
+    def datas(self):
+        """
+        Query function for all parameter values.
+        """
+        return self.__datas
 
     def file_name(self):
         """
@@ -98,6 +105,7 @@ class InCar(VasPy):
             raise ValueError('%s is not in INCAR, ' +
                              'Use add() instead.' % pname)
         setattr(self, pname, str(data))
+
         return
 
     def add(self, pname, data):
