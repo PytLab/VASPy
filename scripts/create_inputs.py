@@ -14,6 +14,7 @@ from vaspy.matstudio import XsdFile
 from vaspy.incar import InCar
 
 if "__main__" == __name__:
+
     # Set argument parser.
     parser = argparse.ArgumentParser()
 
@@ -21,16 +22,16 @@ if "__main__" == __name__:
     parser.add_argument("-k", "--kpoints", help="set k-points")
     args = parser.parse_args()
 
-    #create POSCAR
+    # create POSCAR
     status, output = commands.getstatusoutput('ls *.xsd | head -1')
     xsd = XsdFile(filename=output)
     poscar_content = xsd.get_poscar_content(bases_const=1.0)
     with open('POSCAR', 'w') as f:
         f.write(poscar_content)
 
-    #create POTCAR
+    # create POTCAR
     potdir = r'/data/pot/vasp/potpaw_PBE2010/'
-    #delete old POTCAR
+    # delete old POTCAR
     if os.path.exists('./POTCAR'):
         os.remove('./POTCAR')
     for elem in xsd.atoms:
@@ -43,7 +44,7 @@ if "__main__" == __name__:
             sys.exit(1)
         commands.getstatusoutput('cat ' + potcar + ' >> ./POTCAR')
 
-    #creat KPOINTS
+    # creat KPOINTS
     if not args.kpoints:
         kpoints = []
         for base in xsd.bases:
@@ -58,9 +59,9 @@ if "__main__" == __name__:
     with open('KPOINTS', 'w') as f:
         f.write(kpt_content)
 
-    #copy INCAR vasp.script
+    # copy INCAR vasp.script
     commands.getstatusoutput('cp $HOME/example/INCAR $HOME/example/vasp.script ./')
-    #change jobname
+    # change jobname
     jobname = output.split('.')[0]
     with open('vasp.script', 'r') as f:
         content_list = f.readlines()
@@ -69,7 +70,7 @@ if "__main__" == __name__:
     with open('vasp.script', 'w') as f:
         f.writelines(content_list)
 
-    #create fort.188
+    # create fort.188
     atom_idxs = []
     atom_names = []
     for idx, atom_name in enumerate(xsd.atom_names):
@@ -92,15 +93,15 @@ if "__main__" == __name__:
             (atom_idxs[0]+1, atom_idxs[1]+1, distance)
         with open('fort.188', 'w') as f:
             f.write(content)
-        print "fort.188 has been created."
-        print '-'*20
-        print "atom number: %-5d%-5d" % (atom_idxs[0]+1, atom_idxs[1]+1)
-        print "atom name: %s %s" % tuple(atom_names)
-        print "distance: %f" % distance
-        print '-'*20
+        logging.info("fort.188 has been created.")
+        logging.info('-'*20)
+        logging.info("atom number: {:<5d}{:<5d}".format(atom_idxs[0]+1, atom_idxs[1]+1))
+        logging.info("atom name: {} {}".format(*atom_names))
+        logging.info("distance: {:f}".format(distance))
+        logging.info('-'*20)
 
         # set IBRION = 1
         incar = InCar()
         incar.set('IBRION', 1)
         incar.tofile()
-        print "IBRION is set to 1."
+        logging.info("IBRION is set to 1.")
