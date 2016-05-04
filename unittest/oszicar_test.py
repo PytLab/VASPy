@@ -3,6 +3,7 @@
     OsziCar类单元测试.
 '''
 import unittest
+import commands
 
 import numpy as np
 import matplotlib
@@ -10,7 +11,7 @@ import matplotlib
 from vaspy.iter import OsziCar
 
 
-class TestOsziCar(unittest.TestCase):
+class OsziCarTest(unittest.TestCase):
 
     def setUp(self):
         #create an instance of OSZICAR file
@@ -36,7 +37,7 @@ class TestOsziCar(unittest.TestCase):
         plot = self.x.plot('E0', mode='save')
         self.assertTrue(isinstance(plot, matplotlib.figure.Figure))
 
-
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestOsziCar)
+    suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
+
