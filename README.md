@@ -12,6 +12,11 @@ Make it **easier** to process VASP files.
 
 处理VASP文件从未如此 **灵活** **简单**
 
+***VASPy***是一个纯python编写的处理VASP文件的框架
+使用者可以使用VASPy的接口简单快捷的编写处理VASP文件的脚本，也可以在命令行直接操作VASP文件。
+
+[`/scripts`](https://github.com/PytLab/VASPy/tree/master/scripts)下是本人根据自己的需求，使用VASPy所写的一些脚本，可作为参考。
+
 ### 命令行处理DOS文件使用举例：
 
     #处理分割好的DOS文件
