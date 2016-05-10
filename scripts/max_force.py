@@ -1,7 +1,8 @@
 import argparse
-import sys
-import os
 import commands
+import logging
+import os
+import sys
 
 import numpy as np
 
@@ -20,24 +21,25 @@ max_num = outcar.max_force_atom
 force_info = outcar.atom_forces[max_num-1, :]
 pos = force_info[: 3].tolist()
 forces = force_info[3:].tolist()
-print "\nmax force atom: %d" % max_num
-print " atom position: (%f, %f, %f)" % tuple(pos)
-print "        forces: %f, %f, %f" % tuple(forces)
-print "   total-force: %f\n" % np.linalg.norm(forces)
+
+logging.info("{:<15s}: {}".format("max force atom", max_num))
+logging.info("{:<15s}: ({}, {}, {})".format("atom position", *pos))
+logging.info("{:<15s}: {}, {}, {}".format("forces", *forces))
+logging.info("{:<15s}: {}\n".format("total-force", np.linalg.norm(forces)))
 
 # Get fort.188 info.
 if os.path.exists('./fort.188'):
     with open('fort.188', 'r') as f:
         atom_info = f.readlines()[5]
-    print "%10s%10s%15s" % ('Atom1', 'Atom2', 'DISTANCE')
-    print "-"*35
-    print "%10s%10s%15s\n" % tuple(str2list(atom_info))
+    logging.info("{:<10s}{:<10s}{:<15s}".format("Atom1", "Atom2", "DISTANCE"))
+    logging.info("-"*30)
+    logging.info("{:<10s}{:<10s}{:<15s}\n".format(*str2list(atom_info)))
 
 # Create .xsd file.
 if args.xsd:
     status, output = commands.getstatusoutput('ls *.xsd | head -1')
     if not output.endswith('.xsd'):
-        print "No .xsd file in current directory."
+        logging.info("No .xsd file in current directory.")
         sys.exit(1)
     xsd = XsdFile(filename=output)
     # modify atom color
@@ -46,3 +48,4 @@ if args.xsd:
     filename = jobname + '-force.xsd'
     xsd.tofile(filename=filename)
     print filename + " has been created."
+
