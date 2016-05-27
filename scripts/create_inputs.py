@@ -66,7 +66,7 @@ if "__main__" == __name__:
 
     # Copy INCAR vasp.script
     commands.getstatusoutput('cp $HOME/example/INCAR $HOME/example/vasp.script ./')
-   
+
     # Get content line list.
     jobname = output.split('.')[0]
     with open('vasp.script', 'r') as f:
@@ -76,7 +76,7 @@ if "__main__" == __name__:
     content_list[1] = '#PBS -N ' + jobname + '\n'
     logging.info("job name -> {}".format(jobname))
 
-    # Change node number and cpu number. 
+    # Change node number and cpu number.
     if args.nnode or args.ncpu:
         regex = re.compile(r'nodes=(\d):ppn=(\d)')
         match = regex.search(content_list[5])
