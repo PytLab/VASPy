@@ -50,6 +50,7 @@ class XsdFile(AtomCo):
         # get element tree
         tree = ET.ElementTree(file=self.filename())
         self.tree = tree
+
         # MS version info
         root = tree.getroot()
         ms_version = root.get('Version')
@@ -60,10 +61,15 @@ class XsdFile(AtomCo):
             root.set('WrittenBy', 'VASPy')
         else:
             root.attrib.setdefault('WrittenBy', 'VASPy')
+
         # atom info
         self.get_atom_info()
+
         # lattice parameters
         self.bases = self.get_bases()
+
+        # thermodynamic info.
+        self.get_thermo_info()
 
         return
 
@@ -162,8 +168,27 @@ class XsdFile(AtomCo):
 
         return
 
+    def get_thermo_info(self):
+        """
+        获取文件中能量，力等数据.
+        """
+        # Get info string.
+        for elem in self.tree.iter("SymmetrySystem"):
+            info = elem.attrib["Name"]
+            break
+
+        # Get thermo data.
+        fieldnames = ["energy", "force", "magnetism"]
+        for key, value in zip(fieldnames, info.split()):
+            data = float(value.split(':')[-1].strip())
+            setattr(self, key, data)
+
+        return
+
     def update(self):
-        "根据最新数据获取更新ElementTree内容"
+        """
+        根据最新数据获取更新ElementTree内容
+        """
         if self.ntot != len(self.data):
             raise UnmatchedDataShape(
                 'length of data is not equal to atom number.')
@@ -176,14 +201,20 @@ class XsdFile(AtomCo):
 
         # atoms info
         self.update_atoms()
+
         # space group
         self.update_bases()
+
+        # Thermodynamic info.
+        self.update_thermo()
 
         return
 
     def update_atoms(self):
-        "更新ElementTree原子相关的值"
-        "update attribute values about atoms in element tree."
+        """
+        更新ElementTree原子相关的值"
+        update attribute values about atoms in element tree.
+        """
         for atom in self.atoms:
             idx = 0  # index for coordinate
             for elem in self.tree.iter('Atom3d'):
@@ -205,6 +236,22 @@ class XsdFile(AtomCo):
                     #atom name
                     elem.set('Name', self.atom_names_dict[atom][idx])
                     idx += 1
+
+        return
+
+    def update_thermo(self):
+        """
+        更新ElementTree中能量力等信息。
+        """
+        value = ""
+        for key, attr in zip(['E', 'F', 'M'], ["energy", "force", "magnetism"]):
+            data = getattr(self, attr)
+            value += "{}:{} ".format(key, data)
+        value = value.strip()
+
+        for elem in self.tree.iter("SymmetrySystem"):
+            elem.set("Name", value)
+            break
 
         return
 
