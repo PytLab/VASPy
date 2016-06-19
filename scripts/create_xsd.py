@@ -1,12 +1,14 @@
 '''
     Script to create .xyz file.
 '''
-import sys
-import re
-import commands
 import argparse
+import commands
+import logging
+import re
+import sys
 
 from vaspy import atomco, matstudio
+from vaspy.iter import OutCar, OsziCar
 
 if "__main__" == __name__:
 
@@ -59,6 +61,14 @@ if not output.endswith('.xsd'):
     sys.exit(1)
 xsd = matstudio.XsdFile(filename=output)
 xsd.data = direct_coordinates
+
+# Get energy and force.
+oszicar = OsziCar()
+outcar = OutCar()
+xsd.force = outcar.total_forces[-1]
+logging.info("Total Force --> {}".format(xsd.force))
+xsd.energy = oszicar.E0[-1]
+logging.info("Total Energy --> {}".format(xsd.energy))
 
 jobname = output.split('.')[0]
 xsd.tofile(filename=jobname+suffix)
