@@ -317,3 +317,4 @@ class XsdFile(AtomCo):
         self.tree.write(filename)
 
         return
+

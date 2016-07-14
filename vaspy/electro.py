@@ -468,3 +468,4 @@ class ChgCar(ElfCar):
         >>> a = ChgCar()
         '''
         ElfCar.__init__(self, filename)
+
