@@ -44,10 +44,25 @@ class InCar(VasPy):
         # set attrs
         for pname, data in zip(tot_pnames, tot_datas):
             setattr(self, pname, data)
-        self.__pnames = tot_pnames
-        self.__datas = tot_datas
+
+        # Set parameter names and data lists.
+        sorted_pnames, sorted_datas = self.__sort_two_lists(tot_pnames, tot_datas)
+        self.__pnames = sorted_pnames
+        self.__datas = sorted_datas
 
         return
+
+    def __sort_two_lists(self, list1, list2):
+        """
+        Private helper function to sort two lists.
+        """
+        assert len(list1) == len(list2)
+
+        # Sort the pairs according the entries of list1.
+        sorted_pairs = sorted(zip(list1, list2), key=lambda pair: pair[0])
+        sorted_list1, sorted_list2 = [list(x) for x in zip(*sorted_pairs)]
+
+        return sorted_list1, sorted_list2
 
     def pnames(self):
         """
