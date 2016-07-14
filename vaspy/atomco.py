@@ -215,10 +215,12 @@ class XyzFile(AtomCo):
 
         return
 
-    def coordinate_transform(self, bases=np.array([[1.0, 0.0, 0.0],
-                                                   [0.0, 1.0, 0.0],
-                                                   [0.0, 0.0, 1.0]])):
+    def coordinate_transform(self, bases=None):
         "Use Ax=b to do coordinate transform cartesian to direct"
+        if bases is None:
+            bases = np.array([[1.0, 0.0, 0.0],
+                              [0.0, 1.0, 0.0],
+                              [0.0, 0.0, 1.0]])
         return self.cart2dir(bases, self.data)
 
     def get_content(self):
@@ -446,3 +448,4 @@ class XdatCar(AtomCo):
                 prompt = f.readline().strip()
 
                 yield step, np.array(data)
+
