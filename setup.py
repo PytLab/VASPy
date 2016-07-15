@@ -15,7 +15,8 @@ requires = [
 ]
 
 license = 'LICENSE'
-long_description = file('README.md').read()
+with open("README.md") as f:
+    long_descriptio = f.read()
 name = 'python-vaspy'
 packages = [
     'vaspy',
