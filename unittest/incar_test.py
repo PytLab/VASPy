@@ -64,6 +64,48 @@ class InCarTest(unittest.TestCase):
         self.incar.add("TEST_zjshao", "True")
         self.assertTrue(self.incar.TEST_zjshao, "True")
 
+    def test_compare(self):
+        " Make sure we can compare two InCar objects correctly. "
+        # Two equal INCAR.
+        incar1 = InCar("./testdata/INCAR")
+        incar2 = InCar("./testdata/INCAR")
+        a_dict, b_dict = incar1.compare(incar2)
+
+        self.assertDictEqual(a_dict, {})
+        self.assertDictEqual(b_dict, {})
+
+        # Different INCAR.
+        incar1 = InCar("./testdata/INCAR")
+        incar2 = InCar("./testdata/INCAR2")
+        a_dict, b_dict = incar1.compare(incar2)
+
+        self.assertDictEqual(a_dict, {'ISMEAR': '1', 'LREAL': 'A'})
+        self.assertDictEqual(b_dict, {'ISMEAR': '2', 'LREAL': ''})
+
+    def test_eq(self):
+        " Test __eq__() function."
+        # Two equal INCAR.
+        incar1 = InCar("./testdata/INCAR")
+        incar2 = InCar("./testdata/INCAR")
+        self.assertTrue(incar1 == incar2)
+
+        # Different INCAR.
+        incar1 = InCar("./testdata/INCAR")
+        incar2 = InCar("./testdata/INCAR2")
+        self.assertFalse(incar1 == incar2)
+
+    def test_ne(self):
+        " Test __ne__() function."
+        # Two equal INCAR.
+        incar1 = InCar("./testdata/INCAR")
+        incar2 = InCar("./testdata/INCAR")
+        self.assertFalse(incar1 != incar2)
+
+        # Different INCAR.
+        incar1 = InCar("./testdata/INCAR")
+        incar2 = InCar("./testdata/INCAR2")
+        self.assertTrue(incar1 != incar2)
+
     def test_tofile(self):
         " Test INCAR content can be write to file. "
         # NEED IMPLEMENTATIN

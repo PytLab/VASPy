@@ -1,4 +1,4 @@
-__version__ = '0.5.5'
+__version__ = '0.6.0'
 __all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter', 'incar']
 
 

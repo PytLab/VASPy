@@ -44,10 +44,25 @@ class InCar(VasPy):
         # set attrs
         for pname, data in zip(tot_pnames, tot_datas):
             setattr(self, pname, data)
-        self.__pnames = tot_pnames
-        self.__datas = tot_datas
+
+        # Set parameter names and data lists.
+        sorted_pnames, sorted_datas = self.__sort_two_lists(tot_pnames, tot_datas)
+        self.__pnames = sorted_pnames
+        self.__datas = sorted_datas
 
         return
+
+    def __sort_two_lists(self, list1, list2):
+        """
+        Private helper function to sort two lists.
+        """
+        assert len(list1) == len(list2)
+
+        # Sort the pairs according the entries of list1.
+        sorted_pairs = sorted(zip(list1, list2), key=lambda pair: pair[0])
+        sorted_list1, sorted_list2 = [list(x) for x in zip(*sorted_pairs)]
+
+        return sorted_list1, sorted_list2
 
     def pnames(self):
         """
@@ -125,6 +140,56 @@ class InCar(VasPy):
         setattr(self, pname, data)
 
         return
+
+    def compare(self, another):
+        """
+        Function to compare two InCar objects.
+        """
+        tot_pnames = set(self.pnames() + another.pnames())
+
+        self_dict, another_dict = {}, {}
+        for pname in tot_pnames:
+            # If both have, check the difference.
+            if (pname in self.pnames() and
+                    pname in another.pnames()):
+                self_data = getattr(self, pname)
+                another_data = getattr(another, pname)
+                if self_data != another_data:
+                    self_dict.setdefault(pname, self_data)
+                    another_dict.setdefault(pname, another_data)
+            else:
+                # Only in this object.
+                if pname in self.pnames():
+                    self_data = getattr(self, pname)
+                    self_dict.setdefault(pname, self_data)
+                    another_dict.setdefault(pname, "")
+                # Only in the other object.
+                else:
+                    another_data = getattr(another, pname)
+                    another_dict.setdefault(pname, another_data)
+                    self_dict.setdefault(pname, "")
+
+        return self_dict, another_dict
+
+    def __eq__(self, another):
+        """
+        Overload euqal operator function.
+        """
+        self_dict, another_dict = self.compare(another)
+
+        if (not self_dict) and (not another_dict):
+            return True
+        else:
+            return False
+
+    def __ne__(self, another):
+        """
+        Overload not equal operator function.
+        """
+        if self == another:
+            return False
+        else:
+            return True
 
     def tofile(self):
         "Create INCAR file."
