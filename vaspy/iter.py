@@ -4,7 +4,7 @@
 Provide iteration-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
 ========================================================================
 
 """
@@ -14,7 +14,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from vaspy import VasPy
-from functions import line2list
+from vaspy import listed_zip as zip
+from vaspy.functions import line2list
 
 
 class OsziCar(VasPy):

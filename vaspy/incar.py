@@ -4,7 +4,7 @@
 Provide INCAR file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, October 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, October 2015
+Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
 ========================================================================
 
 """
@@ -144,6 +144,14 @@ class InCar(VasPy):
     def compare(self, another):
         """
         Function to compare two InCar objects.
+        
+        Parameters:
+        -----------
+        another: Another InCar object.
+
+        Returns:
+        --------
+        A tuple of two dictionaries containing difference informations.
         """
         tot_pnames = set(self.pnames() + another.pnames())
 

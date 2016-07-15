@@ -1,7 +1,7 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
+  - "3.5"
 
 notifications:
   email: false
@@ -29,7 +29,6 @@ install:
   - python setup.py install  # install vaspy
 # command to run tests
 script:
-  - cd unittest/testdata
-  - python ../../scripts/continue.py ts.xyz  # test XyzFile, PosCar
-  - cd ..
+  - cd unittest
   - python vaspy_tests.py  # test OsziCar
+

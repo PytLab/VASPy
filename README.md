@@ -1,7 +1,7 @@
  VASPy
 ========
 [![Build Status](https://travis-ci.org/PytLab/VASPy.svg?branch=master)](https://travis-ci.org/PytLab/VASPy)
-[![platform](https://img.shields.io/badge/python-2.6-green.svg)](https://www.python.org/download/releases/2.6.9/)
+[![platform](https://img.shields.io/badge/python-3.5-green.svg)](https://www.python.org/downloads/release/python-351/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![versions](https://img.shields.io/badge/versions%20-%20%200.6.0-blue.svg)](https://github.com/PytLab/VASPy)
@@ -18,7 +18,19 @@ Make it **easier** to manipulate VASP files.
 
 使用者可以使用***VASPy***的接口简单快捷的编写处理VASP文件的脚本，也可以在命令行直接操作VASP文件。
 
+兼容 Python2.7.x 与 Python3.x
+
 [`/scripts`](https://github.com/PytLab/VASPy/tree/master/scripts)下是本人根据自己的需求，使用VASPy所写的一些脚本，可作为参考。
+
+---
+
+### 安装方法:
+
+``` shell
+$ pip install numpy
+$ pip install matplotlib
+$ python setup.py install
+```
 
 ---
 
