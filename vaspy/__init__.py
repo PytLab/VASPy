@@ -1,5 +1,11 @@
 import sys
 
+if sys.version > "3":
+    PY2 = False
+else:
+    PY2 = True
+
+
 __version__ = '0.6.0'
 __all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter', 'incar']
 
@@ -28,20 +34,4 @@ import logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M:%S')
-
-# Compatible functions with py2 and py3.
-if sys.version > "3":
-    PY3 = True
-else:
-    PY3 = False
-
-
-def listed_zip(*args):
-    """
-    A compatible version of `zip`.
-    """
-    if PY3:
-        return list(zip(*args))
-    else:
-        return zip(*args)
 

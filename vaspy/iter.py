@@ -13,8 +13,7 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 
-from vaspy import VasPy
-from vaspy import listed_zip as zip
+from vaspy import VasPy, PY2
 from vaspy.functions import line2list
 
 
@@ -53,17 +52,26 @@ class OsziCar(VasPy):
         "匹配每一步迭代的数据"
         m = self.split_regex.search(line)
         if m:
-            #get step
+            # Get step
             step = int(m.group(1))
-            #get other data
+
+            # Get other data
             resid = m.group(2)
             eq_tuples = self.eq_regex.findall(resid)  # list of tuples
-            names, numbers = zip(*eq_tuples)
-            #remove space in names
+            if PY2:
+                names, numbers = zip(*eq_tuples)
+            else:
+                names, numbers = list(zip(*eq_tuples))
+
+            # Remove space in names.
             names = [name.replace(' ', '') for name in names]
+
             #convert string to float
             numbers = [float(number) for number in numbers]
-            eq_tuples = [('step', step)] + zip(names, numbers)
+            if PY2:
+                eq_tuples = [('step', step)] + zip(names, numbers)
+            else:
+                eq_tuples = [('step', step)] + list(zip(names, numbers))
             return eq_tuples
         else:
             return None
@@ -76,7 +84,11 @@ class OsziCar(VasPy):
                 eq_tuples = self.match(line)
                 if eq_tuples:  # if matched
                     if not hasattr(self, 'vars'):
-                        self.vars, numbers = zip(*eq_tuples)
+                        if PY2:
+                            self.vars, numbers = zip(*eq_tuples)
+                        else:
+                            self.vars, numbers = list(zip(*eq_tuples))
+
                     for name, number in eq_tuples:
                         if not hasattr(self, name):
                             setattr(self, name, [number])
@@ -105,7 +117,10 @@ class OsziCar(VasPy):
         n: int, top numbers of sorted data.
 
         '''
-        zipped = zip(getattr(self, var), self.step)  # (E0, step)
+        if PY2:
+            zipped = zip(getattr(self, var), self.step)  # (E0, step)
+        else:
+            zipped = list(zip(getattr(self, var), self.step))
         dtype = [('var', float), ('step', int)]
         zipped = np.array(zipped, dtype=dtype)
         srted = np.sort(zipped, order='var')
