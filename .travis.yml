@@ -29,8 +29,6 @@ install:
   - python setup.py install  # install vaspy
 # command to run tests
 script:
-  - cd unittest/testdata
-  - python ../../scripts/continue.py ts.xyz  # test XyzFile, PosCar
-  - cd ..
+  - cd unittest
   - python vaspy_tests.py  # test OsziCar
 
