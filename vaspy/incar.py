@@ -141,6 +141,36 @@ class InCar(VasPy):
 
         return
 
+    def compare(self, another):
+        """
+        Function to compare two InCar objects.
+        """
+        tot_pnames = set(self.pnames() + another.pnames())
+
+        self_dict, another_dict = {}, {}
+        for pname in tot_pnames:
+            # If both have, check the difference.
+            if (pname in self.pnames() and
+                    pname in another.pnames()):
+                self_data = getattr(self, pname)
+                another_data = getattr(another, pname)
+                if self_data != another_data:
+                    self_dict.setdefault(pname, self_data)
+                    another_dict.setdefault(pname, another_data)
+            else:
+                # Only in this object.
+                if pname in self.pnames():
+                    self_data = getattr(self, pname)
+                    self_dict.setdefault(pname, self_data)
+                    another_dict.setdefault(pname, "")
+                # Only in the other object.
+                else:
+                    another_data = getattr(another, pname)
+                    another_dict.setdefault(pname, another_data)
+                    self_dict.setdefault(pname, "")
+
+        return self_dict, another_dict
+
     def tofile(self):
         "Create INCAR file."
         content = '# Created by VASPy\n'
