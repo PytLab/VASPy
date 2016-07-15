@@ -3,7 +3,6 @@
     OsziCar类单元测试.
 '''
 import unittest
-import commands
 
 import numpy as np
 import matplotlib
