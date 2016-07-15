@@ -143,12 +143,12 @@ if "__main__" == __name__:
 
         # Set IBRION = 1
         incar.set('IBRION', 1)
-        logging.info("{:>10s} --> {:<10s}".format("IBRION", "1"))
+        logging.info("{} -> {}".format("IBRION", "1"))
 
     for pname, value in args.__dict__.iteritems():
-        if pname in incar.pnames():
+        if (value is not None) and (pname in incar.pnames()):
             incar.set(pname, value)
-            logging.info("{:>10s} --> {:<10s}".format(pname, value))
+            logging.info("{} -> {}".format(pname, value))
 
     # Generate new INCAR file.
     incar.tofile()
