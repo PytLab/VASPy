@@ -3,7 +3,6 @@
 '''
 
 import argparse
-import commands
 import os
 import re
 import sys
@@ -13,8 +12,18 @@ import numpy as np
 
 from vaspy.matstudio import XsdFile
 from vaspy.incar import InCar
+from vaspy import PY2
+
+if PY2:
+    import commands as subprocess
+else:
+    import subprocess
+
 
 if "__main__" == __name__:
+
+    # Copy INCAR vasp.script
+    subprocess.getstatusoutput('cp $HOME/example/INCAR $HOME/example/vasp.script ./')
 
     # Set argument parser.
     parser = argparse.ArgumentParser()
@@ -25,10 +34,18 @@ if "__main__" == __name__:
     parser.add_argument("--ncpu", help="cpu number on each node")
     parser.add_argument("-q", "--queue", help="pbs queue type")
 
+    # Add all possible arguments in INCAR file.
+    if os.path.exists("INCAR"):
+        incar = InCar()
+        parameters = incar.pnames()
+        for parameter in parameters:
+            help_info = "Set '{}' in INCAR".format(parameter)
+            parser.add_argument("--{}".format(parameter), help=help_info)
+
     args = parser.parse_args()
 
     # Create POSCAR
-    status, output = commands.getstatusoutput('ls *.xsd | head -1')
+    status, output = subprocess.getstatusoutput('ls *.xsd | head -1')
     xsd = XsdFile(filename=output)
     poscar_content = xsd.get_poscar_content(bases_const=1.0)
     with open('POSCAR', 'w') as f:
@@ -45,9 +62,9 @@ if "__main__" == __name__:
         if os.path.exists(potdir + elem):
             potcar = potdir + elem + '/POTCAR'
         else:
-            print 'No POTCAR for ' + elem
+            logging('No POTCAR for ' + elem)
             sys.exit(1)
-        commands.getstatusoutput('cat ' + potcar + ' >> ./POTCAR')
+        subprocess.getstatusoutput('cat ' + potcar + ' >> ./POTCAR')
 
     # Creat KPOINTS
     if not args.kpoints:
@@ -63,9 +80,6 @@ if "__main__" == __name__:
     kpt_content = 'mesh auto\n0\nG\n' + kpt_str + '\n0 0 0\n'
     with open('KPOINTS', 'w') as f:
         f.write(kpt_content)
-
-    # Copy INCAR vasp.script
-    commands.getstatusoutput('cp $HOME/example/INCAR $HOME/example/vasp.script ./')
 
     # Get content line list.
     jobname = output.split('.')[0]
@@ -128,7 +142,14 @@ if "__main__" == __name__:
         logging.info('-'*20)
 
         # Set IBRION = 1
-        incar = InCar()
         incar.set('IBRION', 1)
-        incar.tofile()
-        logging.info("IBRION is set to 1.")
+        logging.info("{:>10s} --> {:<10s}".format("IBRION", "1"))
+
+    for pname, value in args.__dict__.iteritems():
+        if pname in incar.pnames():
+            incar.set(pname, value)
+            logging.info("{:>10s} --> {:<10s}".format(pname, value))
+
+    # Generate new INCAR file.
+    incar.tofile()
+
