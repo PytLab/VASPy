@@ -16,7 +16,7 @@ requires = [
 
 license = 'LICENSE'
 with open("README.md") as f:
-    long_descriptio = f.read()
+    long_description = f.read()
 name = 'python-vaspy'
 packages = [
     'vaspy',
@@ -28,18 +28,16 @@ platforms = ['linux']
 url = 'https://github.com/PytLab/VASPy'
 download_url = ''
 
-setup(
-    author=author,
-    author_email=author_email,
-    description=description,
-    license=license,
-    long_description=long_description,
-    maintainer=maintainer,
-    name=name,
-    packages=packages,
-    data_files=data_files,
-    platforms=platforms,
-    url=url,
-    download_url=download_url,
-    version=version,
-    )
+setup(author=author,
+      author_email=author_email,
+      description=description,
+      license=license,
+      long_description=long_description,
+      maintainer=maintainer,
+      name=name,
+      packages=packages,
+      data_files=data_files,
+      platforms=platforms,
+      url=url,
+      download_url=download_url,
+      version=version)
