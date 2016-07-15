@@ -113,6 +113,11 @@ charge difference(use ChgCar class)
             <td><strong>内容</strong></td>
         </tr>
         <tr>
+            <td>2016-07-15</td>
+            <td>0.6.0</td>
+            <td>兼容Python 3.x</td>
+        </tr>
+        <tr>
             <td>2015-11-17</td>
             <td>0.4.1</td>
             <td>XdatCar类实现迭代协议</td>
