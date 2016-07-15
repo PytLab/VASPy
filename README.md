@@ -18,9 +18,19 @@ Make it **easier** to manipulate VASP files.
 
 使用者可以使用***VASPy***的接口简单快捷的编写处理VASP文件的脚本，也可以在命令行直接操作VASP文件。
 
-\*目前版本兼容 Python2.7.x 与 Python3.x
+兼容 Python2.7.x 与 Python3.x
 
 [`/scripts`](https://github.com/PytLab/VASPy/tree/master/scripts)下是本人根据自己的需求，使用VASPy所写的一些脚本，可作为参考。
+
+---
+
+安装方法:
+
+``` shell
+$ pip install numpy
+$ pip install matplotlib
+$ python setup.py install
+```
 
 ---
 
