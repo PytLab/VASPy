@@ -6,7 +6,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![versions](https://img.shields.io/badge/versions%20-%20%200.6.0-blue.svg)](https://github.com/PytLab/VASPy)
 
-### An **object-oriented** VASP file manipulating library.
+### An **object-oriented** VASP file processing library.
 
 Make it **easier** to manipulate VASP files.
 
@@ -28,7 +28,9 @@ Make it **easier** to manipulate VASP files.
 
 ``` shell
 $ pip install numpy
+
 $ pip install matplotlib
+
 $ python setup.py install
 ```
 
