@@ -171,6 +171,26 @@ class InCar(VasPy):
 
         return self_dict, another_dict
 
+    def __eq__(self, another):
+        """
+        Overload euqal operator function.
+        """
+        self_dict, another_dict = self.compare(another)
+
+        if (not self_dict) and (not another_dict):
+            return True
+        else:
+            return False
+
+    def __ne__(self, another):
+        """
+        Overload not equal operator function.
+        """
+        if self == another:
+            return False
+        else:
+            return True
+
     def tofile(self):
         "Create INCAR file."
         content = '# Created by VASPy\n'
