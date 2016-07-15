@@ -32,7 +32,10 @@ class OsziCarTest(unittest.TestCase):
         srted = oszicar.esort('E0', 2)
         shouldbe = np.array([(-101.21186, 326), (-101.21116, 324)],
                             dtype=[('var', '<f8'), ('step', '<i4')])
-        self.assertTrue((srted == shouldbe).all())
+        #self.assertTrue((srted == shouldbe).all())
+        srted = srted.tolist()
+        shouldbe = shouldbe.tolist()
+        self.assertTrue(srted == shouldbe)
 
     def test_plot(self):
         "Make sure object could plot"
