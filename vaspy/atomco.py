@@ -4,15 +4,16 @@
 Provide coordinate file class which do operations on these files.
 ===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
-Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
 
 ==============================================================
 
 """
 import numpy as np
 
-from vaspy import VasPy, CarfileValueError
-from functions import *
+from vaspy import VasPy
+from vaspy.errors import CarfileValueError
+from vaspy.functions import *
 
 
 class AtomCo(VasPy):

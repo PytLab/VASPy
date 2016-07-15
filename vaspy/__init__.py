@@ -19,16 +19,6 @@ class VasPy(object):
         " Query function for bounded filename."
         return self.__filename
 
-
-class CarfileValueError(Exception):
-    "Exception raised for errors in the CONTCAR-like file."
-    pass
-
-
-class UnmatchedDataShape(Exception):
-    "Exception raised for errors in unmatched data shape."
-    pass
-
 import logging
 
 logging.basicConfig(level=logging.INFO,

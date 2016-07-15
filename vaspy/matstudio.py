@@ -4,7 +4,7 @@
 Provide Material Studio markup file class which do operations on these files.
 =============================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
 ==============================================================
 
 """
@@ -12,8 +12,8 @@ import xml.etree.cElementTree as ET
 
 import numpy as np
 
-from atomco import AtomCo
-from vaspy import UnmatchedDataShape
+from vaspy.atomco import AtomCo
+from vaspy.errors import UnmatchedDataShape
 
 
 class XsdFile(AtomCo):
