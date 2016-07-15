@@ -24,7 +24,7 @@ Make it **easier** to manipulate VASP files.
 
 ---
 
-安装方法:
+### 安装方法:
 
 ``` shell
 $ pip install numpy
