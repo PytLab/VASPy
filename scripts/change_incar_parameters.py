@@ -34,7 +34,12 @@ if "__main__" == __name__:
     args_space = parser.parse_args()
 
     # Change parameters for all incars.
-    for pname, value in args_space.__dict__.iteritems():
+    if PY2:
+        pname_value_pairs = args.__dict__.iteritems()
+    else:
+        pname_value_pairs = args.__dict__.items()
+
+    for pname, value in pname_value_pairs :
         if value is None:
             continue
 

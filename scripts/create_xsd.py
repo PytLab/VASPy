@@ -2,13 +2,19 @@
     Script to create .xyz file.
 '''
 import argparse
-import commands
 import logging
 import re
 import sys
 
 from vaspy import atomco, matstudio
 from vaspy.iter import OutCar, OsziCar
+from vaspy import PY2
+
+if PY2:
+    import commands as subprocess
+else:
+    import subprocess
+
 
 if "__main__" == __name__:
 
@@ -36,7 +42,7 @@ if "__main__" == __name__:
                     break
                 line = f.readline()
             if not content:
-                print 'Step: %s is out of range.' % step
+                logging.info('Step: {} is out of range.'.format(step))
                 sys.exit(1)
         # write to .xyz file
         with open('ts.xyz', 'w') as f:
@@ -55,9 +61,9 @@ if "__main__" == __name__:
         suffix = '-y.xsd'
 
 # create .xsd file
-status, output = commands.getstatusoutput('ls *.xsd | head -1')
+status, output = subprocess.getstatusoutput('ls *.xsd | head -1')
 if not output.endswith('.xsd'):
-    print "No .xsd file in current directory."
+    logging.info("No .xsd file in current directory.")
     sys.exit(1)
 xsd = matstudio.XsdFile(filename=output)
 xsd.data = direct_coordinates

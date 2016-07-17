@@ -145,7 +145,12 @@ if "__main__" == __name__:
         incar.set('IBRION', 1)
         logging.info("{} -> {}".format("IBRION", "1"))
 
-    for pname, value in args.__dict__.iteritems():
+    if PY2:
+        pname_value_pairs = args.__dict__.iteritems()
+    else:
+        pname_value_pairs = args.__dict__.items()
+
+    for pname, value in pname_value_pairs :
         if (value is not None) and (pname in incar.pnames()):
             incar.set(pname, value)
             logging.info("{} -> {}".format(pname, value))
