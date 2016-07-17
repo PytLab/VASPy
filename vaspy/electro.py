@@ -195,7 +195,7 @@ class ElfCar(PosCar):
         "Rewrite load method"
         PosCar.load(self)
         with open(self.filename(), 'r') as f:
-            for i in xrange(self.totline):
+            for i in range(self.totline):
                 f.readline()
             #get dimension of 3d array
             grid = f.readline().strip(whitespace)
@@ -238,15 +238,15 @@ class ElfCar(PosCar):
         nx, ny, nz = widths
         # x axis
         added_data = copy.deepcopy(expanded_data)
-        for i in xrange(nx - 1):
+        for i in range(nx - 1):
             expanded_data = np.append(expanded_data, added_data, axis=0)
         # y axis
         added_data = copy.deepcopy(expanded_data)
-        for i in xrange(ny - 1):
+        for i in range(ny - 1):
             expanded_data = np.append(expanded_data, added_data, axis=1)
         # z axis
         added_data = copy.deepcopy(expanded_data)
-        for i in xrange(nz - 1):
+        for i in range(nz - 1):
             expanded_data = np.append(expanded_data, added_data, axis=2)
 
         return expanded_data, expanded_grid

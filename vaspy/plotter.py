@@ -58,7 +58,7 @@ class DataPlotter(object):
         x = self.data[:, xcol]
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        for i in xrange(*ycols):
+        for i in range(*ycols):
             y = self.data[:, i]
             ax.plot(x, y, linewidth=3)
 
@@ -70,7 +70,7 @@ class DataPlotter(object):
         x = self.data[:, 0]
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        for col in xrange(1, ncols):
+        for col in range(1, ncols):
             y = self.data[:, col]
             ax.plot(x, y, linewidth=3)
         fig.show()

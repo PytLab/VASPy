@@ -287,7 +287,7 @@ class XsdFile(AtomCo):
         # get atom type and number of this type
         # [48, 48, 30, 14] -> [48, 96, 126, 140]
         atoms_num_sum = [sum(self.atoms_num[: i+1])
-                         for i in xrange(len(self.atoms))]
+                         for i in range(len(self.atoms))]
         for idx, n in enumerate(atoms_num_sum):
             if atom_number <= n:
                 atom_idx = idx

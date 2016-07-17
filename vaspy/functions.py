@@ -72,7 +72,7 @@ def atomdict2str(atomco_dict, keys):
     content_str = ''
     for atom in keys:
         n = len(atomco_dict[atom])
-        for i in xrange(n):
+        for i in range(n):
             line_tuple = tuple([atom] + atomco_dict[atom][i])
             content_str += '%-3s%16s%16s%16s\n' % line_tuple
 

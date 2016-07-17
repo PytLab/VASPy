@@ -49,7 +49,7 @@ class AtomCo(VasPy):
         "根据已获取的data和atoms, atoms_num, 获取atomco_dict"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
         idx_list = [sum(self.atoms_num[:i])
-                    for i in xrange(1, len(self.atoms)+1)]
+                    for i in range(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
 
         data_list = data.tolist()
@@ -66,7 +66,7 @@ class AtomCo(VasPy):
         "根据已获取的tf和atoms, atoms_num, 获取tf_dict"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
         idx_list = [sum(self.atoms_num[:i])
-                    for i in xrange(1, len(self.atoms)+1)]
+                    for i in range(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
 
         tf_list = tf.tolist()
@@ -335,7 +335,7 @@ class PosCar(AtomCo):
     def constrain_atom(self, atom, to='F', axis='all'):
         "修改某一类型原子的FT信息"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(self.atoms_num[:i]) for i in xrange(1, len(self.atoms)+1)]
+        idx_list = [sum(self.atoms_num[:i]) for i in range(1, len(self.atoms)+1)]
         idx_list = [0] + idx_list
 
         if to not in ['T', 'F']:
@@ -424,7 +424,7 @@ class XdatCar(AtomCo):
             self.bases_const = float(f.readline().strip())
             # lattice basis
             self.bases = []
-            for i in xrange(3):
+            for i in range(3):
                 basis = line2list(f.readline())
                 self.bases.append(basis)
             # atom info
@@ -437,13 +437,13 @@ class XdatCar(AtomCo):
         "generator which yield step number and iterative data."
         with open(self.filename(), 'r') as f:
             # pass info lines
-            for i in xrange(self.info_nline):
+            for i in range(self.info_nline):
                 f.readline()
             prompt = f.readline().strip()
             while '=' in prompt:
                 step = int(prompt.split('=')[-1])
                 data = []
-                for i in xrange(self.ntot):
+                for i in range(self.ntot):
                     data_line = f.readline()
                     data.append(line2list(data_line))
                 prompt = f.readline().strip()
