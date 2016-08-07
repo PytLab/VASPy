@@ -149,6 +149,9 @@ class OsziCar(VasPy):
 
 
 class OutCar(VasPy):
+
+    force_regex = re.compile(r"^ POSITION\s+TOTAL-FORCE\s*\(eV\/Angst\)$")
+
     def __init__(self, filename='OUTCAR'):
         """
         Create a OUTCAR file class.
@@ -162,57 +165,54 @@ class OutCar(VasPy):
           Attribute           Description
           ===============    ==================================================
           filename            string, name of OUTCAR file
-          total_forces        1d array, 每个离子步迭代原子受到的总力
-          atom_forces         2d array, 最近一次离子步迭代每个原子的受力数据
-          max_force_atom      int, 最近一次离子步迭代受力最大原子序数
           ===============    ==================================================
         """
         VasPy.__init__(self, filename)
-        self.load()
 
-    def load(self):
-        #locate informations
-        with open(self.filename(), 'r') as f:
-            total_forces = []
-            tforce_regex = \
-                re.compile(r'FORCES: max atom, RMS\s+(\d+\.\d+)\s+\d+\.\d+\s*')
-            max_regex = re.compile(r'Number: max atom\s+(\d+)\s*')
-            for i, line in enumerate(f):
-                #locate force infomation
-                if 'TOTAL-FORCE' in line:  # force info begins
-                    fbegin = i
-                elif 'RMS' in line:  # total force
-                    m = tforce_regex.search(line)
-                    total_force = float(m.group(1))
-                    total_forces.append(total_force)
-                elif 'Number' in line:
-                    #atom number with max force on it
-                    m = max_regex.search(line)
-                    max_force_atom = int(m.group(1))
-        #get information details
-        #----------------- force info -------------------#
-        if 'fbegin' in dir():
-            #total force
-            total_forces = np.array(total_forces)
-            #atom forces
-            atom_forces = []
-            with open(self.filename(), 'r') as f:
-                for i, line in enumerate(f):
-                    if i > fbegin+1:
-                        if '-'*10 in line:
-                            break
-                        atom_force = line2list(line)
-                        atom_forces.append(atom_force)
-            atom_forces = np.array(atom_forces)
+    def __iter__(self):
+        with open(self.filename(), "r") as f:
+            ion_step = 0
 
-            #set attrs
-            self.total_forces = total_forces
-            self.atom_forces = atom_forces
-            self.max_force_atom = max_force_atom
-        else:
-            print ("Warning: " +
-                   "the first electronic iteration is running, " +
-                   "no force information is loaded.")
+            # Force data collection flags.
+            collect_begin = False
+            collecting = False
 
-        return
+            # Collect force data for each ionic step and yield.
+            for line in f:
+                if not collect_begin:
+                    if self.force_regex.match(line):
+                        collect_begin = True
+                        ion_step += 1
+                elif not collecting:
+                    if "-"*6 in line:
+                        collecting = True
+                        coordinates = []
+                        forces = []
+                else:
+                    if "-"*6 in line:
+                        collecting = False
+                        collect_begin = False
+                        yield ion_step, coordinates, forces
+                    else:
+                        x, y, z, fx, fy, fz = line2list(line)
+                        coordinates.append([x, y, z])
+                        forces.append([fx, fy, fz])
+
+    @staticmethod
+    def fmax(atom_forces):
+        """
+        Static method for getting the max forces vector and atom index.
+
+        Parameters:
+        -----------
+        atom_forces: 2D array of floats, forces on each atom.
+
+        Return:
+        -------
+        The max force index and force vector.
+        """
+        max_force = max(atom_forces, key=lambda x: sum([x**2 for i in x]))
+        index = atom_forces.index(max_force)
+
+        return index, max_force
 
