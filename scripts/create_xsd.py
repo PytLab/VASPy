@@ -1,6 +1,7 @@
 '''
-    Script to create .xyz file.
+Script to create xsd file from VASP outputs.
 '''
+
 import argparse
 import logging
 import re
@@ -26,35 +27,22 @@ if "__main__" == __name__:
 
     if args.step:
         # extract certain step data to .xyz file
-        step = args.step
-        step_regex = re.compile(r'^STEP\s+=\s+' + step + r'$')
-        with open('OUT.ANI', 'r') as f:
-            natom = int(f.readline().strip())
-            # match step
-            content = ''
-            count = 0
-            line = f.readline()
-            while line:
-                if step_regex.match(line):
-                    # get data content
-                    for i in xrange(natom):
-                        content += f.readline()
-                    break
-                line = f.readline()
-            if not content:
-                logging.info('Step: {} is out of range.'.format(step))
-                sys.exit(1)
-        # write to .xyz file
-        with open('ts.xyz', 'w') as f:
-            head = '%12d\nSTEP = %8s\n' % (natom, step)
-            content = head + content
-            f.write(content)
+        step = int(args.step)
 
-        # coordinate transformation
-        xyz = atomco.XyzFile('ts.xyz')
-        poscar = atomco.PosCar()
-        direct_coordinates = xyz.coordinate_transform(poscar.bases)
-        suffix = '-' + step + '.xsd'
+        # Get data of that step from XDATCAR.
+        xdatcar = atomco.XdatCar()
+        for i, data in xdatcar:
+            if i == step:
+                break
+
+        # Check step validity.
+        if i < step:
+            raise ValueError("Illegal step {} (> {})".format(step, i))
+
+        # Direct coordinates for that step.
+        direct_coordinates = data
+
+        suffix = "-{}.xsd".format(step)
     else:  # the last step data
         contcar = atomco.ContCar()
         direct_coordinates = contcar.data
@@ -78,3 +66,4 @@ logging.info("Total Energy --> {}".format(xsd.energy))
 
 jobname = output.split('.')[0]
 xsd.tofile(filename=jobname+suffix)
+
