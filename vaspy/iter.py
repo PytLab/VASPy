@@ -168,11 +168,11 @@ class OutCar(VasPy):
         >>> a = OsziCar(filename='OUTCAR', poscar="POSCAR")
 
         Class attributes descriptions
-        =======================================================================
+        ===================================================
           Attribute           Description
-          ===============    ==================================================
+          ===============    ==============================
           filename            string, name of OUTCAR file
-          ===============    ==================================================
+          ===============    ==============================
         """
         VasPy.__init__(self, filename)
 
@@ -213,7 +213,7 @@ class OutCar(VasPy):
                         coordinates.append([x, y, z])
                         forces.append([fx, fy, fz])
 
-    def __mask_forces(self, atom_forces):
+    def __mask_forces(self, atom_forces, tfs):
         """
         Private helper function to use F/T info to mask forces.
 
@@ -222,15 +222,15 @@ class OutCar(VasPy):
         Masked forces 2D array.
         """
         # Check atom forces.
-        if len(self.poscar.tf) != len(atom_forces):
+        if len(tfs) != len(atom_forces):
             msg = "Length of atom forces({}) must be equal to length of atoms({})."
-            msg = msg.format(len(self.poscar.tf), len(atom_forces))
+            msg = msg.format(len(atom_forces), len(tfs))
             raise ValueError(msg)
 
         masked_forces = []
-        for tfs, forces in zip(self.poscar.tf, atom_forces):
+        for tf_vector, forces in zip(tfs, atom_forces):
             masked_force = []
-            for tf, force in zip(tfs, forces):
+            for tf, force in zip(tf_vector, forces):
                 if tf == "F":
                     masked_force.append(0.0)
                 else:
@@ -252,7 +252,7 @@ class OutCar(VasPy):
         The max force index and force vector.
         """
         # Mask forces.
-        masked_forces = self.__mask_forces(atom_forces)
+        masked_forces = self.__mask_forces(atom_forces, self.poscar.tf)
 
         # Get max forces.
         max_force = max(masked_forces, key=lambda x: sum([i**2 for i in x]))
