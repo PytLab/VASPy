@@ -21,14 +21,11 @@ class AtomCo(VasPy):
     def __init__(self, filename):
         VasPy.__init__(self, filename)
 
-    def __repr__(self):
-        if hasattr(self, 'get_content'):
-            return self.get_content()
-        else:
-            return self.filename()
-
-    def __str__(self):
-        return self.__repr__()
+#    def __repr__(self):
+#        if hasattr(self, 'get_content'):
+#            return self.get_content()
+#        else:
+#            return self.filename()
 
     def __getattribute__(self, attr):
         '''
