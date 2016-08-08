@@ -4,7 +4,7 @@
 Provide iteration-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, August 2016
 ========================================================================
 
 """
@@ -170,6 +170,11 @@ class OutCar(VasPy):
         VasPy.__init__(self, filename)
 
     def __iter__(self):
+        """
+        Return a generator yield ionic_step, coordinates, forces on atoms.
+
+        NOTE: ionic step starts from 1 **NOT 0**.
+        """
         with open(self.filename(), "r") as f:
             ion_step = 0
 
@@ -211,8 +216,29 @@ class OutCar(VasPy):
         -------
         The max force index and force vector.
         """
-        max_force = max(atom_forces, key=lambda x: sum([x**2 for i in x]))
+        max_force = max(atom_forces, key=lambda x: sum([i**2 for i in x]))
         index = atom_forces.index(max_force)
 
         return index, max_force
+
+    def forces(self, step=-1):
+        """
+        Function to get forces info for a specific step.
+
+        Parameters:
+        -----------
+        step: The step number, int.
+
+        Return:
+        -------
+        Coordinates and forces for that step.
+        """
+        for i, coord, forces in self.__iter__():
+            if step != -1 and i == step:
+                return coord, forces
+
+        if step == -1:
+            return coord, forces
+        elif step > i:
+            raise ValueError("Illegal step {} (> {})".format(step, i))
 
