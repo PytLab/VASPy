@@ -79,7 +79,7 @@ class OsziCar(VasPy):
 
     def load(self):
         "加载文件数据信息"
-        with open(self.filename(), 'r') as f:
+        with open(self.filename, 'r') as f:
             content = ''
             for line in f:
                 eq_tuples = self.match(line)
@@ -185,7 +185,7 @@ class OutCar(VasPy):
 
         NOTE: ionic step starts from 1 **NOT 0**.
         """
-        with open(self.filename(), "r") as f:
+        with open(self.filename, "r") as f:
             ion_step = 0
 
             # Force data collection flags.

@@ -25,7 +25,7 @@ class AtomCo(VasPy):
 #        if hasattr(self, 'get_content'):
 #            return self.get_content()
 #        else:
-#            return self.filename()
+#            return self.filename
 
     def __getattribute__(self, attr):
         '''
@@ -181,7 +181,7 @@ class XyzFile(AtomCo):
 
     def load(self):
         "加载文件内容"
-        with open(self.filename(), 'r') as f:
+        with open(self.filename, 'r') as f:
             content_list = f.readlines()
         ntot = int(content_list[0].strip())  # total atom number
         step = int(str2list(content_list[1])[-1])  # iter step number
@@ -269,7 +269,7 @@ class PosCar(AtomCo):
     def load(self):
         "获取文件数据信息"
         "Load all information in POSCAR."
-        with open(self.filename(), 'r') as f:
+        with open(self.filename, 'r') as f:
             content_list = f.readlines()
         #get scale factor
         bases_const = float(content_list[1])
@@ -415,7 +415,7 @@ class XdatCar(AtomCo):
         self.load()
 
     def load(self):
-        with open(self.filename(), 'r') as f:
+        with open(self.filename, 'r') as f:
             # read lattice info
             self.system = f.readline().strip()
             self.bases_const = float(f.readline().strip())
@@ -432,7 +432,7 @@ class XdatCar(AtomCo):
 
     def __iter__(self):
         "generator which yield step number and iterative data."
-        with open(self.filename(), 'r') as f:
+        with open(self.filename, 'r') as f:
             # pass info lines
             for i in range(self.info_nline):
                 f.readline()

@@ -48,7 +48,7 @@ class XsdFile(AtomCo):
 
     def load(self):
         # get element tree
-        tree = ET.ElementTree(file=self.filename())
+        tree = ET.ElementTree(file=self.filename)
         self.tree = tree
 
         # MS version info

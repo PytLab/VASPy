@@ -131,7 +131,7 @@ class DosX(DataPlotter):
         content = ''
         for datalist in data:
             content += ('%12.8f'*ndata + '\n') % tuple(datalist)
-        with open(self.filename(), 'w') as f:
+        with open(self.filename, 'w') as f:
             f.write(content)
 
         return
@@ -194,7 +194,7 @@ class ElfCar(PosCar):
     def load(self):
         "Rewrite load method"
         PosCar.load(self)
-        with open(self.filename(), 'r') as f:
+        with open(self.filename, 'r') as f:
             for i in range(self.totline):
                 f.readline()
             #get dimension of 3d array

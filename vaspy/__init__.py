@@ -13,11 +13,7 @@ __all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter', 'incar']
 class VasPy(object):
     def __init__(self, filename):
         "Base class to be inherited by all classes in VASPy."
-        self.__filename = filename
-
-    def filename(self):
-        " Query function for bounded filename."
-        return self.__filename
+        self.filename = filename
 
 import logging
 
