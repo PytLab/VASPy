@@ -2,13 +2,15 @@
 
 import unittest
 
-from oszicar_test import OsziCarTest
 from incar_test import InCarTest
+from outcar_test import OutCarTest
+from oszicar_test import OsziCarTest
 
 
 def suite():
     suite = unittest.TestSuite([
         unittest.TestLoader().loadTestsFromTestCase(OsziCarTest),
+        unittest.TestLoader().loadTestsFromTestCase(OutCarTest),
         unittest.TestLoader().loadTestsFromTestCase(InCarTest)])
     
     return suite
