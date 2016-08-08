@@ -138,7 +138,7 @@ class OutCarTest(unittest.TestCase):
                         poscar="./testdata/POSCAR")
         coords, forces = outcar.forces()
         ret_index, ret_max_force = outcar.fmax(forces)
-        ref_index = 3
+        ref_index = 4
         ref_max_force = [-0.0, -0.0, -0.046234]
 
         self.assertEqual(ret_index, ref_index)

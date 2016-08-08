@@ -249,7 +249,8 @@ class OutCar(VasPy):
 
         Return:
         -------
-        The max force index and force vector.
+        The atom number with max force and force vector.
+        NOTE: atom number start from **1 NOT 0**
         """
         # Mask forces.
         masked_forces = self.__mask_forces(atom_forces, self.poscar.tf)
@@ -258,7 +259,7 @@ class OutCar(VasPy):
         max_force = max(masked_forces, key=lambda x: sum([i**2 for i in x]))
         index = masked_forces.index(max_force)
 
-        return index, max_force
+        return index + 1, max_force
 
     def forces(self, step=-1):
         """
