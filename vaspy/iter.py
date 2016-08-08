@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from vaspy import VasPy, PY2
+from vaspy.atomco import PosCar
 from vaspy.functions import line2list
 
 
@@ -152,13 +153,19 @@ class OutCar(VasPy):
 
     force_regex = re.compile(r"^ POSITION\s+TOTAL-FORCE\s*\(eV\/Angst\)$")
 
-    def __init__(self, filename='OUTCAR'):
+    def __init__(self, filename="OUTCAR", poscar="POSCAR"):
         """
         Create a OUTCAR file class.
 
+        Parameters:
+        -----------
+        filename: File name of OUTCAR, default name is "OUTCAR"(OUTCAR in current path).
+
+        poscar: File name of POSCAR, default value is "POSCAR"(POSCAR in current path).
+
         Example:
 
-        >>> a = OsziCar(filename='OUTCAR')
+        >>> a = OsziCar(filename='OUTCAR', poscar="POSCAR")
 
         Class attributes descriptions
         =======================================================================
@@ -168,6 +175,9 @@ class OutCar(VasPy):
           ===============    ==================================================
         """
         VasPy.__init__(self, filename)
+
+        # Get PosCar object.
+        self.poscar = PosCar(poscar)
 
     def __iter__(self):
         """
@@ -203,8 +213,33 @@ class OutCar(VasPy):
                         coordinates.append([x, y, z])
                         forces.append([fx, fy, fz])
 
-    @staticmethod
-    def fmax(atom_forces):
+    def __mask_forces(self, atom_forces):
+        """
+        Private helper function to use F/T info to mask forces.
+
+        Returns:
+        --------
+        Masked forces 2D array.
+        """
+        # Check atom forces.
+        if len(self.poscar.tf) != len(atom_forces):
+            msg = "Length of atom forces({}) must be equal to length of atoms({})."
+            msg = msg.format(len(self.poscar.tf), len(atom_forces))
+            raise ValueError(msg)
+
+        masked_forces = []
+        for tfs, forces in zip(self.poscar.tf, atom_forces):
+            masked_force = []
+            for tf, force in zip(tfs, forces):
+                if tf == "F":
+                    masked_force.append(0.0)
+                else:
+                    masked_force.append(force)
+            masked_forces.append(masked_force)
+
+        return masked_forces
+
+    def fmax(self, atom_forces):
         """
         Static method for getting the max forces vector and atom index.
 
@@ -216,8 +251,12 @@ class OutCar(VasPy):
         -------
         The max force index and force vector.
         """
-        max_force = max(atom_forces, key=lambda x: sum([i**2 for i in x]))
-        index = atom_forces.index(max_force)
+        # Mask forces.
+        masked_forces = self.__mask_forces(atom_forces)
+
+        # Get max forces.
+        max_force = max(masked_forces, key=lambda x: sum([i**2 for i in x]))
+        index = masked_forces.index(max_force)
 
         return index, max_force
 
