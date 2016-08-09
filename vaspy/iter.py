@@ -14,22 +14,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from vaspy import VasPy, PY2
+from vaspy import LazyProperty
 from vaspy.atomco import PosCar
 from vaspy.functions import line2list
-
-
-class lazy_property(object):
-    """
-    Descriptor for lazy property.
-    延迟初始化描述符.
-    """
-    def __init__(self, func):
-        self.func = func
-
-    def __get__(self, instance, owner):
-        val = self.func(instance)
-        setattr(instance, self.func.__name__, val)
-        return val
 
 
 class OsziCar(VasPy):
@@ -297,7 +284,7 @@ class OutCar(VasPy):
         elif step > i:
             raise ValueError("Illegal step {} (> {})".format(step, i))
 
-    @lazy_property
+    @LazyProperty
     def max_forces(self):
         """
         Function to get max force for every ionic step.

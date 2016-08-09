@@ -21,3 +21,16 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M:%S')
 
+
+class LazyProperty(object):
+    """
+    Descriptor for lazy property.
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, instance, owner):
+        val = self.func(instance)
+        setattr(instance, self.func.__name__, val)
+        return val
+
