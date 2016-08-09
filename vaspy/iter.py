@@ -288,7 +288,7 @@ class OutCar(VasPy):
             raise ValueError("Illegal step {} (> {})".format(step, i))
 
     @LazyProperty
-    def max_forces(self):
+    def total_forces(self):
         """
         Function to get max force for every ionic step.
         """
