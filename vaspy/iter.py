@@ -183,7 +183,8 @@ class OutCar(VasPy):
         # Get PosCar object.
         self.poscar = PosCar(poscar)
 
-    def __iter__(self):
+    @property
+    def force_iterator(self):
         """
         Return a generator yield ionic_step, coordinates, forces on atoms.
 
@@ -278,7 +279,7 @@ class OutCar(VasPy):
         -------
         Coordinates and forces for that step.
         """
-        for i, coord, forces in self.__iter__():
+        for i, coord, forces in self.force_iterator:
             if step != -1 and i == step:
                 return coord, forces
 
@@ -293,7 +294,7 @@ class OutCar(VasPy):
         Function to get max force for every ionic step.
         """
         max_forces = []
-        for _, _, forces in self.__iter__():
+        for _, _, forces in self.force_iterator:
             _, fvector = self.fmax(forces)
             max_force = np.linalg.norm(fvector)
             max_forces.append(max_force)
