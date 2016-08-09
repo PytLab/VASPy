@@ -18,6 +18,20 @@ from vaspy.atomco import PosCar
 from vaspy.functions import line2list
 
 
+class lazy_property(object):
+    """
+    Descriptor for lazy property.
+    延迟初始化描述符.
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, instance, owner):
+        val = self.func(instance)
+        setattr(instance, self.func.__name__, val)
+        return val
+
+
 class OsziCar(VasPy):
     def __init__(self, filename='OSZICAR'):
         """
@@ -264,6 +278,7 @@ class OutCar(VasPy):
     def forces(self, step=-1):
         """
         Function to get forces info for a specific step.
+        获取特定离子步的原子受力信息
 
         Parameters:
         -----------
@@ -281,4 +296,17 @@ class OutCar(VasPy):
             return coord, forces
         elif step > i:
             raise ValueError("Illegal step {} (> {})".format(step, i))
+
+    @lazy_property
+    def max_forces(self):
+        """
+        Function to get max force for every ionic step.
+        """
+        max_forces = []
+        for _, _, forces in self.__iter__():
+            _, fvector = self.fmax(forces)
+            max_force = np.linalg.norm(fvector)
+            max_forces.append(max_force)
+
+        return max_forces
 
