@@ -166,14 +166,17 @@ class OutCar(VasPy):
 
         Example:
 
-        >>> a = OsziCar(filename='OUTCAR', poscar="POSCAR")
+        >>> a = OutCar(filename='OUTCAR', poscar="POSCAR")
 
         Class attributes descriptions
-        ===================================================
+        =================================================================
           Attribute           Description
-          ===============    ==============================
+          ===============    ============================================
           filename            string, name of OUTCAR file
-          ===============    ==============================
+          max_forces          list of float, 每个离子步迭代的最大原子受力
+          last_max_force      float, 最后一步的最大原子受力
+          last_max_atom       int, 最后一步受力最大原子序号
+          ===============    ============================================
         """
         VasPy.__init__(self, filename)
 
@@ -296,4 +299,35 @@ class OutCar(VasPy):
             max_forces.append(max_force)
 
         return max_forces
+
+    @LazyProperty
+    def last_forces(self):
+        """
+        Function to get forces info of last ionic step.
+        """
+        _, forces = self.forces(-1)
+        return forces
+
+    @LazyProperty
+    def last_max_force(self):
+        """
+        Function to get the max force in last ionic step.
+
+        Returns:
+        --------
+        The max force value of last ionic step.
+        """
+        _, fvector = self.fmax(self.last_forces)
+        f = np.linalg.norm(fvector)
+
+        return f
+
+    @LazyProperty
+    def last_max_atom(self):
+        """
+        Function to get atom number with max force
+        in the last ionic step.
+        """
+        atom_number, _ = self.fmax(self.last_forces)
+        return atom_number
 
