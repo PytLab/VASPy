@@ -1,8 +1,13 @@
 import argparse
-import commands
 import logging
 import os
 import sys
+
+from vaspy import PY2
+if PY2:
+    import commands as subprocess
+else:
+    import subprocess
 
 import numpy as np
 
@@ -17,15 +22,15 @@ parser.add_argument("--xsd", help="create MaterStudio .xsd file",
 args = parser.parse_args()
 
 outcar = OutCar()
-max_num = outcar.max_force_atom
-force_info = outcar.atom_forces[max_num-1, :]
-pos = force_info[: 3].tolist()
-forces = force_info[3:].tolist()
+pos, forces = outcar.forces(-1)
+idx = outcar.last_max_atom - 1
+pos = pos[idx]
+forces = forces[idx]
 
-logging.info("{:<15s}: {}".format("max force atom", max_num))
+logging.info("{:<15s}: {}".format("max force atom", outcar.last_max_atom))
 logging.info("{:<15s}: ({}, {}, {})".format("atom position", *pos))
 logging.info("{:<15s}: {}, {}, {}".format("forces", *forces))
-logging.info("{:<15s}: {}\n".format("total-force", np.linalg.norm(forces)))
+logging.info("{:<15s}: {}\n".format("total-force", outcar.last_max_force))
 
 # Get fort.188 info.
 if os.path.exists('./fort.188'):
@@ -37,7 +42,7 @@ if os.path.exists('./fort.188'):
 
 # Create .xsd file.
 if args.xsd:
-    status, output = commands.getstatusoutput('ls *.xsd | head -1')
+    status, output = subprocess.getstatusoutput('ls *.xsd | head -1')
     if not output.endswith('.xsd'):
         logging.info("No .xsd file in current directory.")
         sys.exit(1)
@@ -47,5 +52,5 @@ if args.xsd:
     jobname = output.split('.')[0]
     filename = jobname + '-force.xsd'
     xsd.tofile(filename=filename)
-    print filename + " has been created."
+    logging.info(filename + " has been created.")
 

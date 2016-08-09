@@ -59,11 +59,15 @@ xsd.data = direct_coordinates
 # Get energy and force.
 oszicar = OsziCar()
 outcar = OutCar()
-xsd.force = outcar.total_forces[-1]
+
+# Get force and energy for specific step.
+idx = int(args.step)-1 if args.step else -1
+xsd.force = outcar.total_forces[idx]
 logging.info("Total Force --> {}".format(xsd.force))
-xsd.energy = oszicar.E0[-1]
+xsd.energy = oszicar.E0[idx]
 logging.info("Total Energy --> {}".format(xsd.energy))
 
 jobname = output.split('.')[0]
 xsd.tofile(filename=jobname+suffix)
+logging.info("{} created.".format(jobname+suffix))
 

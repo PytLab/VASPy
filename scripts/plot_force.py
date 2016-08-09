@@ -1,5 +1,5 @@
 '''
-    Script to plot total force trend.
+Script to plot total force trend.
 '''
 import sys
 import logging
