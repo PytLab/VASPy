@@ -29,12 +29,12 @@ class OutCarTest(unittest.TestCase):
         self.assertTrue(isinstance(outcar.poscar, PosCar))
 
         # Check lazy property.
-        ref_max_forces = [0.24345800000000001,
-                          0.16800399999999999,
-                          0.103559,
-                          0.046233999999999997]
-        ret_max_forces = outcar.max_forces
-        self.assertListEqual(ref_max_forces, ret_max_forces)
+        ref_total_forces = [0.24345800000000001,
+                            0.16800399999999999,
+                            0.103559,
+                            0.046233999999999997]
+        ret_total_forces = outcar.total_forces
+        self.assertListEqual(ref_total_forces, ret_total_forces)
 
         self.assertEqual(outcar.last_max_force, 0.046233999999999997)
         self.assertEqual(outcar.last_max_atom, 4)
