@@ -19,6 +19,8 @@ if PY2:
 else:
     import subprocess
 
+_logger = logging.getLogger("vaspy.script")
+
 
 if "__main__" == __name__:
 
@@ -62,7 +64,7 @@ if "__main__" == __name__:
         if os.path.exists(potdir + elem):
             potcar = potdir + elem + '/POTCAR'
         else:
-            logging('No POTCAR for ' + elem)
+            _logger.info('No POTCAR for ' + elem)
             sys.exit(1)
         subprocess.getstatusoutput('cat ' + potcar + ' >> ./POTCAR')
 
@@ -75,7 +77,7 @@ if "__main__" == __name__:
             kpoints.append(str(kpt))
     else:
         kpoints = [i.strip() for i in args.kpoints.split(",")]
-        logging.info("Set k-point -> {} {} {}".format(*kpoints))
+        _logger.info("Set k-point -> {} {} {}".format(*kpoints))
     kpt_str = ' '.join(kpoints)
     kpt_content = 'mesh auto\n0\nG\n' + kpt_str + '\n0 0 0\n'
     with open('KPOINTS', 'w') as f:
@@ -88,7 +90,7 @@ if "__main__" == __name__:
 
     # Change job name.
     content_list[1] = '#PBS -N ' + jobname + '\n'
-    logging.info("job name -> {}".format(jobname))
+    _logger.info("job name -> {}".format(jobname))
 
     # Change node number and cpu number.
     if args.nnode or args.ncpu:
@@ -101,12 +103,12 @@ if "__main__" == __name__:
         nnode = args.nnode if args.nnode else nnode
         ncpu = args.ncpu if args.ncpu else ncpu
         content_list[5] = "#PBS -l nodes={}:ppn={}\n".format(nnode, ncpu)
-        logging.info("nodes -> {}, ppn -> {}".format(nnode, ncpu))
+        _logger.info("nodes -> {}, ppn -> {}".format(nnode, ncpu))
 
     # Change node type.
     if args.queue:
         content_list[6] = "#PBS -q {}\n".format(args.queue)
-        logging.info("queue type -> {}".format(args.queue))
+        _logger.info("queue type -> {}".format(args.queue))
 
     with open('vasp.script', 'w') as f:
         f.writelines(content_list)
@@ -134,16 +136,16 @@ if "__main__" == __name__:
             (atom_idxs[0]+1, atom_idxs[1]+1, distance)
         with open('fort.188', 'w') as f:
             f.write(content)
-        logging.info("fort.188 has been created.")
-        logging.info('-'*20)
-        logging.info("atom number: {:<5d}{:<5d}".format(atom_idxs[0]+1, atom_idxs[1]+1))
-        logging.info("atom name: {} {}".format(*atom_names))
-        logging.info("distance: {:f}".format(distance))
-        logging.info('-'*20)
+        _logger.info("fort.188 has been created.")
+        _logger.info('-'*20)
+        _logger.info("atom number: {:<5d}{:<5d}".format(atom_idxs[0]+1, atom_idxs[1]+1))
+        _logger.info("atom name: {} {}".format(*atom_names))
+        _logger.info("distance: {:f}".format(distance))
+        _logger.info('-'*20)
 
         # Set IBRION = 1
         incar.set('IBRION', 1)
-        logging.info("{} -> {}".format("IBRION", "1"))
+        _logger.info("{} -> {}".format("IBRION", "1"))
 
     if PY2:
         pname_value_pairs = args.__dict__.iteritems()
@@ -153,7 +155,7 @@ if "__main__" == __name__:
     for pname, value in pname_value_pairs :
         if (value is not None) and (pname in incar.pnames):
             incar.set(pname, value)
-            logging.info("{} -> {}".format(pname, value))
+            _logger.info("{} -> {}".format(pname, value))
 
     # Generate new INCAR file.
     incar.tofile()

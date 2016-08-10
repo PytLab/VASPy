@@ -11,6 +11,8 @@ from vaspy.incar import InCar
 
 SHELL_COMMAND = "find ./ -name 'INCAR'"
 
+_logger = logging.getLogger("vaspy.script")
+
 if "__main__" == __name__:
 
     # Check command validity.
@@ -44,9 +46,9 @@ if "__main__" == __name__:
             continue
 
         for incar in incars:
-            logging.info("{} --> {} in {}.".format(pname, value, incar.filename()))
+            _logger.info("{} --> {} in {}.".format(pname, value, incar.filename()))
             incar.set(pname, value)
             incar.tofile()
 
-    logging.info("{} INCAR files ... ok.".format(len(incars)))
+    _logger.info("{} INCAR files ... ok.".format(len(incars)))
 

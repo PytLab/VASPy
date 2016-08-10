@@ -16,6 +16,8 @@ if PY2:
 else:
     import subprocess
 
+_logger = logging.getLogger("vaspy.script")
+
 
 if "__main__" == __name__:
 
@@ -51,7 +53,7 @@ if "__main__" == __name__:
 # create .xsd file
 status, output = subprocess.getstatusoutput('ls *.xsd | head -1')
 if not output.endswith('.xsd'):
-    logging.info("No .xsd file in current directory.")
+    _logger.info("No .xsd file in current directory.")
     sys.exit(1)
 xsd = matstudio.XsdFile(filename=output)
 xsd.data = direct_coordinates
@@ -63,11 +65,11 @@ outcar = OutCar()
 # Get force and energy for specific step.
 idx = int(args.step)-1 if args.step else -1
 xsd.force = outcar.total_forces[idx]
-logging.info("Total Force --> {}".format(xsd.force))
+_logger.info("Total Force --> {}".format(xsd.force))
 xsd.energy = oszicar.E0[idx]
-logging.info("Total Energy --> {}".format(xsd.energy))
+_logger.info("Total Energy --> {}".format(xsd.energy))
 
 jobname = output.split('.')[0]
 xsd.tofile(filename=jobname+suffix)
-logging.info("{} created.".format(jobname+suffix))
+_logger.info("{} created.".format(jobname+suffix))
 
