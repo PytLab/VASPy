@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
-#functions used in atomco
+
+import string
+
 import numpy as np
 
 
 def str2list(rawstr):
-    import string
     rawlist = rawstr.strip(string.whitespace).split(' ')
-    #remove space elements in list
+    # Remove space elements in list.
     cleanlist = [x for x in rawlist if x != ' ' and x != '']
     return cleanlist
 
