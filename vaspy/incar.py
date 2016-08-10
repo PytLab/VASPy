@@ -8,6 +8,8 @@ Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
 ========================================================================
 
 """
+import logging
+
 from vaspy import VasPy
 
 
@@ -30,6 +32,9 @@ class InCar(VasPy):
         super(self.__class__, self).__init__(filename)
         self.filename = filename
         self.load()
+
+        # Set logger.
+        self.__logger = logging.getLogger("vaspy.InCar")
 
     def load(self):
         "Load all data in INCAR."
@@ -122,6 +127,33 @@ class InCar(VasPy):
         setattr(self, pname, data)
 
         return
+
+    def pop(self, pname):
+        """
+        Delete a parameter from InCar object.
+
+        Returns:
+        --------
+        parameter name, parameter value.
+
+        Example:
+        --------
+        >>> incar_obj.del("ISIF")
+        """
+        if not hasattr(self, pname):
+            msg = "InCar has no parameter '{}'".format(pname)
+            self.__logger.warning(msg)
+            return
+
+        # Delete from pnames and datas.
+        idx = self.pnames.index(pname)
+        self.pnames.pop(idx)
+        data = self.datas.pop(idx)
+
+        # Delete attribute.
+        del self.__dict__[pname]
+
+        return pname, data
 
     def compare(self, another):
         """
