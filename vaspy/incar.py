@@ -212,7 +212,7 @@ class InCar(VasPy):
         else:
             return True
 
-    def tofile(self):
+    def tofile(self, filename=None):
         "Create INCAR file."
         content = '# Created by VASPy\n'
         for pname in self.pnames:
@@ -220,7 +220,12 @@ class InCar(VasPy):
                 raise ValueError('Unknown parameter: %s' % pname)
             data = str(getattr(self, pname))
             content += '%s = %s\n' % (pname, data)
-        with open(self.filename, 'w') as f:
+
+        # Write to file.
+        if filename is None:
+            filename = self.filename
+        with open(filename, 'w') as f:
             f.write(content)
 
         return
+
