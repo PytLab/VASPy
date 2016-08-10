@@ -37,7 +37,7 @@ if "__main__" == __name__:
     # Add all possible arguments in INCAR file.
     if os.path.exists("INCAR"):
         incar = InCar()
-        parameters = incar.pnames()
+        parameters = incar.pnames
         for parameter in parameters:
             help_info = "Set '{}' in INCAR".format(parameter)
             parser.add_argument("--{}".format(parameter), help=help_info)
@@ -151,7 +151,7 @@ if "__main__" == __name__:
         pname_value_pairs = args.__dict__.items()
 
     for pname, value in pname_value_pairs :
-        if (value is not None) and (pname in incar.pnames()):
+        if (value is not None) and (pname in incar.pnames):
             incar.set(pname, value)
             logging.info("{} -> {}".format(pname, value))
 

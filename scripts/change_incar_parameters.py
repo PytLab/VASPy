@@ -23,7 +23,7 @@ if "__main__" == __name__:
     incars = [InCar(incar_path) for incar_path in incar_paths]
 
     # Get all possible arguments.
-    set_list = [set(incar.pnames()) for incar in incars]
+    set_list = [set(incar.pnames) for incar in incars]
     possible_args = set.intersection(*set_list)
 
     # Set arguments for this script.
