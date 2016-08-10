@@ -120,8 +120,8 @@ class InCar(VasPy):
         """
         data = str(data)
         if hasattr(self, pname):
-            print ("Waring: %s is already in INCAR, " +
-                   "set to %s" % (pname, data))
+            msg = "{} is already in INCAR, set to {}".format(pname, data)
+            self.__logger.warning(msg)
         else:
             self.pnames.append(pname)
         setattr(self, pname, data)
