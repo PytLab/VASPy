@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
+
 """
 ========================================================================
 Provide electro-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, September 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, May 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, August 2016
 ========================================================================
 
 """
@@ -51,6 +52,9 @@ class DosX(DataPlotter):
           ============  =======================================
         """
         DataPlotter.__init__(self, filename=filename, field=' ', dtype=float)
+
+        # Set logger.
+        self.__logger = logging.getLogger("vaspy.DosX")
 
     def __add__(self, dosx_inst):
         sum_dosx = copy.deepcopy(self)
@@ -276,7 +280,7 @@ class ElfCar(PosCar):
             #expand elf_data and grid
             elf_data, grid = self.expand_data(self.elf_data, self.grid,
                                               widths=widths)
-            logging.info('data shape = %s', str(elf_data.shape))
+            self.__logger.info('data shape = %s', str(elf_data.shape))
             # now cut the cube
             if abs(distance) > 1:
                 raise ValueError('Distance must be between 0 and 1.')
@@ -308,8 +312,8 @@ class ElfCar(PosCar):
         #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
         x, y = np.ogrid[s]
-        logging.info('z shape = %s, x shape = %s, y shape = %s',
-                     str(z.shape), str(x.shape), str(y.shape))
+        self.__logger.info('z shape = %s, x shape = %s, y shape = %s',
+                           str(z.shape), str(x.shape), str(y.shape))
         mx, my = np.mgrid[s]
         #use cubic 2d interpolation
         interpfunc = interp2d(x, y, z, kind='cubic')
@@ -358,7 +362,7 @@ class ElfCar(PosCar):
     def plot_mcontour(self, ndim0, ndim1, z, show_mode):
         "use mayavi.mlab to plot contour."
         if not mayavi_installed:
-            logging.info("Mayavi is not installed on your device.")
+            self.__logger.info("Mayavi is not installed on your device.")
             return
         #do 2d interpolation
         #get slice object
@@ -400,7 +404,7 @@ class ElfCar(PosCar):
         }
         '''
         if not mayavi_installed:
-            logging.warning("Mayavi is not installed on your device.")
+            self.__logger.warning("Mayavi is not installed on your device.")
             return
         # set parameters
         widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
@@ -410,7 +414,7 @@ class ElfCar(PosCar):
         maxct = kwargs['maxct'] if 'maxct' in kwargs else maxdata
         # check maxct
         if maxct > maxdata:
-            logging.warning("maxct is larger than %f", maxdata)
+            self.__logger.warning("maxct is larger than %f", maxdata)
         opacity = kwargs['opacity'] if 'opacity' in kwargs else 0.6
         nct = kwargs['nct'] if 'nct' in kwargs else 5
         # plot surface
@@ -429,7 +433,7 @@ class ElfCar(PosCar):
     def plot_field(self, **kwargs):
         "plot scalar field for elf data"
         if not mayavi_installed:
-            logging.warning("Mayavi is not installed on your device.")
+            self.__logger.warning("Mayavi is not installed on your device.")
             return
         # set parameters
         vmin = kwargs['vmin'] if 'vmin' in kwargs else 0.0

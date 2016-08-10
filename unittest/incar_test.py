@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 '''
-    InCar单元测试.
+InCar单元测试.
 '''
 import unittest
 
