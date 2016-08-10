@@ -9,26 +9,29 @@ if PY2:
 else:
     import subprocess
 
+_logger = logging.getLogger("vaspy.script")
+
 if "__main__" == __name__:
     incar = InCar()
 
     # Move files.
-    cmd = "mv ../KPOINTS ./"
+    cmd = "cp ../KPOINTS ./"
     status, output = subprocess.getstatusoutput(cmd)
     if status:
         raise ValueError(output)
 
     # Change INCAR parameters.
-    incar.add("IBRION", 5)
-    logging.info("IBRION --> {}".format(5))
-    incar.add("POTIM", 0.05)
-    logging.info("POTIM --> {}".format(0.05))
-    incar.add("ISIF", 0)
-    logging.info("ISIF --> {}".format(0))
-    incar.add("NFREE", 2)
-    logging.info("NFREE --> {}".format(2))
+    parameters = [("IBRION", 5), ("POTIM", 0.05), ("ISIF", 0), ("NFREE", 2)]
+
+    for pname, value in parameters:
+        if hasattr(incar, pname):
+            incar.set(pname, value)
+        else:
+            incar.add(pname, value)
+        _logger.info("{} --> {}".format(pname, value))
+
     incar.pop("NCORE")
-    logging.info("Remove Paramter NCORE")
+    _logger.info("Remove Paramter NCORE")
 
     incar.tofile()
 
