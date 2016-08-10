@@ -51,9 +51,11 @@ class InCar(VasPy):
             setattr(self, pname, data)
 
         # Set parameter names and data lists.
-        sorted_pnames, sorted_datas = self.__sort_two_lists(tot_pnames, tot_datas)
-        self.pnames = sorted_pnames
-        self.datas = sorted_datas
+#        sorted_pnames, sorted_datas = self.__sort_two_lists(tot_pnames, tot_datas)
+#        self.pnames = sorted_pnames
+#        self.datas = sorted_datas
+        self.pnames = tot_pnames
+        self.datas = tot_datas
 
         return
 
