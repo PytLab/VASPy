@@ -9,6 +9,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, August 2016
 
 """
 import re
+from string import whitespace
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -151,8 +152,21 @@ class OsziCar(VasPy):
 
 
 class OutCar(VasPy):
-
+    # Regular expression for forces information.
     force_regex = re.compile(r"^ POSITION\s+TOTAL-FORCE\s*\(eV\/Angst\)$")
+    force_info = ("ion_step", "coordinates", "forces")
+
+    # Regular expression for frequency information.
+    float_regex = r"(\d+\.\d+)"
+    freq_regex = (r"^\s*(\d+)\s*(f|f\/i)\s*=\s*" +
+                  float_regex + r"\s*THz\s*" +
+                  float_regex + r"\s*2PiTHz\s*" +
+                  float_regex + r"\s*cm-1\s*" +
+                  float_regex + r"\s*meV\s*$")
+    freq_regex = re.compile(freq_regex)
+    freq_info = ("atom number", "freq type", "THz", "2PiTHz",
+                 "cm-1", "meV", "coordinates", "dxdydz")
+    title_regex = re.compile(r"\s*X\s*Y\s*Z\s*dx\s*dy\s*dz\s*")
 
     def __init__(self, filename="OUTCAR", poscar="POSCAR"):
         """
@@ -217,6 +231,37 @@ class OutCar(VasPy):
                         x, y, z, fx, fy, fz = line2list(line)
                         coordinates.append([x, y, z])
                         forces.append([fx, fy, fz])
+
+    def freq_iterator(self):
+        with open(self.filename, "r") as f:
+            collecting = False
+
+            for line in f:
+                freq = self.freq_regex.match(line)
+                title = self.title_regex.match(line)
+                empty_line = (line.strip(whitespace) == "")
+
+                if freq:
+                    freq_data = list(freq.groups())
+
+                # Collect start.
+                if title and not collecting:
+                    collecting = True
+                    coords, deltas = [], []
+                # Collect stop.
+                elif empty_line and collecting:
+                    collecting = False
+                    freq_data.append(coords)
+                    freq_data.append(deltas)
+                    freq_dict = dict(zip(self.freq_info, freq_data))
+                    yield freq_dict
+                # Collect data.
+                elif collecting:
+                    x, y, z, dx, dy, dz = line2list(line)
+                    coord = (x, y, z)
+                    delta = (dx, dy, dz)
+                    coords.append(coord)
+                    deltas.append(delta)
 
     def __mask_forces(self, atom_forces, tfs):
         """
