@@ -155,6 +155,46 @@ class OutCarTest(unittest.TestCase):
         self.assertEqual(ret_index, ref_index)
         self.assertListEqual(ret_max_force, ref_max_force)
 
+    def test_freq_iterator(self):
+        " Make sure we can get correct frequency iterator. "
+        outcar = OutCar(filename="./testdata/OUTCAR_freq",
+                        poscar="./testdata/POSCAR_freq")
+        freq_iter = outcar.freq_iterator
+        ret_freq_dict = next(freq_iter)
+
+        # Check.
+        ref_meV = "93.954209"
+        ret_meV = ret_freq_dict["meV"]
+        self.assertEqual(ref_meV, ret_meV)
+
+        ref_cm = "757.791533"
+        ret_cm = ret_freq_dict["cm-1"]
+        self.assertEqual(ref_cm, ret_cm)
+
+        ref_THz = "22.718019"
+        ret_THz = ret_freq_dict["THz"]
+        self.assertEqual(ref_THz, ret_THz)
+
+        ref_PiTHz = "142.741525"
+        ret_PiTHz = ret_freq_dict["2PiTHz"]
+        self.assertEqual(ref_PiTHz, ret_PiTHz)
+
+        ref_atom_number = "1"
+        ret_atom_number = ret_freq_dict["atom_number"]
+        self.assertEqual(ref_atom_number, ret_atom_number)
+
+        ref_freq_type = "f"
+        ret_freq_type = ret_freq_dict["freq_type"]
+        self.assertEqual(ref_freq_type, ret_freq_type)
+
+        ref_coord = (2.795628, 0.856184, 1.196977)
+        ret_coord = ret_freq_dict["coordinates"][0]
+        self.assertTupleEqual(ref_coord, ret_coord)
+
+        ref_delta = (0.078066, -0.028474, 0.674474)
+        ret_delta = ret_freq_dict["deltas"][-1]
+        self.assertTupleEqual(ref_delta, ret_delta)
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
