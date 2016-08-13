@@ -164,7 +164,7 @@ class OutCar(VasPy):
                   float_regex + r"\s*cm-1\s*" +
                   float_regex + r"\s*meV\s*$")
     freq_regex = re.compile(freq_regex)
-    freq_info = ("atom_number", "freq_type", "THz", "2PiTHz",
+    freq_info = ("index", "freq_type", "THz", "2PiTHz",
                  "cm-1", "meV", "coordinates", "deltas")
     title_regex = re.compile(r"\s*X\s*Y\s*Z\s*dx\s*dy\s*dz\s*")
 

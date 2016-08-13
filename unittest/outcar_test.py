@@ -179,9 +179,9 @@ class OutCarTest(unittest.TestCase):
         ret_PiTHz = ret_freq_dict["2PiTHz"]
         self.assertEqual(ref_PiTHz, ret_PiTHz)
 
-        ref_atom_number = "1"
-        ret_atom_number = ret_freq_dict["atom_number"]
-        self.assertEqual(ref_atom_number, ret_atom_number)
+        ref_index = "1"
+        ret_index = ret_freq_dict["index"]
+        self.assertEqual(ref_index, ret_index)
 
         ref_freq_type = "f"
         ret_freq_type = ret_freq_dict["freq_type"]
