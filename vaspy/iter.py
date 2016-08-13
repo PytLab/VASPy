@@ -164,8 +164,8 @@ class OutCar(VasPy):
                   float_regex + r"\s*cm-1\s*" +
                   float_regex + r"\s*meV\s*$")
     freq_regex = re.compile(freq_regex)
-    freq_info = ("atom number", "freq type", "THz", "2PiTHz",
-                 "cm-1", "meV", "coordinates", "dxdydz")
+    freq_info = ("atom_number", "freq_type", "THz", "2PiTHz",
+                 "cm-1", "meV", "coordinates", "deltas")
     title_regex = re.compile(r"\s*X\s*Y\s*Z\s*dx\s*dy\s*dz\s*")
 
     def __init__(self, filename="OUTCAR", poscar="POSCAR"):
@@ -231,37 +231,6 @@ class OutCar(VasPy):
                         x, y, z, fx, fy, fz = line2list(line)
                         coordinates.append([x, y, z])
                         forces.append([fx, fy, fz])
-
-    def freq_iterator(self):
-        with open(self.filename, "r") as f:
-            collecting = False
-
-            for line in f:
-                freq = self.freq_regex.match(line)
-                title = self.title_regex.match(line)
-                empty_line = (line.strip(whitespace) == "")
-
-                if freq:
-                    freq_data = list(freq.groups())
-
-                # Collect start.
-                if title and not collecting:
-                    collecting = True
-                    coords, deltas = [], []
-                # Collect stop.
-                elif empty_line and collecting:
-                    collecting = False
-                    freq_data.append(coords)
-                    freq_data.append(deltas)
-                    freq_dict = dict(zip(self.freq_info, freq_data))
-                    yield freq_dict
-                # Collect data.
-                elif collecting:
-                    x, y, z, dx, dy, dz = line2list(line)
-                    coord = (x, y, z)
-                    delta = (dx, dy, dz)
-                    coords.append(coord)
-                    deltas.append(delta)
 
     def __mask_forces(self, atom_forces, tfs):
         """
@@ -376,4 +345,39 @@ class OutCar(VasPy):
         """
         atom_number, _ = self.fmax(self.last_forces)
         return atom_number
+
+    @property
+    def freq_iterator(self):
+        """
+        Return frequency iterator to generating frequency related data.
+        """
+        with open(self.filename, "r") as f:
+            collecting = False
+
+            for line in f:
+                freq = self.freq_regex.match(line)
+                title = self.title_regex.match(line)
+                empty_line = (line.strip(whitespace) == "")
+
+                if freq:
+                    freq_data = list(freq.groups())
+
+                # Collect start.
+                if title and not collecting:
+                    collecting = True
+                    coords, deltas = [], []
+                # Collect stop.
+                elif empty_line and collecting:
+                    collecting = False
+                    freq_data.append(coords)
+                    freq_data.append(deltas)
+                    freq_dict = dict(zip(self.freq_info, freq_data))
+                    yield freq_dict
+                # Collect data.
+                elif collecting:
+                    x, y, z, dx, dy, dz = line2list(line)
+                    coord = (x, y, z)
+                    delta = (dx, dy, dz)
+                    coords.append(coord)
+                    deltas.append(delta)
 
