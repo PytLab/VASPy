@@ -195,6 +195,19 @@ class OutCarTest(unittest.TestCase):
         ret_delta = ret_freq_dict["deltas"][-1]
         self.assertTupleEqual(ref_delta, ret_delta)
 
+    def test_zpe(self):
+        " Make sure we can get correct ZPE. "
+        outcar = OutCar(filename="./testdata/OUTCAR_freq",
+                        poscar="./testdata/POSCAR_freq")
+        ref_zpe = 0.11601370899999999
+        ret_zpe = outcar.zpe
+        self.assertEqual(ref_zpe, ret_zpe)
+
+        # Check OUTCAR without freq info.
+        outcar = OutCar(filename="./testdata/OUTCAR",
+                        poscar="./testdata/POSCAR")
+        self.assertFalse(hasattr(outcar, "zpe"))
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
