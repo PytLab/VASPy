@@ -381,3 +381,18 @@ class OutCar(VasPy):
                     coords.append(coord)
                     deltas.append(delta)
 
+    @LazyProperty
+    def zpe(self):
+        """
+        Function to get Zero Point Energy(ZPE) in eV.
+        """
+        try:
+            next(self.freq_iterator)
+        except StopIteration:
+            msg = "'{}' has no attribtue '{}'".format(self.__class__.__name__, "zpe")
+            raise AttributeError(msg)
+
+        E = [float(freq_dict["meV"]) for freq_dict in self.freq_iterator]
+
+        return sum(E)/2000.0
+
