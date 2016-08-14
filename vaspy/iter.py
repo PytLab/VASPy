@@ -190,6 +190,7 @@ class OutCar(VasPy):
           max_forces          list of float, 每个离子步迭代的最大原子受力
           last_max_force      float, 最后一步的最大原子受力
           last_max_atom       int, 最后一步受力最大原子序号
+          zpe                 float, 零点能
           ===============    ============================================
         """
         VasPy.__init__(self, filename)
