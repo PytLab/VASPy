@@ -153,7 +153,7 @@ class OsziCar(VasPy):
 
 class OutCar(VasPy):
     # Regular expression for forces information.
-    force_regex = re.compile(r"^ POSITION\s+TOTAL-FORCE\s*\(eV\/Angst\)$")
+    force_regex = re.compile(r"^\s*POSITION\s+TOTAL-FORCE\s*\(eV\/Angst\)\s*$")
     force_info = ("ion_step", "coordinates", "forces")
 
     # Regular expression for frequency information.
@@ -205,8 +205,7 @@ class OutCar(VasPy):
         Private helper function to check consistency of POSCAR and OUTCAR.
         """
         # Coordinates in OUTCAR.
-        force_iter = self.force_iterator
-        _, coords, _ = next(force_iter)
+        _, coords, _ = next(self.force_iterator)
         coords_outcar = np.array(coords)
         shape_outcar = coords_outcar.shape
 
