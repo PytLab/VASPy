@@ -197,6 +197,28 @@ class OutCar(VasPy):
         # Get PosCar object.
         self.poscar = PosCar(poscar)
 
+        # Check parameter validity.
+        self.__check()
+
+    def __check(self):
+        """
+        Private helper function to check consistency of POSCAR and OUTCAR.
+        """
+        # Coordinates in OUTCAR.
+        force_iter = self.force_iterator
+        _, coords, _ = next(force_iter)
+        coords_outcar = np.array(coords)
+        shape_outcar = coords_outcar.shape
+
+        # Coordinates in POSCAR
+        coords_poscar = self.poscar.data
+        shape_poscar = coords_poscar.shape
+
+        if shape_poscar != shape_outcar:
+            msg = "Shape of data in POSCAR({}) and OUTCAR({}) are different."
+            msg = msg.format(shape_poscar, shape_outcar)
+            raise ValueError(msg)
+
     @property
     def force_iterator(self):
         """
