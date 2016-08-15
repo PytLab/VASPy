@@ -19,6 +19,7 @@ if "__main__" == __name__:
     status, output = subprocess.getstatusoutput(cmd)
     if status:
         raise ValueError(output)
+    _logger.info(cmd)
 
     # Change INCAR parameters.
     parameters = [("IBRION", 5), ("POTIM", 0.05), ("ISIF", 0), ("NFREE", 2)]
