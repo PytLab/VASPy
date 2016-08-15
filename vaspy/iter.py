@@ -403,19 +403,45 @@ class OutCar(VasPy):
                     coords.append(coord)
                     deltas.append(delta)
 
+    def check_freq_exists(func):
+        """
+        Decorator to check if frequency information exists.
+        """
+        def wrapper(self):
+            try:
+                next(self.freq_iterator)
+            except StopIteration:
+                msg = "'{}' has no attribtue '{}'".format(self.__class__.__name__, "zpe")
+                raise AttributeError(msg)
+            return func(self)
+
+        return wrapper
+
+
     @LazyProperty
+    @check_freq_exists
     def zpe(self):
         """
         Function to get Zero Point Energy(ZPE) in eV.
         """
-        try:
-            next(self.freq_iterator)
-        except StopIteration:
-            msg = "'{}' has no attribtue '{}'".format(self.__class__.__name__, "zpe")
-            raise AttributeError(msg)
-
         E = [float(freq_dict["meV"])
              for freq_dict in self.freq_iterator if freq_dict["freq_type"] == "f"]
 
         return sum(E)/2000.0
+
+    @LazyProperty
+    @check_freq_exists
+    def freq_types(self):
+        """
+        Function to get frequency types.
+        """
+        freq_types = [freq_dict["freq_type"] for freq_dict in self.freq_iterator]
+
+        # Reshape.
+        try:
+            freq_types = np.array(freq_types).reshape((-1, 3)).tolist()
+        except ValueError:
+            raise ValueError("Number of frequency can not be divided by 3.")
+
+        return freq_types
 
