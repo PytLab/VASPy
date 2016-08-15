@@ -10,11 +10,12 @@ if "__main__" == __name__:
     freq_types = outcar.freq_types
 
     # Frequency info.
-    tfs = poscar.tf.tolist()
     _logger.info("{:<10s}{:<20s}".format("atom", "freq_type"))
-    _logger.info("_"*25)
+    _logger.info("-"*25)
+
+    idx = 0
+    tfs = poscar.tf.tolist()
     for atom_idx, tf in enumerate(tfs):
-        idx = 0
         if tf == ["T", "T", "T"]:
             _logger.info("{:<10d}{:<5s}{:<5s}{:<5s}".format(atom_idx+1, *freq_types[idx]))
             idx += 1
