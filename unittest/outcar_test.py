@@ -208,6 +208,16 @@ class OutCarTest(unittest.TestCase):
                         poscar="./testdata/POSCAR")
         self.assertFalse(hasattr(outcar, "zpe"))
 
+    def test_freq_types(self):
+        " Make sure we can get correct frequency types. "
+        outcar = OutCar(filename="./testdata/OUTCAR_freq",
+                        poscar="./testdata/POSCAR_freq")
+        ref_freq_types = [["f", "f", "f"],
+                          ["f", "f", "f/i"]]
+        ret_freq_types = outcar.freq_types
+
+        self.assertListEqual(ref_freq_types, ret_freq_types)
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
