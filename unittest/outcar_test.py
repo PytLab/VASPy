@@ -199,7 +199,7 @@ class OutCarTest(unittest.TestCase):
         " Make sure we can get correct ZPE. "
         outcar = OutCar(filename="./testdata/OUTCAR_freq",
                         poscar="./testdata/POSCAR_freq")
-        ref_zpe = 0.11601370899999999
+        ref_zpe = 0.1117761635
         ret_zpe = outcar.zpe
         self.assertEqual(ref_zpe, ret_zpe)
 

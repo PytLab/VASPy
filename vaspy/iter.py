@@ -414,7 +414,8 @@ class OutCar(VasPy):
             msg = "'{}' has no attribtue '{}'".format(self.__class__.__name__, "zpe")
             raise AttributeError(msg)
 
-        E = [float(freq_dict["meV"]) for freq_dict in self.freq_iterator]
+        E = [float(freq_dict["meV"])
+             for freq_dict in self.freq_iterator if freq_dict["freq_type"] == "f"]
 
         return sum(E)/2000.0
 
