@@ -191,6 +191,7 @@ class OutCar(VasPy):
           last_max_force      float, 最后一步的最大原子受力
           last_max_atom       int, 最后一步受力最大原子序号
           zpe                 float, 零点能
+          freq_types          list of str, 频率类型列表
           ===============    ============================================
         """
         VasPy.__init__(self, filename)
