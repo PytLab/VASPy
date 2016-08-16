@@ -152,10 +152,13 @@ class OsziCar(VasPy):
 
 
 class OutCar(VasPy):
+
+    # 抽取原子受力信息的正则表达式
     # Regular expression for forces information.
     force_regex = re.compile(r"^\s*POSITION\s+TOTAL-FORCE\s*\(eV\/Angst\)\s*$")
     force_info = ("ion_step", "coordinates", "forces")
 
+    # 抽取频率信息的正则表达式
     # Regular expression for frequency information.
     float_regex = r"(\d+\.\d+)"
     freq_regex = (r"^\s*(\d+)\s*(f|f\/i)\s*=\s*" +
@@ -223,6 +226,7 @@ class OutCar(VasPy):
     @property
     def force_iterator(self):
         """
+        返回每个离子步迭代的步数，坐标和每个原子受力信息。
         Return a generator yield ionic_step, coordinates, forces on atoms.
 
         NOTE: ionic step starts from 1 **NOT 0**.
@@ -283,7 +287,7 @@ class OutCar(VasPy):
 
     def fmax(self, atom_forces):
         """
-        Static method for getting the max forces vector and atom index.
+        Function to get the max forces vector and atom index.
 
         Parameters:
         -----------
@@ -305,8 +309,8 @@ class OutCar(VasPy):
 
     def forces(self, step=-1):
         """
-        Function to get forces info for a specific step.
         获取特定离子步的原子受力信息
+        Function to get forces info for a specific step.
 
         Parameters:
         -----------
@@ -328,6 +332,7 @@ class OutCar(VasPy):
     @LazyProperty
     def total_forces(self):
         """
+        获取离子步迭代的原子最大受力（合力）列表。
         Function to get max force for every ionic step.
         """
         max_forces = []
@@ -341,6 +346,7 @@ class OutCar(VasPy):
     @LazyProperty
     def last_forces(self):
         """
+        最后离子步所有原子受力矩阵。
         Function to get forces info of last ionic step.
         """
         _, forces = self.forces(-1)
@@ -349,6 +355,7 @@ class OutCar(VasPy):
     @LazyProperty
     def last_max_force(self):
         """
+        最后一步离子步中原子最大受力（合力）。
         Function to get the max force in last ionic step.
 
         Returns:
@@ -363,6 +370,7 @@ class OutCar(VasPy):
     @LazyProperty
     def last_max_atom(self):
         """
+        最后一个离子步受力最大原子的原子序号。
         Function to get atom number with max force
         in the last ionic step.
         """
@@ -372,6 +380,7 @@ class OutCar(VasPy):
     @property
     def freq_iterator(self):
         """
+        返回频率信息字典的迭代器。
         Return frequency iterator to generating frequency related data.
         """
         with open(self.filename, "r") as f:
@@ -423,6 +432,7 @@ class OutCar(VasPy):
     @check_freq_exists
     def zpe(self):
         """
+        从OUTCAR的频率信息返回计算的零点能。
         Function to get Zero Point Energy(ZPE) in eV.
         """
         E = [float(freq_dict["meV"])
@@ -434,6 +444,7 @@ class OutCar(VasPy):
     @check_freq_exists
     def freq_types(self):
         """
+        获取频率类型列表。
         Function to get frequency types.
         """
         freq_types = [freq_dict["freq_type"] for freq_dict in self.freq_iterator]
