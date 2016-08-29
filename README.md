@@ -27,9 +27,7 @@ Make it **easier** to manipulate VASP files.
 ### 安装方法:
 
 ``` shell
-$ pip install numpy
-
-$ pip install matplotlib
+$ pip install -r requirements.txt
 
 $ python setup.py install
 ```
