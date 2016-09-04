@@ -8,6 +8,8 @@ Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
 ==============================================================
 
 """
+from os import getcwd
+import logging
 import xml.etree.cElementTree as ET
 
 import numpy as np
@@ -44,6 +46,11 @@ class XsdFile(AtomCo):
           ============  =======================================================
         """
         super(self.__class__, self).__init__(filename)
+
+        # Set logger.
+        self.__logger = logging.getLogger("vaspy.XsdFile")
+
+        # Load data in xsd.
         self.load()
 
     def load(self):
@@ -68,8 +75,8 @@ class XsdFile(AtomCo):
         # lattice parameters
         self.bases = self.get_bases()
 
-        # thermodynamic info.
-        self.get_thermo_info()
+        # info in Name property.
+        self.get_name_info()
 
         return
 
@@ -168,7 +175,7 @@ class XsdFile(AtomCo):
 
         return
 
-    def get_thermo_info(self):
+    def get_name_info(self):
         """
         获取文件中能量，力等数据.
         """
@@ -178,10 +185,19 @@ class XsdFile(AtomCo):
             break
 
         # Get thermo data.
-        fieldnames = ["energy", "force", "magnetism"]
-        for key, value in zip(fieldnames, info.split()):
-            data = float(value.split(':')[-1].strip())
-            setattr(self, key, data)
+        fieldnames = ["energy", "force", "magnetism", "path"]
+        try:
+            for key, value in zip(fieldnames, info.split()):
+                data = float(value.split(':')[-1].strip())
+                setattr(self, key, data)
+        except:
+            # Set default values.
+            self.force, self.energy, self.magnetism = 0.0, 0.0, 0.0
+
+            msg = "No data info in Name property '{}'".format(info)
+            self.__logger.warning(msg)
+        finally:
+            self.path = getcwd()
 
         return
 
@@ -206,7 +222,7 @@ class XsdFile(AtomCo):
         self.update_bases()
 
         # Thermodynamic info.
-        self.update_thermo()
+        self.update_name()
 
         return
 
@@ -239,15 +255,19 @@ class XsdFile(AtomCo):
 
         return
 
-    def update_thermo(self):
+    def update_name(self):
         """
-        更新ElementTree中能量力等信息。
+        更新ElementTree中能量，力，作业路径等信息。
         """
         value = ""
         for key, attr in zip(['E', 'F', 'M'], ["energy", "force", "magnetism"]):
             data = getattr(self, attr)
             value += "{}:{} ".format(key, data)
         value = value.strip()
+
+        # Get current path.
+        path = getcwd()
+        value = "{} {}:{}".format(value, "P", path)
 
         for elem in self.tree.iter("SymmetrySystem"):
             elem.set("Name", value)
