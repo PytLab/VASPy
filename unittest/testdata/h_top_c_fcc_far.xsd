@@ -63,7 +63,7 @@
 		<Property Name="VanDerWaalsEnergy" DefinedOn="ClassicalEnergyHolder" Type="Double"/>
 		<Property Name="_Stress" DefinedOn="MatterSymmetrySystem" Type="Matrix"/>
 		<Property Name="_TrajectoryStress" DefinedOn="MatterSymmetrySystem" Type="Matrix"/>
-		<SymmetrySystem ID="2" Mapping="3" Children="ci(113):113+4" Normalized="1" Name="E:-100.896 F:0.048 M:8.25" OverspecificationTolerance="0.05" PeriodicDisplayType="Original" HasSymmetryHistory="1">
+		<SymmetrySystem ID="2" Mapping="3" Children="ci(113):113+4" Normalized="1" Name="E:-100.896 F:0.048 M:8.25 P:/data/home/zjshao/co-oxidation/Pt-111/O2-dissociation/spin/lying-bridge/FS" OverspecificationTolerance="0.05" PeriodicDisplayType="Original" HasSymmetryHistory="1">
 			<MappingSet ID="117" SymmetryDefinition="23" ActiveSystem="2" NumFamilies="1" OwnsTotalConstraintMapping="1" TotalConstraintMapping="3">
 				<MappingFamily ID="118" NumImageMappings="79">
 					<IdentityMapping ID="119" Element="1,0,0,0,0,1,0,0,0,0,1,0" Constraint="1,0,0,0,0,1,0,0,0,0,1,0" MappedObjects="ci(110):19+4,90+24,116" DefectObjects="23,120,114,115,121" NumImages="110" NumDefects="5">
