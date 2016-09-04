@@ -64,7 +64,6 @@ MANIFEST
 #test data file
 vaspy/*CAR
 vaspy/*.xsd
-OUTCAR
 vaspy/DOS/*
 
 # Vim temp files
