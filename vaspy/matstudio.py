@@ -188,7 +188,10 @@ class XsdFile(AtomCo):
         fieldnames = ["energy", "force", "magnetism", "path"]
         try:
             for key, value in zip(fieldnames, info.split()):
-                data = float(value.split(':')[-1].strip())
+                if key != "path":
+                    data = float(value.split(':')[-1].strip())
+                else:
+                    data = value.split(":")[-1].strip()
                 setattr(self, key, data)
         except:
             # Set default values.
