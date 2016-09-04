@@ -50,26 +50,26 @@ if "__main__" == __name__:
         direct_coordinates = contcar.data
         suffix = '-y.xsd'
 
-# create .xsd file
-status, output = subprocess.getstatusoutput('ls *.xsd | head -1')
-if not output.endswith('.xsd'):
-    _logger.info("No .xsd file in current directory.")
-    sys.exit(1)
-xsd = matstudio.XsdFile(filename=output)
-xsd.data = direct_coordinates
+    # create .xsd file
+    status, output = subprocess.getstatusoutput('ls *.xsd | head -1')
+    if not output.endswith('.xsd'):
+        _logger.info("No .xsd file in current directory.")
+        sys.exit(1)
+    xsd = matstudio.XsdFile(filename=output)
+    xsd.data = direct_coordinates
 
-# Get energy and force.
-oszicar = OsziCar()
-outcar = OutCar()
+    # Get energy and force.
+    oszicar = OsziCar()
+    outcar = OutCar()
 
-# Get force and energy for specific step.
-idx = int(args.step)-1 if args.step else -1
-xsd.force = outcar.total_forces[idx]
-_logger.info("Total Force --> {}".format(xsd.force))
-xsd.energy = oszicar.E0[idx]
-_logger.info("Total Energy --> {}".format(xsd.energy))
+    # Get force and energy for specific step.
+    idx = int(args.step)-1 if args.step else -1
+    xsd.force = outcar.total_forces[idx]
+    _logger.info("Total Force --> {}".format(xsd.force))
+    xsd.energy = oszicar.E0[idx]
+    _logger.info("Total Energy --> {}".format(xsd.energy))
 
-jobname = output.split('.')[0]
-xsd.tofile(filename=jobname+suffix)
-_logger.info("{} created.".format(jobname+suffix))
+    jobname = output.split('.')[0]
+    xsd.tofile(filename=jobname+suffix)
+    _logger.info("{} created.".format(jobname+suffix))
 
