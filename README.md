@@ -4,7 +4,7 @@
 [![platform](https://img.shields.io/badge/python-3.5-green.svg)](https://www.python.org/downloads/release/python-351/)
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-2710/)
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![versions](https://img.shields.io/badge/versions%20-%20%200.7.0-blue.svg)](https://github.com/PytLab/VASPy)
+[![versions](https://img.shields.io/badge/versions%20-%20%200.7.1-blue.svg)](https://github.com/PytLab/VASPy)
 
 ### An **object-oriented** VASP file processing library.
 
