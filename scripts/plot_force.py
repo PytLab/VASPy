@@ -1,5 +1,5 @@
 '''
-Script to plot total force trend.
+    Script to plot total force trend.
 '''
 import sys
 import logging
@@ -15,11 +15,11 @@ outcar = OutCar()
 fig = plt.figure(figsize=(12, 7))
 ax = fig.add_subplot(111)
 forces = outcar.total_forces
-step = range(forces.shape[0])
+step = range(len(forces))
 ax.plot(step, forces, linewidth=5, color='#4F94CD')
 ax.set_xlabel(r'$\bf{Step}$')
 ax.set_ylabel(r'$\bf{Total Force(eV/Angst)}$')
-ax.set_ylim(0.0, np.max(forces)+0.5)
+ax.set_ylim(0.0, max(forces)+0.5)
 
 if len(sys.argv) > 1 and 'movie' in sys.argv[1]:
     ax.plot([], [], linewidth=3, color='#CD6889')  # line below forces
@@ -41,7 +41,7 @@ if len(sys.argv) > 1 and 'movie' in sys.argv[1]:
 
         return line_below, line_above
 
-    anim = animation.FuncAnimation(fig, animate, init_func=init, frames=forces.shape[0],
+    anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(forces),
                                    interval=1.0/16*1000, blit=True)
     anim.save('max_forces.MP4')
 
