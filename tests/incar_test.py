@@ -2,8 +2,9 @@
 '''
 InCar单元测试.
 '''
-import os
+
 import inspect
+import os
 import unittest
 
 from vaspy.incar import InCar
