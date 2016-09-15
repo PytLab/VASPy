@@ -1,4 +1,4 @@
-matplotlib==1.5.2
-numpy==1.11.1
-scipy==0.18.0
-mayavi==4.5.0
+matplotlib>=1.5.2
+numpy>=1.11.1
+scipy>=0.18.0
+
