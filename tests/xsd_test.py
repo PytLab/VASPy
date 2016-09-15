@@ -3,6 +3,8 @@
 XsdFile类单元测试.
 """
 
+import inspect
+import os
 import unittest
 
 import numpy as np
@@ -10,6 +12,10 @@ import matplotlib
 matplotlib.use('Agg')
 
 from vaspy.matstudio import XsdFile
+
+# Get INCAR file name.
+abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+path = abs_path + "/testdata"
 
 
 class XsdTest(unittest.TestCase):
@@ -20,10 +26,11 @@ class XsdTest(unittest.TestCase):
 
     def test_construction_query(self):
         " Test OutCar construction and query functions. "
-        xsd = XsdFile(filename="./testdata/h_top_c_fcc_far.xsd")
+        filename = path + "/h_top_c_fcc_far.xsd"
+        xsd = XsdFile(filename)
 
         # Check query functions.
-        self.assertEqual(xsd.filename, "./testdata/h_top_c_fcc_far.xsd")
+        self.assertEqual(xsd.filename, filename)
         self.assertEqual(xsd.bases_const, 1.0)
 
         ref_bases = [[  4.31035158,  -2.48858265,   0.        ],
@@ -40,7 +47,8 @@ class XsdTest(unittest.TestCase):
 
     def test_get_name_info(self):
         " Make sure we can get correct info from Name property. "
-        xsd = XsdFile(filename="./testdata/h_top_c_fcc_far_noname.xsd")
+        filename = path + "/h_top_c_fcc_far_noname.xsd"
+        xsd = XsdFile(filename)
 
         self.assertEqual(xsd.force, 0.0)
         self.assertEqual(xsd.energy, 0.0)
@@ -49,7 +57,8 @@ class XsdTest(unittest.TestCase):
 
     def test_update_name(self):
         "Make sure we can update Name info."
-        xsd = XsdFile(filename="./testdata/h_top_c_fcc_far_noname.xsd")
+        filename = path + "/h_top_c_fcc_far_noname.xsd"
+        xsd = XsdFile(filename)
 
         xsd.update_name()
 

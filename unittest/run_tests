@@ -1,4 +1,0 @@
-#!/bin/sh
-
-python ./vaspy_tests.py
-

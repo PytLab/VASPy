@@ -2,6 +2,9 @@
 '''
     OsziCar类单元测试.
 '''
+
+import inspect
+import os
 import unittest
 
 import numpy as np
@@ -10,6 +13,9 @@ matplotlib.use('Agg')
 
 from vaspy.iter import OsziCar
 
+# Get INCAR file name.
+abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+path = abs_path + "/testdata"
 
 class OsziCarTest(unittest.TestCase):
 
@@ -19,7 +25,8 @@ class OsziCarTest(unittest.TestCase):
 
     def test_attrs(self):
         "Make sure load() effects"
-        oszicar = OsziCar('./testdata/OSZICAR') 
+        filename = path + "/OSZICAR"
+        oszicar = OsziCar(filename) 
         for var in oszicar.vars:
             self.assertTrue(hasattr(oszicar, var))
 
@@ -28,7 +35,8 @@ class OsziCarTest(unittest.TestCase):
 
     def test_esort(self):
         "Make sure the esort() effects"
-        oszicar = OsziCar('./testdata/OSZICAR') 
+        filename = path + "/OSZICAR"
+        oszicar = OsziCar(filename) 
         srted = oszicar.esort('E0', 2)
         shouldbe = np.array([(-101.21186, 326), (-101.21116, 324)],
                             dtype=[('var', '<f8'), ('step', '<i4')])
@@ -39,7 +47,8 @@ class OsziCarTest(unittest.TestCase):
 
     def test_plot(self):
         "Make sure object could plot"
-        oszicar = OsziCar('./testdata/OSZICAR') 
+        filename = path + "/OSZICAR"
+        oszicar = OsziCar(filename) 
         plot = oszicar.plot('E0', mode='save')
         self.assertTrue(isinstance(plot, matplotlib.figure.Figure))
 

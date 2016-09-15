@@ -3,6 +3,8 @@
 OutCar类单元测试.
 """
 
+import inspect
+import os
 import unittest
 
 import numpy as np
@@ -11,6 +13,10 @@ matplotlib.use('Agg')
 
 from vaspy.atomco import PosCar
 from vaspy.iter import OutCar
+
+# Get INCAR file name.
+abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+path = abs_path + "/testdata"
 
 
 class OutCarTest(unittest.TestCase):
@@ -21,11 +27,13 @@ class OutCarTest(unittest.TestCase):
 
     def test_construction_query(self):
         " Test OutCar construction and query functions. "
-        outcar = OutCar(filename="./testdata/OUTCAR",
-                        poscar="./testdata/POSCAR")
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
+        outcar = OutCar(filename=filename,
+                        poscar=poscar)
 
         # Check query functions.
-        self.assertEqual(outcar.filename, "./testdata/OUTCAR")
+        self.assertEqual(outcar.filename, filename)
         self.assertTrue(isinstance(outcar.poscar, PosCar))
 
         # Check lazy property.
@@ -42,8 +50,11 @@ class OutCarTest(unittest.TestCase):
     def test_forces(self):
         " Make sure we can get correct forces data."
         # {{{
-        outcar = OutCar(filename="./testdata/OUTCAR",
-                        poscar="./testdata/POSCAR")
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
+        outcar = OutCar(filename=filename,
+                        poscar=poscar)
+
         coords, forces = outcar.forces()
 
         ref_coords = [[1.78441, 0.85618, 2.29204],
@@ -127,8 +138,10 @@ class OutCarTest(unittest.TestCase):
 
     def test_mask_forces(self):
         " Test private helper function __mask_forces()."
-        outcar = OutCar(filename="./testdata/OUTCAR",
-                        poscar="./testdata/POSCAR")
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
+        outcar = OutCar(filename=filename, poscar=poscar)
+
         tfs = [["T", "T", "T"],
                ["F", "F", "F"],
                ["F", "T", "F"]]
@@ -145,8 +158,10 @@ class OutCarTest(unittest.TestCase):
 
     def test_fmax(self):
         " Make sure we can get correct max forces. "
-        outcar = OutCar(filename="./testdata/OUTCAR",
-                        poscar="./testdata/POSCAR")
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
+        outcar = OutCar(filename=filename, poscar=poscar)
+
         coords, forces = outcar.forces()
         ret_index, ret_max_force = outcar.fmax(forces)
         ref_index = 4
@@ -157,8 +172,10 @@ class OutCarTest(unittest.TestCase):
 
     def test_freq_iterator(self):
         " Make sure we can get correct frequency iterator. "
-        outcar = OutCar(filename="./testdata/OUTCAR_freq",
-                        poscar="./testdata/POSCAR_freq")
+        filename = path + "/OUTCAR_freq"
+        poscar = path + "/POSCAR_freq"
+        outcar = OutCar(filename=filename, poscar=poscar)
+
         freq_iter = outcar.freq_iterator
         ret_freq_dict = next(freq_iter)
 
@@ -197,21 +214,27 @@ class OutCarTest(unittest.TestCase):
 
     def test_zpe(self):
         " Make sure we can get correct ZPE. "
-        outcar = OutCar(filename="./testdata/OUTCAR_freq",
-                        poscar="./testdata/POSCAR_freq")
+        filename = path + "/OUTCAR_freq"
+        poscar = path + "/POSCAR_freq"
+        outcar = OutCar(filename=filename, poscar=poscar)
+
         ref_zpe = 0.1117761635
         ret_zpe = outcar.zpe
         self.assertEqual(ref_zpe, ret_zpe)
 
         # Check OUTCAR without freq info.
-        outcar = OutCar(filename="./testdata/OUTCAR",
-                        poscar="./testdata/POSCAR")
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
+        outcar = OutCar(filename=filename, poscar=poscar)
+
         self.assertFalse(hasattr(outcar, "zpe"))
 
     def test_freq_types(self):
         " Make sure we can get correct frequency types. "
-        outcar = OutCar(filename="./testdata/OUTCAR_freq",
-                        poscar="./testdata/POSCAR_freq")
+        filename = path + "/OUTCAR_freq"
+        poscar = path + "/POSCAR_freq"
+        outcar = OutCar(filename=filename, poscar=poscar)
+
         ref_freq_types = [["f", "f", "f"],
                           ["f", "f", "f/i"]]
         ret_freq_types = outcar.freq_types
@@ -219,6 +242,6 @@ class OutCarTest(unittest.TestCase):
         self.assertListEqual(ref_freq_types, ret_freq_types)
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(OutCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
 
