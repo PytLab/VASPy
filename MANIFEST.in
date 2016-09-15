@@ -1,6 +1,6 @@
-include *.md
+include README.rst
 include requirements.txt
 include LICENSE
-recursive-include scripts *.py
-recursive-include unittest *.py
+recursive-include scripts *
+recursive-include tests *
 
