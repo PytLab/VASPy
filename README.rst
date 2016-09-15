@@ -18,7 +18,7 @@ VASPy
     :target: LICENSE
     :alt: Software License
 
-.. image:: https://img.shields.io/badge/versions%20-%20%200.7.3-blue.svg
+.. image:: https://img.shields.io/badge/versions%20-%20%200.7.5-blue.svg
     :target: https://github.com/PytLab/VASPy
     :alt: versions
 
