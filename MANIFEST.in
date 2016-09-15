@@ -1,3 +1,6 @@
 include *.md
-recursive-include vaspy *.py
+include requirements.txt
+include LICENSE
 recursive-include scripts *.py
+recursive-include unittest *.py
+
