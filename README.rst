@@ -23,33 +23,26 @@ VASPy
     :alt: versions
 
 
-Introduction/简介
------------------
+Introduction
+------------
 
-VASPy is a pure Python library designed to make ease and quick to manipulate VASP files.
+VASPy is a pure Python library designed to make it easy and quick to manipulate VASP files.
 
-Make it **easier** to manipulate VASP files.
+You can use VASPy to manipulate VASP files in command lins or write your own python scripts to process VASP files and visualize VASP data.
+In `/scripts <https://github.com/PytLab/VASPy/tree/master/scripts>`_ there are some scripts written by me for daily use.
 
-处理VASP文件从未如此 **灵活** **简单**
-
-***VASPy*** 是一个纯python编写的处理VASP文件的框架
-
-使用者可以使用***VASPy***的接口简单快捷的编写处理VASP文件的脚本，也可以在命令行直接操作VASP文件。
-
-兼容 Python2.7.x 与 Python3.x
-
-`/scripts <https://github.com/PytLab/VASPy/tree/master/scripts>`_ 下是本人根据自己的需求，使用VASPy所写的一些脚本，可作为参考。
-
-Installation/安装
------------------
+Installation
+------------
 Via pip(recommend)::
+
     pip install vaspy
 
 From source::
+
     python setup.py install
 
-Examples/应用举例
------------------
+Examples
+--------
 
 manipulate splited DOS file in command-line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,6 +84,7 @@ Visualize ELFCAR
     >>> a.plot_field()     # 绘制标量场
 
 **Output**
+
 .. image:: https://github.com/PytLab/VASPy/blob/master/pic/contour2d.png
 
 .. image:: https://github.com/PytLab/VASPy/blob/master/pic/contours.png
