@@ -34,11 +34,15 @@ In `/scripts <https://github.com/PytLab/VASPy/tree/master/scripts>`_ , there are
 
 Installation
 ------------
-Via pip(recommend)::
+1. Via pip(recommend)::
 
     pip install vaspy
 
-From source::
+2. Via easy_install::
+
+    easy_install vaspy
+
+3. From source::
 
     python setup.py install
 
