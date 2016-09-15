@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 Script to create xsd file from VASP outputs.
 '''

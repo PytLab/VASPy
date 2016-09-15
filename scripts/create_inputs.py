@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
     Script to convert .xsd file to VASP input files.
 '''

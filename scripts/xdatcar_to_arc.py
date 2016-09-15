@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
     Script to convert XDATCAR to *.arc file to display in Material Studio.
 '''

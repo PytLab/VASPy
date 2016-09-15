@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 Modify recursively parameters in all INCAR file.
 '''

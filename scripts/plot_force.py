@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
     Script to plot total force trend.
 '''
