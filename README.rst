@@ -29,7 +29,8 @@ Introduction
 VASPy is a pure Python library designed to make it easy and quick to manipulate VASP files.
 
 You can use VASPy to manipulate VASP files in command lins or write your own python scripts to process VASP files and visualize VASP data.
-In `/scripts <https://github.com/PytLab/VASPy/tree/master/scripts>`_ there are some scripts written by me for daily use.
+
+In `/scripts <https://github.com/PytLab/VASPy/tree/master/scripts>`_ , there are some scripts written by me for daily use.
 
 Installation
 ------------
