@@ -27,8 +27,8 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib
   - source activate test-environment
   - python setup.py install  # install vaspy
+
 # command to run tests
 script:
-  - cd unittest
-  - python vaspy_tests.py  # test OsziCar
+  - python setup.py test
 
