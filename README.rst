@@ -14,13 +14,18 @@ VASPy
     :target: https://www.python.org/downloads/release/python-2710
     :alt: platform
 
-.. image:: https://img.shields.io/badge/license-MIT-blue.svg
-    :target: LICENSE
-    :alt: Software License
-
-.. image:: https://img.shields.io/badge/versions%20-%20%200.7.5-blue.svg
-    :target: https://github.com/PytLab/VASPy
+.. image:: https://img.shields.io/badge/pypi-v0.7.5-blue.svg
+    :target: https://pypi.python.org/pypi/vaspy/
     :alt: versions
+
+.. image:: https://img.shields.io/github/issues/PytLab/VASPy.svg
+    :target: https://github.com/PytLab/VASPy/issues
+
+.. image:: https://img.shields.io/github/stars/PytLab/VASPy.svg
+    :target: https://github.com/PytLab/VASPy/stargazers
+
+.. image:: https://img.shields.io/github/forks/PytLab/VASPy.svg
+    :target: https://github.com/PytLab/VASPy/network
 
 
 Introduction
