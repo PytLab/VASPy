@@ -59,7 +59,7 @@ Installation
 
 """
 
-requires = [
+install_requires = [
     'numpy>=1.11.1',
     'matplotlib>=1.5.2',
     'scipy>=0.18.0',
@@ -100,7 +100,7 @@ setup(author=author,
       description=description,
       license=license,
       long_description=long_description,
-      setup_requires=requires,
+      install_requires=install_requires,
       maintainer=maintainer,
       name=name,
       packages=find_packages(),
