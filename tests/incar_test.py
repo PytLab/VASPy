@@ -8,10 +8,8 @@ import os
 import unittest
 
 from vaspy.incar import InCar
+from tests import path
 
-# Get INCAR file name.
-abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-path = abs_path + "/testdata"
 
 class InCarTest(unittest.TestCase):
 

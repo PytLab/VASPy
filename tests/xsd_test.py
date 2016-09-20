@@ -13,9 +13,7 @@ matplotlib.use('Agg')
 
 from vaspy.matstudio import XsdFile
 
-# Get INCAR file name.
-abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-path = abs_path + "/testdata"
+from tests import path
 
 
 class XsdTest(unittest.TestCase):

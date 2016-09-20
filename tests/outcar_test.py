@@ -14,9 +14,7 @@ matplotlib.use('Agg')
 from vaspy.atomco import PosCar
 from vaspy.iter import OutCar
 
-# Get INCAR file name.
-abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-path = abs_path + "/testdata"
+from tests import path
 
 
 class OutCarTest(unittest.TestCase):

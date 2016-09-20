@@ -3,8 +3,6 @@
     OsziCar类单元测试.
 '''
 
-import inspect
-import os
 import unittest
 
 import numpy as np
@@ -13,9 +11,8 @@ matplotlib.use('Agg')
 
 from vaspy.iter import OsziCar
 
-# Get INCAR file name.
-abs_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-path = abs_path + "/testdata"
+from tests import path
+
 
 class OsziCarTest(unittest.TestCase):
 
