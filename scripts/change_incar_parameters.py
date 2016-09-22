@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 '''
 Modify recursively parameters in all INCAR file.
 '''
@@ -8,6 +7,7 @@ import commands
 import logging
 
 
+from vaspy import PY2
 from vaspy.incar import InCar
 
 SHELL_COMMAND = "find ./ -name 'INCAR'"
@@ -38,16 +38,16 @@ if "__main__" == __name__:
 
     # Change parameters for all incars.
     if PY2:
-        pname_value_pairs = args.__dict__.iteritems()
+        pname_value_pairs = args_space.__dict__.iteritems()
     else:
-        pname_value_pairs = args.__dict__.items()
+        pname_value_pairs = args_space.__dict__.items()
 
     for pname, value in pname_value_pairs :
         if value is None:
             continue
 
         for incar in incars:
-            _logger.info("{} --> {} in {}.".format(pname, value, incar.filename()))
+            _logger.info("{} --> {} in {}.".format(pname, value, incar.filename))
             incar.set(pname, value)
             incar.tofile()
 
