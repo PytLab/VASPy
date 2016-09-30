@@ -1,5 +1,6 @@
 import logging
 import sys
+import os
 
 if sys.version > "3":
     PY2 = False
@@ -23,7 +24,13 @@ logger.addHandler(console_hdlr)
 
 class VasPy(object):
     def __init__(self, filename):
-        "Base class to be inherited by all classes in VASPy."
+        """
+        Base class to be inherited by all classes in VASPy.
+        """
+        # Check filename validity.
+        if not os.path.exists(filename):
+            raise ValueError("{} not exist.".format(filename))
+
         self.filename = filename
 
 
