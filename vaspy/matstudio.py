@@ -14,8 +14,10 @@ import xml.etree.cElementTree as ET
 
 import numpy as np
 
+from vaspy import VasPy, LazyProperty
 from vaspy.atomco import AtomCo
 from vaspy.errors import UnmatchedDataShape
+from vaspy.functions import str2list
 
 
 class XsdFile(AtomCo):
@@ -340,4 +342,66 @@ class XsdFile(AtomCo):
         self.tree.write(filename)
 
         return
+
+
+class ArcFile(VasPy):
+    def __init__(self, filename):
+        """
+        Create a Material Studio *.arc file class.
+        """
+        super(ArcFile, self).__init__(filename)
+
+        # Set logger.
+        self.__logger = logging.getLogger("vaspy.ArcFile")
+
+    @property
+    def coords_iterator(self):
+        """
+        Return generator for Cartisan coordinates in arc file iteration.
+        返回每个轨迹的所有原子的笛卡尔坐标
+        """
+        with open(self.filename, "r") as f:
+            collecting = False
+            coords = []
+            for line in f:
+                line = line.strip()
+                if not collecting and line.startswith("PBC "):  # NOTE: Use "PBC " to tell "PBC=" apart
+                    collecting = True
+                elif collecting and line.startswith("end"):
+                    collecting = False
+                    yield np.array(coords)
+                    coords = []
+                # Collect coordinates data.
+                elif collecting:
+                    line_list = str2list(line)
+                    coord = [float(c) for c in line_list[1: 4]]
+                    coords.append(coord)
+
+    @LazyProperty
+    def lengths(self):
+        """
+        Lengths of axes of supercell.
+        晶格基向量长度。
+        """
+        with open(self.filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("PBC "):
+                    line_list = str2list(line)
+                    return [float(l) for l in line_list[1: 4]]
+        return None
+
+    @LazyProperty
+    def angles(self):
+        """
+        Angels of axes of supercell in Degrees.
+        晶格基向量夹角（角度）。
+        """
+        with open(self.filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("PBC "):
+                    line_list = str2list(line)
+                    return [float(l) for l in line_list[4: 7]]
+        return None
 
