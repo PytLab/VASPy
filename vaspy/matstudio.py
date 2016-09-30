@@ -348,6 +348,21 @@ class ArcFile(VasPy):
     def __init__(self, filename):
         """
         Create a Material Studio *.arc file class.
+
+        Example:
+
+        >>> a = ArcFile("00-05.arc")
+
+        Class attributes descriptions
+        ================================================================
+         Attribute         Description
+         ===============  ==============================================
+         filename          string, name of arc file.
+         coords_iterator   generator, yield Cartisan coordinates in
+                           numpy array.
+         lengths           list of float, lengths of lattice axes.
+         angles            list of float, angles of lattice axes.
+        ================  ==============================================
         """
         super(ArcFile, self).__init__(filename)
 
