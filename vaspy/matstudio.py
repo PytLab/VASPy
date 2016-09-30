@@ -4,7 +4,7 @@
 Provide Material Studio markup file class which do operations on these files.
 =============================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, October 2016
 ==============================================================
 
 """
@@ -410,7 +410,7 @@ class ArcFile(VasPy):
     def angles(self):
         """
         Angels of axes of supercell in Degrees.
-        晶格基向量夹角（角度）。
+        晶格基向量夹角(角度)。
         """
         with open(self.filename, "r") as f:
             for line in f:
