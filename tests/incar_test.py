@@ -150,6 +150,6 @@ class InCarTest(unittest.TestCase):
         # NEED IMPLEMENTATIN
         pass
 
-if "__main__" == __name__:
+if "__main__" == __name__: 
     suite = unittest.TestLoader().loadTestsFromTestCase(InCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite) 
