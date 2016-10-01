@@ -47,7 +47,7 @@ class XsdFile(AtomCo):
           bases          np.array, basis vectors of space, dtype=np.float64
           ============  =======================================================
         """
-        super(self.__class__, self).__init__(filename)
+        super(XsdFile, self).__init__(filename)
 
         # Set logger.
         self.__logger = logging.getLogger("vaspy.XsdFile")
@@ -431,7 +431,7 @@ class ArcFile(VasPy):
             elements = []
             for line in f:
                 line = line.strip()
-                if not collecting and line.startswith("PBC "):  # NOTE: Use "PBC " to tell "PBC=" apart
+                if not collecting and line.startswith("PBC "):
                     collecting = True
                 elif collecting and line.startswith("end"):
                     collecting = False
@@ -441,4 +441,44 @@ class ArcFile(VasPy):
                     line_list = str2list(line)
                     element = line_list[0]
                     elements.append(element)
+
+
+class XtdFile(XsdFile):
+    def __init__(self, filename, arcname=None):
+        """
+        Create Material Studio *.xtd file class.
+
+        Example:
+
+        >>> a = XtdFile(filename='00-04.xtd', arcname="00-04.arc")
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute        Description
+          ==============  =====================================================
+          filename         string, name of *.xtd file.
+          arcname          string, name of *.arc file.
+          coords_iterator  generator, yield direct coordinates.
+          =====================================================================
+
+        """
+        super(XtdFile, self).__init__(filename)
+
+        if arcname is not None:
+            self.arcfile = ArcFile(arcname)
+        else:
+            self.arcfile = None
+
+    @property
+    def coords_iterator(self):
+        """
+        Return generator which yields direct coordinates.
+        返回生成器生成相对坐标矩阵。
+        """
+        if self.arcfile is None:
+            raise ValueError("No ArcFile object in XtdFile.")
+
+        for cart_coords in self.arcfile.coords_iterator:
+           dir_coords = self.cart2dir(self.bases, cart_coords)
+           yield dir_coords
 
