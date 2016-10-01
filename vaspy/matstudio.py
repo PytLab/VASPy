@@ -4,7 +4,7 @@
 Provide Material Studio markup file class which do operations on these files.
 =============================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, October 2016
 ==============================================================
 
 """
@@ -14,8 +14,10 @@ import xml.etree.cElementTree as ET
 
 import numpy as np
 
+from vaspy import VasPy, LazyProperty
 from vaspy.atomco import AtomCo
 from vaspy.errors import UnmatchedDataShape
+from vaspy.functions import str2list
 
 
 class XsdFile(AtomCo):
@@ -45,7 +47,7 @@ class XsdFile(AtomCo):
           bases          np.array, basis vectors of space, dtype=np.float64
           ============  =======================================================
         """
-        super(self.__class__, self).__init__(filename)
+        super(XsdFile, self).__init__(filename)
 
         # Set logger.
         self.__logger = logging.getLogger("vaspy.XsdFile")
@@ -340,4 +342,143 @@ class XsdFile(AtomCo):
         self.tree.write(filename)
 
         return
+
+
+class ArcFile(VasPy):
+    def __init__(self, filename):
+        """
+        Create a Material Studio *.arc file class.
+
+        Example:
+
+        >>> a = ArcFile("00-05.arc")
+
+        Class attributes descriptions
+        ================================================================
+         Attribute         Description
+         ===============  ==============================================
+         filename          string, name of arc file.
+         coords_iterator   generator, yield Cartisan coordinates in
+                           numpy array.
+         lengths           list of float, lengths of lattice axes.
+         angles            list of float, angles of lattice axes.
+        ================  ==============================================
+        """
+        super(ArcFile, self).__init__(filename)
+
+        # Set logger.
+        self.__logger = logging.getLogger("vaspy.ArcFile")
+
+    @property
+    def coords_iterator(self):
+        """
+        Return generator for Cartisan coordinates in arc file iteration.
+        返回每个轨迹的所有原子的笛卡尔坐标
+        """
+        with open(self.filename, "r") as f:
+            collecting = False
+            coords = []
+            for line in f:
+                line = line.strip()
+                if not collecting and line.startswith("PBC "):  # NOTE: Use "PBC " to tell "PBC=" apart
+                    collecting = True
+                elif collecting and line.startswith("end"):
+                    collecting = False
+                    yield np.array(coords)
+                    coords = []
+                # Collect coordinates data.
+                elif collecting:
+                    line_list = str2list(line)
+                    coord = [float(c) for c in line_list[1: 4]]
+                    coords.append(coord)
+
+    @LazyProperty
+    def lengths(self):
+        """
+        Lengths of axes of supercell.
+        晶格基向量长度。
+        """
+        with open(self.filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("PBC "):
+                    line_list = str2list(line)
+                    return [float(l) for l in line_list[1: 4]]
+        return None
+
+    @LazyProperty
+    def angles(self):
+        """
+        Angels of axes of supercell in Degrees.
+        晶格基向量夹角(角度)。
+        """
+        with open(self.filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("PBC "):
+                    line_list = str2list(line)
+                    return [float(l) for l in line_list[4: 7]]
+        return None
+
+    @LazyProperty
+    def elements(self):
+        """
+        Element name of all atom in lattice.
+        晶格中的所有元素种类名称。
+        """
+        with open(self.filename, "r") as f:
+            collecting = False
+            elements = []
+            for line in f:
+                line = line.strip()
+                if not collecting and line.startswith("PBC "):
+                    collecting = True
+                elif collecting and line.startswith("end"):
+                    collecting = False
+                    return elements
+                # Collect coordinates data.
+                elif collecting:
+                    line_list = str2list(line)
+                    element = line_list[0]
+                    elements.append(element)
+
+
+class XtdFile(XsdFile):
+    def __init__(self, filename, arcname=None):
+        """
+        Create Material Studio *.xtd file class.
+
+        Example:
+
+        >>> a = XtdFile(filename='00-04.xtd', arcname="00-04.arc")
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute        Description
+          ==============  =====================================================
+          filename         string, name of *.xtd file.
+          arcname          string, name of *.arc file.
+          coords_iterator  generator, yield direct coordinates.
+          =====================================================================
+
+        """
+        super(XtdFile, self).__init__(filename)
+
+        if arcname is not None:
+            self.arcfile = ArcFile(arcname)
+        else:
+            self.arcfile = None
+
+    @property
+    def coords_iterator(self):
+        """
+        Return generator which yields direct coordinates.
+        返回生成器生成相对坐标矩阵。
+        """
+        if self.arcfile is None:
+            raise ValueError("No ArcFile object in XtdFile.")
+
+        for cart_coords in self.arcfile.coords_iterator:
+           dir_coords = self.cart2dir(self.bases, cart_coords)
+           yield np.array(dir_coords)
 
