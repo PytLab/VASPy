@@ -8,6 +8,7 @@ Script to create neb input files from Material Studio trajectory file.
 import argparse
 import logging
 import os
+import re
 import sys
 
 import numpy as np
