@@ -83,6 +83,24 @@ class ArcTest(unittest.TestCase):
 
         self.assertListEqual(ret_coords, ref_coords)
 
+    def test_elements(self):
+        " Test query function elements(). "
+        filename = path + "/00-04.arc" 
+        arc = ArcFile(filename)
+
+        ref_elements = ['Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt',
+                        'Pt', 'Pt', 'Pt', 'Pt', 'Pt', 'O']
+
+        ret_elements = arc.elements
+
+        self.assertListEqual(ref_elements, ret_elements)
+
 if "__main__" == __name__:
     suite = unittest.TestLoader().loadTestsFromTestCase(ArcTest)
     unittest.TextTestRunner(verbosity=2).run(suite) 
