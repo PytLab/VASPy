@@ -420,3 +420,25 @@ class ArcFile(VasPy):
                     return [float(l) for l in line_list[4: 7]]
         return None
 
+    @LazyProperty
+    def elements(self):
+        """
+        Element name of all atom in lattice.
+        晶格中的所有元素种类名称。
+        """
+        with open(self.filename, "r") as f:
+            collecting = False
+            elements = []
+            for line in f:
+                line = line.strip()
+                if not collecting and line.startswith("PBC "):  # NOTE: Use "PBC " to tell "PBC=" apart
+                    collecting = True
+                elif collecting and line.startswith("end"):
+                    collecting = False
+                    return elements
+                # Collect coordinates data.
+                elif collecting:
+                    line_list = str2list(line)
+                    element = line_list[0]
+                    elements.append(element)
+
