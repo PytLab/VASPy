@@ -4,7 +4,7 @@
 Provide coordinate file class which do operations on these files.
 ===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
-Updated by PytLab <shaozhengjiang@gmail.com>, July 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, October 2016
 
 ==============================================================
 
@@ -28,9 +28,10 @@ class AtomCo(VasPy):
 #            return self.filename
 
     def __getattribute__(self, attr):
-        '''
+        """
+        Make sure we can return the newest data and tf.
         确保dict能够及时根据data, tf值的变化更新.
-        '''
+        """
         if attr == 'atomco_dict':
             return self.get_atomco_dict(self.data)
         elif attr == 'tf_dict':
@@ -43,7 +44,9 @@ class AtomCo(VasPy):
             raise CarfileValueError('Atom numbers mismatch!')
 
     def get_atomco_dict(self, data):
-        "根据已获取的data和atoms, atoms_num, 获取atomco_dict"
+        """
+        根据已获取的data和atoms, atoms_num, 获取atomco_dict
+        """
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
         idx_list = [sum(self.atoms_num[:i])
                     for i in range(1, len(self.atoms)+1)]
@@ -60,7 +63,9 @@ class AtomCo(VasPy):
         return atomco_dict
 
     def get_tf_dict(self, tf):
-        "根据已获取的tf和atoms, atoms_num, 获取tf_dict"
+        """
+        根据已获取的tf和atoms, atoms_num, 获取tf_dict
+        """
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
         idx_list = [sum(self.atoms_num[:i])
                     for i in range(1, len(self.atoms)+1)]
@@ -89,7 +94,10 @@ class AtomCo(VasPy):
 
     @content_decorator
     def get_xyz_content(self):
-        "获取最新.xyz文件内容字符串"
+        """
+        Get xyz file content.
+        获取最新.xyz文件内容字符串
+        """
         ntot = "%12d\n" % self.ntot
         step = "STEP =%9d\n" % self.step
         data = atomdict2str(self.atomco_dict, self.atoms)
@@ -99,7 +107,10 @@ class AtomCo(VasPy):
 
     @content_decorator
     def get_poscar_content(self):
-        "根据对象数据获取poscar文件内容字符串"
+        """
+        Get POSCAR content.
+        根据对象数据获取poscar文件内容字符串
+        """
         content = 'Created by VASPy\n'
         bases_const = " %.9f\n" % self.bases_const
         # bases
@@ -123,7 +134,10 @@ class AtomCo(VasPy):
         return content
 
     def get_volume(self):
-        "Get volume of slab(Angstrom^3)"
+        """
+        Get volume of slab(Angstrom^3)
+        获取晶格体积
+        """
         if hasattr(self, 'bases_const') and hasattr(self, 'bases'):
             bases = self.bases_const*self.bases
             volume = np.linalg.det(bases)

@@ -480,5 +480,5 @@ class XtdFile(XsdFile):
 
         for cart_coords in self.arcfile.coords_iterator:
            dir_coords = self.cart2dir(self.bases, cart_coords)
-           yield dir_coords
+           yield np.array(dir_coords)
 
