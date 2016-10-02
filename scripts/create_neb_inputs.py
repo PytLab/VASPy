@@ -6,9 +6,11 @@ Script to create neb input files from Material Studio trajectory file.
 """
 
 import argparse
+import glob
 import logging
 import os
 import re
+import shutil
 import sys
 
 import numpy as np
@@ -77,6 +79,11 @@ if "__main__" == __name__:
             f.write(poscar_content)
         _logger.info("{} created.".format(poscar_name))
 
+    # Move OUTCAR to 00 & XX.
+    if glob.glob("OUTCAR_*"):
+        shutil.move("OUTCAR_00", "./00/OUTCAR")
+        shutil.move("OUTCAR_XX", "./{}/OUTCAR".format(dirname))
+
     # Number of images.
     n_images = idx - 1
 
@@ -113,7 +120,7 @@ if "__main__" == __name__:
 
     # Modify INCAR parameters.
     incar = InCar()
-    incar.IBRION = 3
+    incar.set("IBRION", 3)
     neb_parameters = [("IOPT", 1),
                       ("ICHAIN", 0),
                       ("LCLIMB", ".TRUE."),

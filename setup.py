@@ -110,3 +110,4 @@ setup(author=author,
       version=version,
       test_suite="tests",
       classifiers=classifiers)
+
