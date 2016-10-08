@@ -72,3 +72,7 @@ vaspy/DOS/*
 
 # Pictures
 *.png
+
+# ctags
+tags
+
