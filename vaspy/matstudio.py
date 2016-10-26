@@ -99,6 +99,20 @@ class XsdFile(AtomCo):
 
         return bases
 
+    def __get_identity_mappings(self):
+        """
+        Private helper function to get IdentityMapping tag.
+        获取IdentityMapping标签对象.
+        """
+        # Find IdentityMapping tag using Xpath.
+        identity_mappings = self.tree.findall('.//IdentityMapping')
+
+        if not identity_mappings:
+            msg = 'No IdentityMapping tag found.'
+            raise ValueError(msg)
+
+        return identity_mappings
+
     def get_atom_info(self):
         "获取和原子相关的信息, 直接进行属性赋值"
         # atom info
@@ -110,10 +124,14 @@ class XsdFile(AtomCo):
         atom_names = []
         atom_name_dict = {}
 
-        for elem in self.tree.iter('Atom3d'):
-            if 'XYZ' in elem.attrib:
+        identity_mappings = self.__get_identity_mappings()
 
-                # atom name and number
+        # For each IdentityMapping tag.
+        for identity_mapping in identity_mappings:
+
+            # For each Atom3d tag in IdentityMapping.
+            for elem in identity_mapping.iter('Atom3d'):
+                # Atom name and number
                 atom = elem.attrib['Components']
                 if atom not in natoms_dict:
                     natoms_dict.setdefault(atom, 1)
@@ -121,8 +139,17 @@ class XsdFile(AtomCo):
                 else:
                     natoms_dict[atom] += 1
 
-                # coordinates
-                xyz = elem.attrib['XYZ']  # string
+                # Coordinates
+                # NOTE: In bulk the origin point may not have coordinate,
+                #       so use '0.0,0.0,0.0' as default value.
+                if 'XYZ' not in elem.attrib:
+                    xyz = '0.0,0.0,0.0'
+                    msg = ("Found an Atom3d tag without 'XYZ' attribute" +
+                           ", set to {}").format(xyz)
+                    self.__logger.info(msg)
+                else:
+                    xyz = elem.attrib['XYZ']
+
                 coordinate = [float(i.strip()) for i in xyz.split(',')]
                 if atom not in atomco_dict:
                     atomco_dict.setdefault(atom, [coordinate])
@@ -233,17 +260,31 @@ class XsdFile(AtomCo):
 
     def update_atoms(self):
         """
-        更新ElementTree原子相关的值"
+        更新ElementTree原子相关的值
         update attribute values about atoms in element tree.
         """
+        # Find <IdentityMapping> tag.
+        identity_mappings = self.__get_identity_mappings()
+
+        # Loop over all atom type.
         for atom in self.atoms:
-            idx = 0  # index for coordinate
-            for elem in self.tree.iter('Atom3d'):
-                # xyz value
-                if 'XYZ' in elem.attrib and elem.attrib['Components'] == atom:
+            # Index for atom with same type.
+            idx = 0
+            # Loop over all IdentityMapping tags.
+            for identity_mapping in identity_mappings:
+                # Loop over all Atom3d tags in IdentityMapping.
+                for elem in identity_mapping.iter('Atom3d'):
+                    if elem.attrib['Components'] != atom:
+                        continue
+                    # XYZ value
                     xyz = self.atomco_dict[atom][idx]  # list of float
                     xyz = ','.join([str(v) for v in xyz])
-                    elem.set('XYZ', xyz)
+                    if 'XYZ' not in elem.attrib:
+                        msg = ("Found an Atom3d tag without 'XYZ' attribute" +
+                               ", set to {}").format(xyz)
+                        self.__logger.info(msg)
+                    elem.attrib['XYZ'] = xyz
+
                     # TF value
                     tf = self.tf_dict[atom][idx]
                     tf = ','.join(tf)
@@ -254,7 +295,8 @@ class XsdFile(AtomCo):
                     elif tf == 'T,T,T':
                         if 'RestrictedProperties' in elem.attrib:
                             elem.attrib.pop('RestrictedProperties')
-                    #atom name
+
+                    # Atom name.
                     elem.set('Name', self.atom_names_dict[atom][idx])
                     idx += 1
 
