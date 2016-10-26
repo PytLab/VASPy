@@ -6,6 +6,7 @@ XsdFile类单元测试.
 import inspect
 import os
 import unittest
+import xml.etree.cElementTree as ET
 
 import numpy as np
 import matplotlib
@@ -69,6 +70,24 @@ class XsdTest(unittest.TestCase):
         self.assertTrue("M:" in name)
         self.assertTrue("P:" in name)
 
+    def test_bulk_construction(self):
+        " Test XsdFile construction for a bulk. "
+        filename = path + "/bulk.xsd"
+        xsd = XsdFile(filename)
+
+        # Check the default coordinate value for the Atom3d tag without XYZ.
+        ref_origin_coord = [0.0, 0.0, 0.0]
+        ret_origin_coord = xsd.data[0].tolist()
+        self.assertListEqual(ref_origin_coord, ret_origin_coord)
+
+        # Check atom info update in new xsd file.
+        temp_file = "{}/temp.xsd".format(path)
+        xsd.tofile(temp_file)
+        tree = ET.parse(temp_file)
+        for atom3d in tree.iter('Atom3d'):
+            break
+        self.assertEqual(atom3d.get('XYZ'), '0.0,0.0,0.0')
+        os.remove(temp_file)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(XsdTest)
