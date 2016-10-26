@@ -3,6 +3,7 @@
     OsziCar类单元测试.
 '''
 
+import os
 import unittest
 
 import numpy as np
@@ -48,6 +49,8 @@ class OsziCarTest(unittest.TestCase):
         oszicar = OsziCar(filename) 
         plot = oszicar.plot('E0', mode='save')
         self.assertTrue(isinstance(plot, matplotlib.figure.Figure))
+        # Remove picture.
+        os.remove("E0_vs_step.png")
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
