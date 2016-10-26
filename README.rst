@@ -14,7 +14,7 @@ VASPy
     :target: https://www.python.org/downloads/release/python-2710
     :alt: platform
 
-.. image:: https://img.shields.io/badge/pypi-v0.7.9-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.7.10-blue.svg
     :target: https://pypi.python.org/pypi/vaspy/
     :alt: versions
 
@@ -121,6 +121,15 @@ Manipulate XDATCAR:
 .. image:: https://github.com/PytLab/VASPy/blob/master/pic/sn2_my.gif
 
 **You can write your OWN script to process VASP files**
+
+From author
+-----------
+Welcome to use *VASPy*.
+
+- If you find any bug, please report it to me by open a issue.
+- The VASPy needs to be improved, your contribution will be welcomed.
+
+(●'◡'●)ﾉ♥
 
 Important update log
 --------------------
