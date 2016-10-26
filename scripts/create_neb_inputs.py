@@ -121,6 +121,7 @@ if "__main__" == __name__:
     # Modify INCAR parameters.
     incar = InCar()
     incar.set("IBRION", 3)
+    incar.set("POTIM", 0)
     neb_parameters = [("IOPT", 1),
                       ("ICHAIN", 0),
                       ("LCLIMB", ".TRUE."),
