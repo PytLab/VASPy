@@ -124,12 +124,10 @@ Manipulate XDATCAR:
 
 From author
 -----------
-Welcome to use *VASPy*.
+Welcome to use **VASPy**  (●'◡'●)ﾉ♥
 
 - If you find any bug, please report it to me by open a issue.
-- The VASPy needs to be improved, your contribution will be welcomed.
-
-(●'◡'●)ﾉ♥
+- **VASPy** needs to be improved, your contribution will be welcomed.
 
 Important update log
 --------------------
