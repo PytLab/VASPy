@@ -111,8 +111,8 @@ Manipulate XDATCAR:
     >>> xdatcar = XdatCar()
     >>> # 输出xdatcar相应Cartesian坐标
     >>> for step, data in xdatcar:
-    >>>     print step
-    >>>     print xdatcar.dir2cart(xdatcar.bases, data)
+    >>>     print(step)
+    >>>     print(xdatcar.dir2cart(xdatcar.bases, data))
     >>> # 可直接运行script/中脚本生成相应.arc文件用于MaterialStudio显示动画
     >>> python xdatcar_to_arc.py
 
@@ -122,11 +122,11 @@ Manipulate XDATCAR:
 
 **You can write your OWN script to process VASP files**
 
-From author
------------
+From the author
+---------------
 Welcome to use **VASPy**  (●'◡'●)ﾉ♥
 
-- If you find any bug, please report it to me by open a issue.
+- If you find any bug, please report it to me by opening a issue.
 - **VASPy** needs to be improved, your contribution will be welcomed.
 
 Important update log
