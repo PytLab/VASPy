@@ -49,23 +49,22 @@ manipulate splited DOS file in command-line
 
 .. code-block:: python
 
-    # 处理分割好的DOS文件
+    # Manipulate splited DOS files.
     >>> from vaspy.electro import DosX
     >>> a = DosX('DOS1')
     >>> b = DosX('DOS8')
     
-    # 分波态密度合并
+    # Merge DOS data.
     >>> c = a
-    >>> c.reset_data()              # 初始化DOS数据
-    >>> for i in xrange(1, 10):
-    >>>    c += DosX('DOS'+str(i))  # 循环合并DOS数据
+    >>> c.reset_data()              # Initialize DOS data
+    >>> for i in range(1, 10):
+    >>>    c += DosX('DOS'+str(i))  # Merge DOS data.
     >>> ...
-    >>> c.data                      # 以float矩阵显示合并后的数据
-                                    # 可直接进行计算等操作
-    >>> c.tofile()                  # 生成新的合并后的DOS文件
+    >>> c.data                      # Get data(numpy array/matrix)
+    >>> c.tofile()                  # Get new DOS file with merged data
     
-    # 绘图
-    >>> c.plotsum(0, (5, 10))       # 绘制d轨道pDOS图
+    # Plot.
+    >>> c.plotsum(0, (5, 10))
 
 **Output**
 
@@ -78,10 +77,10 @@ Visualize ELFCAR
 
     >>> from vaspy.electro import ElfCar
     >>> a = ElfCar() 
-    >>> a.plot_contour()   # 绘制等值线图
-    >>> a.plot_mcontour()  # 使用mlab绘制等值线图(需安装Mayavi)
-    >>> a.plot_contour3d() # 绘制3d等值线图
-    >>> a.plot_field()     # 绘制标量场
+    >>> a.plot_contour()   # Plot coutour
+    >>> a.plot_mcontour()  # Plot coutour using mlab(with Mayavi installed)
+    >>> a.plot_contour3d() # Plot 3D coutour
+    >>> a.plot_field()     # Plot scalar field
 
 **Output**
 
@@ -109,11 +108,11 @@ Manipulate XDATCAR:
 
     >>> from vaspy.atomco import XdatCar
     >>> xdatcar = XdatCar()
-    >>> # 输出xdatcar相应Cartesian坐标
+    >>> # Get Cartisan coordinates and step number in XDATCAR.
     >>> for step, data in xdatcar:
     >>>     print(step)
     >>>     print(xdatcar.dir2cart(xdatcar.bases, data))
-    >>> # 可直接运行script/中脚本生成相应.arc文件用于MaterialStudio显示动画
+
     >>> python xdatcar_to_arc.py
 
 **animation**
@@ -135,7 +134,7 @@ Important update log
 .. csv-table::
     :header: "Date", "Version", "Description"
 
-    "2016-08-08", "0.7.0", "增强库的通用性"
-    "2016-07-15", "0.6.0", "兼容python 3"
-    "2015-08-04", "0.1.0", "初始版本"
+    "2016-08-08", "0.7.0", "Enhance universality"
+    "2016-07-15", "0.6.0", "Compatible with python 3"
+    "2015-08-04", "0.1.0", "Initial version"
 
