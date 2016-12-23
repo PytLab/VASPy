@@ -86,8 +86,7 @@ class DosX(DataPlotter):
         "Reset data array to zeros."
         self.data[:, 1:] = 0.0
 
-    def plotsum(self, xcol, ycols, fill=True,
-                show_dbc=False, show_fermi=True):
+    def plotsum(self, xcol, ycols, **kwargs):
         '''
         绘制多列加合的图像.
 
@@ -100,6 +99,9 @@ class DosX(DataPlotter):
             column numbers of data for y values
             (start, stop[, step])
             绘制图像的Y轴数据的列号，可以是多个，并进行列向量自动合并
+
+        Optional kwargs:
+        ----------------
         fill: Fill the area below fermi level or not, bool.
             The default value is True.
         show_dbc: Show the label of dband-center or not, bool.
@@ -115,6 +117,12 @@ class DosX(DataPlotter):
         # Use the 0th column data as x, sum of #5, #7, #9 column data as y.
         >>> a.plotsum(0, (5, 10, 2))
         '''
+        # Get kwargs.
+        fill = kwargs.pop("fill", True)
+        show_fermi = kwargs.pop("show_fermi", True)
+        d_cols = kwargs.pop("d_cols", (0, 0))
+        show_dbc = kwargs.pop("show_dbc", False)
+
         x = self.data[:, xcol]
         if len(ycols) == 2:
             start, stop = ycols
@@ -145,9 +153,10 @@ class DosX(DataPlotter):
             minus_y = y[: len(minus_x)]
             ax.fill_between(minus_x, minus_y, facecolor='#B9D3EE',
                             interpolate=True)
+
         # show d band center line
         if show_dbc:
-            dbc = self.get_dband_center()
+            dbc = self.get_dband_center(d_cols)
             x_dbc = [dbc]*2
             y_dbc = [int(ymin-1), int(ymax+1)]
             ax.plot(x_dbc, y_dbc, linestyle='dashed',
@@ -182,21 +191,34 @@ class DosX(DataPlotter):
 
         return
 
-    def get_dband_center(self):
-        "Get d-band center of the DosX object."
-        #合并d轨道DOS
-        if self.data.shape[1] == 10:
-            yd = np.sum(self.data[:, 5:10], axis=1)
+    def get_dband_center(self, d_cols):
+        """
+        Get d-band center of the DosX object.
+
+        Parameters:
+        -----------
+        d_cols: The column number range for d orbitals, tuple of int.
+
+        Examples:
+        ---------
+        # The 5 - 9 columns are state density for d orbitals.
+        >>> dos.get_dband_center(d_cols=(5, 10))
+        """
+
+        # 合并d轨道DOS
+        start, end = d_cols
+        yd = np.sum(self.data[:, start:end], axis=1)
+
         #获取feimi能级索引
         for idx, E in enumerate(self.data[:, 0]):
             if E >= 0:
                 nfermi = idx
                 break
         E = self.data[: nfermi+1, 0]  # negative inf to Fermi
-        dos = yd[: nfermi+1]  # y values from negative inf to Fermi
-        #use Simpson integration to get d-electron number
+        dos = yd[: nfermi+1]          # y values from negative inf to Fermi
+        # Use Simpson integration to get d-electron number
         nelectro = simps(dos, E)
-        #get total energy of dband
+        # Get total energy of dband
         tot_E = simps(E*dos, E)
         dband_center = tot_E/nelectro
         self.dband_center = dband_center
