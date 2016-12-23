@@ -74,3 +74,4 @@ class DataPlotter(object):
             y = self.data[:, col]
             ax.plot(x, y, linewidth=3)
         fig.show()
+

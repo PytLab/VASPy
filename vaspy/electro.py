@@ -56,14 +56,29 @@ class DosX(DataPlotter):
         # Set logger.
         self.__logger = logging.getLogger("vaspy.DosX")
 
+    def __deepcopy__(self, memo):
+        """
+        Overload copy.deepcopy behavior, only deep copy data when call copy.deepcopy().
+        """
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(result)] = result
+
+        # Deepcopy object components, data ONLY.
+        result.data = copy.deepcopy(self.data, memo)
+
+        return result
+
     def __add__(self, dosx_inst):
+        # Get a copy.
         sum_dosx = copy.deepcopy(self)
-        #相加之前判断能量分布是否相同
+
+        # 相加之前判断能量分布是否相同
         same = (self.data[:, 0] == dosx_inst.data[:, 0]).all()
         if not same:
             raise ValueError('Energy is different.')
         sum_dosx.data[:, 1:] = self.data[:, 1:] + dosx_inst.data[:, 1:]
-        sum_dosx.filename = 'DOS_SUM'
+        sum_dosx.filename = "DOS_SUM"
 
         return sum_dosx
 
@@ -72,7 +87,7 @@ class DosX(DataPlotter):
         self.data[:, 1:] = 0.0
 
     def plotsum(self, xcol, ycols, fill=True,
-                show_dbc=True, show_fermi=True):
+                show_dbc=False, show_fermi=True):
         '''
         绘制多列加合的图像.
 
@@ -80,11 +95,24 @@ class DosX(DataPlotter):
         ---------
         xcol: int
             column number of data for x values
+            绘制图像的x轴数据的列号
         ycols: tuple of int
             column numbers of data for y values
             (start, stop[, step])
+            绘制图像的Y轴数据的列号，可以是多个，并进行列向量自动合并
+        fill: Fill the area below fermi level or not, bool.
+            The default value is True.
+        show_dbc: Show the label of dband-center or not, bool.
+            The default value is False.
+        show_fermi: Show the lable of fermi level or not, bool.
+            The default value is True.
+
         Example:
+        --------
+        # Use the 0th column data as x, sum of 1st and 2nd column data as y.
         >>> a.plotsum(0, (1, 3))
+
+        # Use the 0th column data as x, sum of #5, #7, #9 column data as y.
         >>> a.plotsum(0, (5, 10, 2))
         '''
         x = self.data[:, xcol]
@@ -96,18 +124,22 @@ class DosX(DataPlotter):
         ys = self.data[:, start:stop:step]
         y = np.sum(ys, axis=1)
         ymax = np.max(y)
-        #plot
+        ymin = np.min(y)
+
+        # Plot.
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.plot(x, y, linewidth=5, color='#104E8B')
-        #plot fermi energy auxiliary line
+
+        # Plot fermi energy auxiliary line.
         if show_fermi:
-            #Fermi verical line
-            xfermi = np.array([0.0]*50)
-            yfermi = np.linspace(0, int(ymax+1), 50)
+            # Fermi verical line
+            xfermi = [0.0, 0.0]
+            yfermi = [int(ymin-1), int(ymax+1)]
             ax.plot(xfermi, yfermi, linestyle='dashed',
                     color='#4A708B', linewidth=3)
-        # fill area from minus infinit to 0
+
+        # Fill area from minus infinit to 0.
         if fill:
             minus_x = np.array([i for i in x if i <= 0])
             minus_y = y[: len(minus_x)]
@@ -116,26 +148,36 @@ class DosX(DataPlotter):
         # show d band center line
         if show_dbc:
             dbc = self.get_dband_center()
-            x_dbc = np.array([dbc]*50)
-            y_dbc = np.linspace(0, int(ymax+1), 50)
+            x_dbc = [dbc]*2
+            y_dbc = [int(ymin-1), int(ymax+1)]
             ax.plot(x_dbc, y_dbc, linestyle='dashed',
                     color='#C67171', linewidth=3)
 
         ax.set_xlabel(r'$\bf{E - E_F(eV)}$', fontdict={'fontsize': 20})
         ax.set_ylabel(r'$\bf{pDOS(arb. unit)}$', fontdict={'fontsize': 20})
+        margin = (ymax - ymin)*0.2
+        ax.set_ylim(ymin-margin, ymax+margin)
         fig.show()
 
         return
 
-    def tofile(self):
-        "生成文件"
-        "DosX object to DOS file."
+    def tofile(self, filename=None):
+        """
+        DosX object to DOSX file.
+
+        Parameters:
+        -----------
+        filename: The name of generated DOSX file, str.
+        """
         ndata = self.data.shape[1]  # data number in a line
         data = self.data.tolist()
         content = ''
         for datalist in data:
             content += ('%12.8f'*ndata + '\n') % tuple(datalist)
-        with open(self.filename, 'w') as f:
+
+        if filename is None:
+            filename = self.filename
+        with open(filename, 'w') as f:
             f.write(content)
 
         return
@@ -193,7 +235,10 @@ class ElfCar(PosCar):
           plot_field       method, plot scalar field for elf data
           ==============  =============================================
         """
-        super(self.__class__, self).__init__(filename)
+        super(ElfCar, self).__init__(filename)
+
+        # Set logger.
+        self.__logger = logging.getLogger("vaspy.ElfCar")
 
     def load(self):
         "Rewrite load method"
