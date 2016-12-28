@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import commands
 import unittest
 
 from arc_test import ArcTest
