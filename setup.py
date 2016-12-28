@@ -108,6 +108,6 @@ setup(author=author,
       url=url,
       download_url=download_url,
       version=version,
-      test_suite="tests",
+#      test_suite="tests",
       classifiers=classifiers)
 

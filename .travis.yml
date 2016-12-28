@@ -30,5 +30,6 @@ install:
 
 # command to run tests
 script:
-  - python setup.py test
+  - cd tests
+  - python vaspy_test.py
 
