@@ -8,6 +8,8 @@ from oszicar_test import OsziCarTest
 from outcar_test import OutCarTest
 from xsd_test import XsdTest
 from xtd_test import XtdTest
+from poscar_test import PosCarTest
+from xyzfile_test import XyzFileTest
 
 def suite():
     suite = unittest.TestSuite([
@@ -17,6 +19,8 @@ def suite():
         unittest.TestLoader().loadTestsFromTestCase(OutCarTest),
         unittest.TestLoader().loadTestsFromTestCase(XsdTest),
         unittest.TestLoader().loadTestsFromTestCase(XtdTest),
+        unittest.TestLoader().loadTestsFromTestCase(PosCarTest),
+        unittest.TestLoader().loadTestsFromTestCase(XyzFileTest),
     ])
 
     return suite
