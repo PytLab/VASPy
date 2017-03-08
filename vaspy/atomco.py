@@ -149,19 +149,37 @@ class AtomCo(VasPy):
 
     @staticmethod
     def dir2cart(bases, data):
+        """
+        Static method to convert direct coordinates to Cartisan coordinates.
+
+        Parameters:
+        -----------
+        bases: The 3x3 array for basis vectors, 3x3 numpy.array.
+
+        data: The direct coordinate data, Nx3 numpy.array.
+        """
         A = np.matrix(bases).T
         x = np.matrix(data).T
         b = A*x
 
-        return b.T
+        return np.array(b.T)
 
     @staticmethod
     def cart2dir(bases, data):
+        """
+        Static method to convert Cartisian coordinates to direct coordinates.
+
+        Parameters:
+        -----------
+        bases: The 3x3 array for basis vectors, 3x3 numpy.array.
+
+        data: The Cartisan coordinate data, Nx3 numpy.array.
+        """
         b = np.matrix(data.T)
         A = np.matrix(bases).T
         x = A.I*b
 
-        return x.T
+        return np.array(x.T)
 
 
 class XyzFile(AtomCo):
