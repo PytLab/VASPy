@@ -10,6 +10,7 @@ from xsd_test import XsdTest
 from xtd_test import XtdTest
 from poscar_test import PosCarTest
 from xyzfile_test import XyzFileTest
+from cif_test import CifFileTest
 
 def suite():
     suite = unittest.TestSuite([
@@ -21,6 +22,7 @@ def suite():
         unittest.TestLoader().loadTestsFromTestCase(XtdTest),
         unittest.TestLoader().loadTestsFromTestCase(PosCarTest),
         unittest.TestLoader().loadTestsFromTestCase(XyzFileTest),
+        unittest.TestLoader().loadTestsFromTestCase(CifFileTest),
     ])
 
     return suite
