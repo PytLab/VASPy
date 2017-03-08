@@ -9,6 +9,9 @@ Updated by PytLab <shaozhengjiang@gmail.com>, October 2016
 ==============================================================
 
 """
+import logging
+import re
+
 import numpy as np
 
 from vaspy import VasPy
@@ -505,4 +508,97 @@ class XdatCar(AtomCo):
                 prompt = f.readline().strip()
 
                 yield step, np.array(data)
+
+
+class CifFile(AtomCo):
+    def __init__(self, filename):
+        """
+        Class for *.cif files.
+
+        Example:
+
+        >>> a = CifFile(filename='ts.cif')
+
+        Class attributes descriptions
+        =======================================================================
+          Attribute         Description
+          ===============  ====================================================
+          filename         string, name of the file the direct coordiante data
+                           stored in
+          ntot             int, the number of total atom number
+          atoms            list of strings, atom types
+          natoms           list of tuples, same shape with atoms.
+                           (atom name, atom number)
+          atoms_num        list of int, atom number of atoms in atoms
+          atom_names       list of string,
+                           Value of attribute 'Name' in Atom3d tag.
+          data             np.array, coordinates of atoms, dtype=float64
+
+          cell_length_a    float, length of cell vector a
+          cell_length_a    float, length of cell vector b
+          cell_length_c    float, length of cell vector c
+          cell_angle_alpha float, angle of cell alpha
+          cell_angle_beta  float, angle of cell beta
+          cell_angle_gamma float, angle of cell gamma
+          ===============  ====================================================
+        """
+        super(CifFile, self).__init__(filename)
+        self.__logger = logging.getLogger("vaspy.CifCar")
+        self.load()
+
+    def load(self):
+        """
+        Load data and attributes from *.cif file.
+        """
+        # Regular expression for attributes matching.
+        regex = re.compile(r'^_(\w+)(?:\s+)(.+)$')
+
+        with open(self.filename, 'r') as f:
+            lines = f.readlines()
+
+        # Split lines by 'loop_' indices.
+        loop_indices = [i for i, line in enumerate(lines) if line.startswith('loop_')]
+        # [19, 23] -> [(0, 19), (20, 23), (24, line_length)]
+        start_indices = [0] + [i + 1 for i in loop_indices]
+        end_indices = loop_indices + [len(lines)]
+        lines_groups = [lines[start: end] for start, end in zip(start_indices, end_indices)]
+
+        # Get attributes.
+        float_candidates = ['cell_length_a', 'cell_length_b', 'cell_length_c',
+                            'cell_angle_alpha', 'cell_angle_beta', 'cell_angle_gamma']
+        for line in lines_groups[0]:
+            line = line.strip()
+            if line.startswith('_'):
+                m = regex.match(line)
+                if m:
+                    attr, value = m.groups()
+                    if attr in float_candidates:
+                        value = float(value)
+                    setattr(self, attr, value)
+                    self.__logger.debug("{} = {}".format(attr, value))
+
+        # Get coordinates data.
+        titles = []
+        data = []
+        atom_names = []
+        atom_types = []
+
+        for line in lines_groups[-1]:
+            line = line.strip()
+            if line.startswith('_'):
+                titles.append(line[1:])
+            elif line:
+                atom_name, _, x, y, z, _, _, atom_type = line2list(line, dtype=str)
+                atom_names.append(atom_name)
+                atom_types.append(atom_type)
+                data.append([float(i) for i in (x, y, z)])
+
+        # Set attributes.
+        self.data = np.array(data)
+        self.atom_names = atom_names
+        self.atoms = list(set(atom_types))
+        self.natoms = [atom_types.count(atom) for atom in self.atoms]
+        self.atoms_num = zip(self.atoms, self.natoms)
+        self.titles = titles
+        self.ntot = len(atom_names)
 
