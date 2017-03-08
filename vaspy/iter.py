@@ -4,7 +4,7 @@
 Provide iteration-related file class which do operations on these files.
 ========================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, August 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, March 2017
 ========================================================================
 
 """
@@ -18,6 +18,8 @@ from vaspy import VasPy, PY2
 from vaspy import LazyProperty
 from vaspy.atomco import PosCar
 from vaspy.functions import line2list
+# Copy a XdatCar from atomco.
+from vaspy.atomco import XdatCar
 
 
 class OsziCar(VasPy):
