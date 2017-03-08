@@ -80,56 +80,83 @@ class AtomCo(VasPy):
 
         return tf_dict
 
-    # 装饰器
-    # decorator for get_**_content methods
-    def content_decorator(func):
-        "在执行方法前, 给AtomCo对象必要的属性进行赋值"
-        def wrapper(self, **kwargs):
-            # set attrs before call func
-            for key in kwargs:
-                setattr(self, key, kwargs[key])
-            return func(self)
+    def get_xyz_content(self, step=None):
 
-        return wrapper
-
-    @content_decorator
-    def get_xyz_content(self):
         """
         Get xyz file content.
         获取最新.xyz文件内容字符串
+
+        Parameters:
+        -----------
+        step: The step number, int, optional, 1 by default.
         """
-        ntot = "%12d\n" % self.ntot
-        step = "STEP =%9d\n" % self.step
+        ntot = "{:12d}\n".format(self.ntot)
+        try:
+            step = self.step if step is None else step
+        except AttributeError:
+            step = 1
+        step = "STEP ={:9d}\n".format(step)
         data = atomdict2str(self.atomco_dict, self.atoms)
         content = ntot + step + data
 
         return content
 
-    @content_decorator
-    def get_poscar_content(self):
+    def get_poscar_content(self, **kwargs):
         """
         Get POSCAR content.
         根据对象数据获取poscar文件内容字符串
+
+        Parameters:
+        -----------
+        bases_const: The constant for basis vectors, optional, 1.0 by default.
+
+        bases: The basis vectors for the lattice, option, 3x3 np.array.
+               [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] by default.
+
+        tf: The T/F info for all atoms. Nx3 np.array, n is the length of 0th axis of data.
         """
         content = 'Created by VASPy\n'
-        bases_const = " %.9f\n" % self.bases_const
+
+        # bases constant.
+        try:
+            bases_const = self.bases_const
+        except AttributeError:
+            bases_const = kwargs.get("bases_const", 1.0)
+        bases_const = " {:.9f}\n".format(bases_const)
+
         # bases
-        bases_list = self.bases.tolist()
+        try:
+            bases = self.bases
+        except AttributeError:
+            bases = kwargs.get("bases", np.array([[1.0, 0.0, 0.0],
+                                                  [0.0, 1.0, 0.0],
+                                                  [0.0, 0.0, 1.0]]))
+        bases_list = bases.tolist()
         bases = ''
         for basis in bases_list:
-            bases += "%14.8f%14.8f%14.8f\n" % tuple(basis)
+            bases += "{:14.8f}{:14.8f}{:14.8f}\n".format(*basis)
+
         # atom info
         atoms, atoms_num = zip(*self.natoms)
-        atoms = ("%5s"*len(atoms)+"\n") % atoms
-        atoms_num = ("%5d"*len(atoms_num)+"\n") % atoms_num
-        #string
+        atoms = ("{:5s}"*len(atoms) + "\n").format(*atoms)
+        atoms_num = ("{:5d}"*len(atoms_num) + "\n").format(*atoms_num)
+
+        # string
         info = "Selective Dynamics\nDirect\n"
+
         # data and tf
+        try:
+            tf = self.tf
+        except AttributeError:
+            # Initialize tf with 'T's.
+            default_tf = np.full(self.data.shape, 'T', dtype=np.str)
+            tf = kwargs.get("tf", default_tf)
         data_tf = ''
-        for data, tf in zip(self.data.tolist(), self.tf.tolist()):
-            data_tf += ("%18.12f"*3+"%5s"*3+"\n") % tuple(data+tf)
+        for data, tf in zip(self.data.tolist(), tf.tolist()):
+            data_tf += ("{:18.12f}"*3+"{:5s}"*3+"\n").format(*(data+tf))
+
         # merge all strings
-        content += bases_const+bases+atoms+atoms_num+info+data_tf
+        content += (bases_const + bases + atoms + atoms_num + info + data_tf)
 
         return content
 
