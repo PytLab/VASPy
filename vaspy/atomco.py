@@ -4,7 +4,7 @@
 Provide coordinate file class which do operations on these files.
 ===================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, November 2014
-Updated by PytLab <shaozhengjiang@gmail.com>, October 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, May 2017
 
 ==============================================================
 
@@ -24,27 +24,23 @@ class AtomCo(VasPy):
     def __init__(self, filename):
         VasPy.__init__(self, filename)
 
-#    def __repr__(self):
-#        if hasattr(self, 'get_content'):
-#            return self.get_content()
-#        else:
-#            return self.filename
-
-    def __getattribute__(self, attr):
-        """
-        Make sure we can return the newest data and tf.
-        确保dict能够及时根据data, tf值的变化更新.
-        """
-        if attr == 'atomco_dict':
-            return self.get_atomco_dict(self.data)
-        elif attr == 'tf_dict':
-            return self.get_tf_dict(self.tf)
-        else:
-            return VasPy.__getattribute__(self, attr)
-
     def verify(self):
         if len(self.data) != self.ntot:
             raise CarfileValueError('Atom numbers mismatch!')
+
+    @property
+    def atomco_dict(self):
+        """ Return the current atom type and coordinates mapping, 
+        make sure the data in dict can be updated in time.
+        """
+        return self.get_atomco_dict(self.data)
+
+    @property
+    def tf_dict(self):
+        """ Return the current atom type and T/F mapping, make sure the data
+        can be updated in time when returned.
+        """
+        return self.get_tf_dict(self.tf)
 
     def get_atomco_dict(self, data):
         """
@@ -60,8 +56,6 @@ class AtomCo(VasPy):
         for atom, idx, next_idx in \
                 zip(self.atoms, idx_list[:-1], idx_list[1:]):
             atomco_dict.setdefault(atom, data_list[idx: next_idx])
-
-        self.atomco_dict = atomco_dict
 
         return atomco_dict
 
@@ -79,7 +73,6 @@ class AtomCo(VasPy):
         for atom, idx, next_idx in \
                 zip(self.atoms, idx_list[:-1], idx_list[1:]):
             tf_dict.setdefault(atom, tf_list[idx: next_idx])
-        self.tf_dict = tf_dict
 
         return tf_dict
 
@@ -383,7 +376,6 @@ class PosCar(AtomCo):
         self.natoms = zip(atoms, atoms_num)
         self.data = data
         self.tf = tf
-        self.tf_dict = tf_dict
         self.totline = data_begin + ntot  # total number of line
 
         # get atomco_dict

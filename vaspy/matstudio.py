@@ -196,11 +196,9 @@ class XsdFile(AtomCo):
         self.atoms = atoms
         self.natoms = natoms
         self.tf = np.array(tf)
-        self.tf_dict = tf_dict
         self.atom_names = atom_names
         self.atom_names_dict = atom_name_dict
         self.data = np.array(coordinates)
-        self.atomco_dict = atomco_dict
 
         return
 
