@@ -14,7 +14,7 @@ VASPy
     :target: https://www.python.org/downloads/release/python-2710
     :alt: platform
 
-.. image:: https://img.shields.io/badge/pypi-v0.7.11-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.8.0-blue.svg
     :target: https://pypi.python.org/pypi/vaspy/
     :alt: versions
 
