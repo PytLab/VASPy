@@ -59,7 +59,7 @@ if "__main__" == __name__:
     # delete old POTCAR
     if os.path.exists('./POTCAR'):
         os.remove('./POTCAR')
-    for elem in xsd.atoms:
+    for elem in xsd.atom_types:
     #    if os.path.exists(potdir + elem + '_new/'):
     #        potcar = potdir + elem + '_new/POTCAR'
         if os.path.exists(potdir + elem):
