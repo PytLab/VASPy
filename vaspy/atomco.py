@@ -25,19 +25,21 @@ class AtomCo(VasPy):
         VasPy.__init__(self, filename)
 
     def verify(self):
-        if len(self.data) != self.ntot:
+        if len(self.data) != self.natom:
             raise CarfileValueError('Atom numbers mismatch!')
 
     @property
     def atomco_dict(self):
-        """ Return the current atom type and coordinates mapping, 
+        """
+        Return the current atom type and coordinates mapping, 
         make sure the data in dict can be updated in time.
         """
         return self.get_atomco_dict(self.data)
 
     @property
     def tf_dict(self):
-        """ Return the current atom type and T/F mapping, make sure the data
+        """
+        Return the current atom type and T/F mapping, make sure the data
         can be updated in time when returned.
         """
         return self.get_tf_dict(self.tf)
@@ -47,15 +49,16 @@ class AtomCo(VasPy):
         根据已获取的data和atoms, atoms_num, 获取atomco_dict
         """
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(self.atoms_num[:i])
-                    for i in range(1, len(self.atoms)+1)]
+        idx_list = [sum(self.atom_numbers[:i])
+                    for i in range(1, len(self.atom_types)+1)]
         idx_list = [0] + idx_list
 
         data_list = data.tolist()
         atomco_dict = {}
-        for atom, idx, next_idx in \
-                zip(self.atoms, idx_list[:-1], idx_list[1:]):
-            atomco_dict.setdefault(atom, data_list[idx: next_idx])
+        for atom_type, idx, next_idx in zip(self.atom_types,
+                                            idx_list[:-1],
+                                            idx_list[1:]):
+            atomco_dict.setdefault(atom_type, data_list[idx: next_idx])
 
         return atomco_dict
 
@@ -64,15 +67,16 @@ class AtomCo(VasPy):
         根据已获取的tf和atoms, atoms_num, 获取tf_dict
         """
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(self.atoms_num[:i])
-                    for i in range(1, len(self.atoms)+1)]
+        idx_list = [sum(self.atom_numbers[:i])
+                    for i in range(1, len(self.atom_types)+1)]
         idx_list = [0] + idx_list
 
         tf_list = tf.tolist()
         tf_dict = {}
-        for atom, idx, next_idx in \
-                zip(self.atoms, idx_list[:-1], idx_list[1:]):
-            tf_dict.setdefault(atom, tf_list[idx: next_idx])
+        for atom_type, idx, next_idx in zip(self.atom_types,
+                                            idx_list[:-1],
+                                            idx_list[1:]):
+            tf_dict.setdefault(atom_type, tf_list[idx: next_idx])
 
         return tf_dict
 
@@ -86,14 +90,14 @@ class AtomCo(VasPy):
         -----------
         step: The step number, int, optional, 1 by default.
         """
-        ntot = "{:12d}\n".format(self.ntot)
+        natom = "{:12d}\n".format(self.natom)
         try:
             step = self.step if step is None else step
         except AttributeError:
             step = 1
         step = "STEP ={:9d}\n".format(step)
-        data = atomdict2str(self.atomco_dict, self.atoms)
-        content = ntot + step + data
+        data = atomdict2str(self.atomco_dict, self.atom_types)
+        content = natom + step + data
 
         return content
 
@@ -133,9 +137,9 @@ class AtomCo(VasPy):
             bases += "{:14.8f}{:14.8f}{:14.8f}\n".format(*basis)
 
         # atom info
-        atoms, atoms_num = zip(*self.natoms)
-        atoms = ("{:5s}"*len(atoms) + "\n").format(*atoms)
-        atoms_num = ("{:5d}"*len(atoms_num) + "\n").format(*atoms_num)
+        types, numbers = self.atom_types, self.atom_numbers
+        atom_types = ("{:5s}"*len(types) + "\n").format(*types)
+        atom_numbers = ("{:5d}"*len(numbers) + "\n").format(*numbers)
 
         # string
         info = "Selective Dynamics\nDirect\n"
@@ -152,7 +156,8 @@ class AtomCo(VasPy):
             data_tf += ("{:18.12f}"*3+"{:5s}"*3+"\n").format(*(data+tf))
 
         # merge all strings
-        content += (bases_const + bases + atoms + atoms_num + info + data_tf)
+        content += (bases_const + bases + atom_types + atom_numbers +
+                    info + data_tf)
 
         return content
 
@@ -219,12 +224,10 @@ class XyzFile(AtomCo):
       ============  =======================================================
       filename       string, name of the file the direct coordiante data
                      stored in
-      ntot           int, the number of total atom number
+      natom          int, the number of total atom number
       step           int, STEP number in OUT.ANI file
-      atoms          list of strings, atom types
-      natoms         list of tuples, same shape with atoms.
-                     (atom name, atom number)
-                     atom number of atoms in atoms
+      atom_types     list of string, atom types
+      atom_numbers   list of int, atom number of atoms
       atomco_dict    dict, {atom name: coordinates}
       data           np.array, coordinates of atoms, dtype=float64
       ============  =======================================================
@@ -235,38 +238,36 @@ class XyzFile(AtomCo):
         self.verify()
 
     def load(self):
-        "加载文件内容"
+        """ Load all data in xyz file.
+        """
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
-        ntot = int(content_list[0].strip())  # total atom number
-        step = int(str2list(content_list[1])[-1])  # iter step number
 
-        #get atom coordinate and number info
+        # Total number of all atoms.
+        natom = int(content_list[0].strip())
+
+        # The iteration step for this xyz file.
+        step = int(str2list(content_list[1])[-1])
+
+        # Get atom coordinate and number info
         data_list = [str2list(line) for line in content_list[2:]]
-        data_array = np.array(data_list)  # dtype=np.string
-        atoms_list = list(data_array[:, 0])  # 1st column
+        data_array = np.array(data_list)      # dtype=np.string
+        atoms_list = list(data_array[:, 0])   # 1st column
         data = np.float64(data_array[:, 1:])  # rest columns
 
-        #get atom number for each atom
-        atoms = []
+        # Atom number for each atom
+        atom_types = []
         for atom in atoms_list:
-            if atom not in atoms:
-                atoms.append(atom)
-        atoms_num = [atoms_list.count(atom) for atom in atoms]
-        natoms = zip(atoms, atoms_num)
+            if atom not in atom_types:
+                atom_types.append(atom)
+        atom_numbers = [atoms_list.count(atom) for atom in atom_types]
 
-        #set class attrs
-        self.ntot = ntot
+        # Set attributes.
+        self.natom = natom
         self.step = step
-        self.atoms = atoms
-        self.atoms_num = atoms_num
-        self.natoms = natoms
+        self.atom_types = atom_types
+        self.atom_numbers = atom_numbers
         self.data = data
-
-        #get atomco_dict
-        self.get_atomco_dict(data)
-
-        return
 
     def coordinate_transform(self, bases=None):
         "Use Ax=b to do coordinate transform cartesian to direct"
@@ -308,48 +309,55 @@ class PosCar(AtomCo):
                          stored in
           bases_const    float, lattice bases constant
           bases          np.array, bases of POSCAR
-          atoms          list of strings, atom types
-          ntot           int, the number of total atom number
-          natoms         list of int, same shape with atoms
+          natom          int, the number of total atom number
+          atom_types     list of strings, atom types
+          atom_numbers   list of int, same shape with atoms
                          atom number of atoms in atoms
           tf             list of list, T&F info of atoms
           data           np.array, coordinates of atoms, dtype=float64
           ============  =======================================================
         """
         AtomCo.__init__(self, filename)
-        #load all data in file
+
+        # Load all data in file
         self.load()
         self.verify()
 
     def load(self):
-        "获取文件数据信息"
-        "Load all information in POSCAR."
+        """ Load all information in POSCAR.
+        """
         with open(self.filename, 'r') as f:
             content_list = f.readlines()
-        #get scale factor
+
+        # get scale factor
         bases_const = float(content_list[1])
-        #bases
+
+        # bases
         bases = [str2list(basis) for basis in content_list[2:5]]
-        #atom info
-        atoms = str2list(content_list[5])
-        atoms_num = str2list(content_list[6])  # atom number
+
+        # Atom info
+        atom_types = str2list(content_list[5])
+        # Atom number (str).
+        atom_numbers = str2list(content_list[6])
         if content_list[7][0] in 'Ss':
             data_begin = 9
         else:
             data_begin = 8
-        #get total number before load data
-        atoms_num = [int(i) for i in atoms_num]
-        ntot = sum(atoms_num)
-        #data
+
+        # get total number before load data
+        atom_numbers = [int(i) for i in atom_numbers]
+        natom = sum(atom_numbers)
+
+        # data
         data, tf = [], []  # data and T or F info
-        tf_dict = {}  # {tf: atom number}
-        for line_str in content_list[data_begin: data_begin+ntot]:
+        tf_dict = {}       # {tf: atom number}
+        for line_str in content_list[data_begin: data_begin+natom]:
             line_list = str2list(line_str)
             data.append(line_list[:3])
             if len(line_list) > 3:
                 tf_list = line_list[3:]
                 tf.append(tf_list)
-                #gather tf info to tf_dict
+                # gather tf info to tf_dict
                 tf_str = ','.join(tf_list)
                 if tf_str not in tf_dict:
                     tf_dict[tf_str] = 1
@@ -357,44 +365,41 @@ class PosCar(AtomCo):
                     tf_dict[tf_str] += 1
             else:
                 tf.append(['T', 'T', 'T'])
-                #gather tf info to tf_dict
+                # gather tf info to tf_dict
                 if 'T,T,T' not in tf_dict:
                     tf_dict['T,T,T'] = 1
                 else:
                     tf_dict['T,T,T'] += 1
-        #data type convertion
+
+        # Data type convertion
         bases = np.float64(np.array(bases))  # to float
         data = np.float64(np.array(data))
         tf = np.array(tf)
 
-        #set class attrs
+        # set class attrs
         self.bases_const = bases_const
         self.bases = bases
-        self.atoms = atoms
-        self.atoms_num = atoms_num
-        self.ntot = ntot
-        self.natoms = zip(atoms, atoms_num)
+        self.atom_types = atom_types
+        self.atom_numbers = atom_numbers
+        self.natom = natom
         self.data = data
         self.tf = tf
-        self.totline = data_begin + ntot  # total number of line
-
-        # get atomco_dict
-        self.get_atomco_dict(data)
-
-        return
+        self.totline = data_begin + natom  # total number of line
 
     def constrain_atom(self, atom, to='F', axis='all'):
         "修改某一类型原子的FT信息"
         # [1, 1, 1, 16] -> [0, 1, 2, 3, 19]
-        idx_list = [sum(self.atoms_num[:i]) for i in range(1, len(self.atoms)+1)]
+        idx_list = [sum(self.atom_numbers[:i])
+                    for i in range(1, len(self.atom_types)+1)]
         idx_list = [0] + idx_list
 
         if to not in ['T', 'F']:
             raise CarfileValueError('Variable to must be T or F.')
 
-        for atomtype, idx, next_idx in \
-                zip(self.atoms, idx_list[:-1], idx_list[1:]):
-            if atomtype == atom:
+        for atom_type, idx, next_idx in zip(self.atom_types,
+                                            idx_list[:-1],
+                                            idx_list[1:]):
+            if atom_type == atom:
                 if axis in ['x', 'X']:
                     self.tf[idx:next_idx, 0] = to
                 elif axis in ['y', 'Y']:
@@ -456,10 +461,8 @@ class XdatCar(AtomCo):
                          stored in
           bases_const    float, lattice bases constant
           bases          np.array, bases of POSCAR
-          atoms          list of strings, atom types
-          ntot           int, the number of total atom number
-          natoms         list of int, same shape with atoms
-                         atom number of atoms in atoms
+          natom          int, the number of total atom number
+          atom_types     list of strings, atom types
           tf             list of list, T&F info of atoms
           info_nline     int, line numbers of lattice info
           ============  =======================================================
@@ -473,16 +476,18 @@ class XdatCar(AtomCo):
             # read lattice info
             self.system = f.readline().strip()
             self.bases_const = float(f.readline().strip())
+
             # lattice basis
             self.bases = []
             for i in range(3):
                 basis = line2list(f.readline())
                 self.bases.append(basis)
+
             # atom info
-            self.atoms = str2list(f.readline())
+            self.atom_types = str2list(f.readline())
             atoms_num = str2list(f.readline())
-            self.atoms_num = [int(i) for i in atoms_num]
-            self.ntot = sum(self.atoms_num)
+            self.atom_numbers = [int(i) for i in atoms_num]
+            self.natom = sum(self.atom_numbers)
 
     def __iter__(self):
         "generator which yield step number and iterative data."
@@ -494,7 +499,7 @@ class XdatCar(AtomCo):
             while '=' in prompt:
                 step = int(prompt.split('=')[-1])
                 data = []
-                for i in range(self.ntot):
+                for i in range(self.natom):
                     data_line = f.readline()
                     data.append(line2list(data_line))
                 prompt = f.readline().strip()
@@ -517,11 +522,9 @@ class CifFile(AtomCo):
           ===============  ====================================================
           filename         string, name of the file the direct coordiante data
                            stored in
-          ntot             int, the number of total atom number
-          atoms            list of strings, atom types
-          natoms           list of tuples, same shape with atoms.
-                           (atom name, atom number)
-          atoms_num        list of int, atom number of atoms in atoms
+          natom            int, the number of total atom number
+          atom_types       list of strings, atom types
+          atom_numbers     list of int, atom number of atoms in atoms
           atom_names       list of string,
                            Value of attribute 'Name' in Atom3d tag.
           data             np.array, coordinates of atoms, dtype=float64
@@ -549,11 +552,13 @@ class CifFile(AtomCo):
             lines = f.readlines()
 
         # Split lines by 'loop_' indices.
-        loop_indices = [i for i, line in enumerate(lines) if line.startswith('loop_')]
+        loop_indices = [i for i, line in enumerate(lines)
+                        if line.startswith('loop_')]
         # [19, 23] -> [(0, 19), (20, 23), (24, line_length)]
         start_indices = [0] + [i + 1 for i in loop_indices]
         end_indices = loop_indices + [len(lines)]
-        lines_groups = [lines[start: end] for start, end in zip(start_indices, end_indices)]
+        lines_groups = [lines[start: end] for start, end in
+                        zip(start_indices, end_indices)]
 
         # Get attributes.
         float_candidates = ['cell_length_a', 'cell_length_b', 'cell_length_c',
@@ -588,9 +593,8 @@ class CifFile(AtomCo):
         # Set attributes.
         self.data = np.array(data)
         self.atom_names = atom_names
-        self.atoms = list(set(atom_types))
-        self.natoms = [atom_types.count(atom) for atom in self.atoms]
-        self.atoms_num = zip(self.atoms, self.natoms)
+        self.atom_types = list(set(atom_types))
+        self.atom_numbers = [atom_types.count(atom) for atom in self.atom_types]
         self.titles = titles
-        self.ntot = len(atom_names)
+        self.natom = len(atom_names)
 

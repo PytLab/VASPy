@@ -35,11 +35,9 @@ class XsdFile(AtomCo):
           ============  =======================================================
           filename       string, name of the file the direct coordiante data
                          stored in
-          ntot           int, the number of total atom number
-          atoms          list of strings, atom types
-          natoms         list of tuples, same shape with atoms.
-                         (atom name, atom number)
-          atoms_num      list of int, atom number of atoms in atoms
+          natom          int, the number of total atom number
+          atom_types     list of strings, atom types
+          atom_numbers   list of int, atom number of atoms in atoms
           atom_names     list of string,
                          Value of attribute 'Name' in Atom3d tag.
           tf             np.array, T & F info for atoms, dtype=np.string
@@ -118,7 +116,7 @@ class XsdFile(AtomCo):
         # atom info
         atomco_dict = {}
         natoms_dict = {}
-        atoms = []
+        atom_types = []
         tf = []
         tf_dict = {}
         atom_names = []
@@ -135,7 +133,7 @@ class XsdFile(AtomCo):
                 atom = elem.attrib['Components']
                 if atom not in natoms_dict:
                     natoms_dict.setdefault(atom, 1)
-                    atoms.append(atom)
+                    atom_types.append(atom)
                 else:
                     natoms_dict[atom] += 1
 
@@ -178,11 +176,10 @@ class XsdFile(AtomCo):
                 else:
                     atom_name_dict[atom].append(atom_name)
 
-        atoms_num = [natoms_dict[atm] for atm in atoms]
-        natoms = zip(atoms, atoms_num)
+        atom_numbers = [natoms_dict[atm] for atm in atom_types]
 
         coordinates = []
-        for atom in atoms:  # sorted by atoms
+        for atom in atom_types:  # sorted by atoms
             # combine all coordinates
             coordinates += atomco_dict[atom]
             # combine all tf info
@@ -191,16 +188,13 @@ class XsdFile(AtomCo):
             atom_names += atom_name_dict[atom]
 
         # set class attrs
-        self.ntot = len(atom_names)
-        self.atoms_num = atoms_num
-        self.atoms = atoms
-        self.natoms = natoms
+        self.natom = len(atom_names)
+        self.atom_numbers = atom_numbers
+        self.atom_types = atom_types
         self.tf = np.array(tf)
         self.atom_names = atom_names
         self.atom_names_dict = atom_name_dict
         self.data = np.array(coordinates)
-
-        return
 
     def get_name_info(self):
         """
@@ -229,19 +223,17 @@ class XsdFile(AtomCo):
         finally:
             self.path = getcwd()
 
-        return
-
     def update(self):
         """
         根据最新数据获取更新ElementTree内容
         """
-        if self.ntot != len(self.data):
+        if self.natom != len(self.data):
             raise UnmatchedDataShape(
                 'length of data is not equal to atom number.')
-        elif self.ntot != len(self.tf):
+        elif self.natom != len(self.tf):
             raise UnmatchedDataShape(
                 'length of tf is not equal to atom number.')
-        elif self.ntot != len(self.atom_names):
+        elif self.natom != len(self.atom_names):
             raise UnmatchedDataShape(
                 'length of atom names is not equal to atom number.')
 
@@ -265,7 +257,7 @@ class XsdFile(AtomCo):
         identity_mappings = self.__get_identity_mappings()
 
         # Loop over all atom type.
-        for atom in self.atoms:
+        for atom in self.atom_types:
             # Index for atom with same type.
             idx = 0
             # Loop over all IdentityMapping tags.
@@ -298,8 +290,6 @@ class XsdFile(AtomCo):
                     elem.set('Name', self.atom_names_dict[atom][idx])
                     idx += 1
 
-        return
-
     def update_name(self):
         """
         更新ElementTree中能量，力，作业路径等信息。
@@ -318,8 +308,6 @@ class XsdFile(AtomCo):
             elem.set("Name", value)
             break
 
-        return
-
     def update_bases(self):
         "update bases value in ElementTree"
         bases = self.bases.tolist()
@@ -333,8 +321,6 @@ class XsdFile(AtomCo):
             elem.set('BVector', bases_str[1])
             elem.set('CVector', bases_str[2])
             break
-
-        return
 
     def modify_color(self, atom_number, color=(255, 117, 51)):
         '''
@@ -351,13 +337,13 @@ class XsdFile(AtomCo):
         '''
         # get atom type and number of this type
         # [48, 48, 30, 14] -> [48, 96, 126, 140]
-        atoms_num_sum = [sum(self.atoms_num[: i+1])
-                         for i in range(len(self.atoms))]
+        atoms_num_sum = [sum(self.atom_numbers[: i+1])
+                         for i in range(len(self.atom_types))]
         for idx, n in enumerate(atoms_num_sum):
             if atom_number <= n:
                 atom_idx = idx
                 break
-        atom_type = self.atoms[atom_idx]
+        atom_type = self.atom_types[atom_idx]
         type_atom_number = atom_number - atoms_num_sum[atom_idx-1]  # start from 1
 
         # go through tags to modify atom color
@@ -374,7 +360,6 @@ class XsdFile(AtomCo):
                     else:
                         elem.set('Color', color_attr)
                     break
-        return
 
     def tofile(self, filename='./new.xsd'):
         "XsdFile object to .xsd file."
