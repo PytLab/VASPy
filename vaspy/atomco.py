@@ -235,7 +235,11 @@ class XyzFile(AtomCo):
     def __init__(self, **kwargs):
         filename = kwargs.pop("filename", None)
         content = kwargs.pop("content", None)
-        if filename is not None:
+        content_list = kwargs.pop("content_list", None)
+
+        if content_list is not None:
+            content_list = content_list
+        elif filename is not None:
             super(self.__class__, self).__init__(filename)
             with open(self.filename, 'r') as f:
                 content_list = f.readlines()
