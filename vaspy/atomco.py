@@ -232,17 +232,23 @@ class XyzFile(AtomCo):
       data           np.array, coordinates of atoms, dtype=float64
       ============  =======================================================
     """
-    def __init__(self, filename):
-        super(self.__class__, self).__init__(filename)
-        self.load()
+    def __init__(self, **kwargs):
+        filename = kwargs.pop("filename", None)
+        content = kwargs.pop("content", None)
+        if filename is not None:
+            super(self.__class__, self).__init__(filename)
+            with open(self.filename, 'r') as f:
+                content_list = f.readlines()
+        elif content is not None:
+            content = content.strip()
+            content_list = content.split("\n")
+
+        self.load(content_list)
         self.verify()
 
-    def load(self):
+    def load(self, content_list):
         """ Load all data in xyz file.
         """
-        with open(self.filename, 'r') as f:
-            content_list = f.readlines()
-
         # Total number of all atoms.
         natom = int(content_list[0].strip())
 
