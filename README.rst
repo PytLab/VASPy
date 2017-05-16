@@ -41,7 +41,7 @@ Installation
 
     python setup.py install
 
-If you want to use mayavi to visualize VASP data, it is recommened to install `Canopy environment <https://store.enthought.com/downloads/#default>`_ on your device instead of installing it manually.
+If you want to use **mayavi** to visualize VASP data, it is recommened to install `Canopy environment <https://store.enthought.com/downloads/#default>`_ on your device instead of installing it manually.
 
 After installing canopy, you can set corresponding aliases, for example:
 
@@ -52,7 +52,7 @@ After installing canopy, you can set corresponding aliases, for example:
     alias canopy-ipython='/Users/zjshao/Library/Enthought/Canopy/edm/envs/User/bin/ipython'
     alias canopy-jupyter='/Users/zjshao/Library/Enthought/Canopy/edm/envs/User/bin/jupyter'
 
-Then you can install VASPy to canopy:
+Then you can install VASPy to canopy::
 
     canopy-pip install vaspy
 
