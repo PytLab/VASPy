@@ -76,3 +76,5 @@ vaspy/DOS/*
 # ctags
 tags
 
+.DS_Store
+
