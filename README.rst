@@ -49,8 +49,8 @@ After installing canopy, you can set corresponding aliases, for example:
 
     alias canopy='/Users/<yourname>/Library/Enthought/Canopy/edm/envs/User/bin/python'
     alias canopy-pip='/Users/zjshao/Library/Enthought/Canopy/edm/envs/User/bin/pip'
-    alias canopy-ipython='/Users/zjshao/Library/Enthought/Canopy/edm/envs/User/bin/ipython'
-    alias canopy-jupyter='/Users/zjshao/Library/Enthought/Canopy/edm/envs/User/bin/jupyter'
+    alias canopy-ipython='/Users/<yourname>/Library/Enthought/Canopy/edm/envs/User/bin/ipython'
+    alias canopy-jupyter='/Users/<yourname>/Library/Enthought/Canopy/edm/envs/User/bin/jupyter'
 
 Then you can install VASPy to canopy::
 
