@@ -14,7 +14,7 @@ max_x = 5.5
 grid_resolution = 50
 interp_resolution = 200
 
-ani = AniFile("out1.ani")
+ani = AniFile("OUT.ANI")
 trajs = [[]]*len(orders)
 for xyz in ani:
     for j in range(len(orders)):
@@ -34,9 +34,10 @@ def locate(x, y, position):
     return bisect(x, i)-1, bisect(y, j)-1
 
 if __name__ == "__main__":
+    right = int(max(lattice_const[:2]))
     z = np.zeros([grid_resolution, grid_resolution])
-    x = np.linspace(-2, 7, grid_resolution)
-    y = np.linspace(-2, 7, grid_resolution)
+    x = np.linspace(-2, right, grid_resolution)
+    y = np.linspace(-2, right, grid_resolution)
     for xi, yi, zi in positions:
         m, n = locate(x, y, [xi, yi])
         z[m, n] += 1
@@ -45,8 +46,8 @@ if __name__ == "__main__":
     z /= len(positions/len(orders))
     interp_func = interp2d(x, y, z, kind="linear")
 
-    newx = np.linspace(-2, 7, interp_resolution)
-    newy = np.linspace(-2, 7, interp_resolution)
+    newx = np.linspace(-2, right, interp_resolution)
+    newy = np.linspace(-2, right, interp_resolution)
     newz = interp_func(newx, newy)
 
     newy, newx = np.meshgrid(newx, newy)
