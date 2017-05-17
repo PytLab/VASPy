@@ -7,10 +7,10 @@ import matplotlib.patheffects as pe
 from vaspy.iter import AniFile
 
 lattice_const = [7.70441, 7.70441, 21]
+orders = [1, 6, 11, 16]
+max_x = 5.5
 
 ani = AniFile("OUT.ANI")
-
-orders = [1, 6, 11, 16]
 
 trajs = [[], [], [], []]
 for xyz in ani:
@@ -18,7 +18,7 @@ for xyz in ani:
         data = xyz.data[orders[j]]
         new_data = [0]*3
         for i, c in enumerate(data):
-            if i == 0 and c >= int(lattice_const[i] - 1):
+            if i == 0 and c >= max_x:
                 c -= lattice_const[i]
             new_data[i] = c
         trajs[j].append(new_data)
