@@ -24,7 +24,7 @@ lz = np.linalg.norm(z)
 content = '!BIOSYM archive 3\nPBC=ON\n'
 
 for step, data in xdatcar:
-    print "step = %s" % step
+    print("step = %s" % step)
     content += ('%80.4f\n' % 0.0)
     content += '!DATE     Oct 29 11:16:38 2015\n'
     content += 'PBC%10.4f%10.4f%10.4f%10.4f%10.4f%10.4f\n' %\
