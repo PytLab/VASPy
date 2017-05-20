@@ -52,7 +52,7 @@ if args.xsd:
         sys.exit(1)
     xsd = XsdFile(filename=output)
     # modify atom color
-    xsd.modify_color(atom_number=max_num)
+    xsd.modify_color(atom_number=outcar.last_max_atom)
     jobname = output.split('.')[0]
     filename = jobname + '-force.xsd'
     xsd.tofile(filename=filename)
