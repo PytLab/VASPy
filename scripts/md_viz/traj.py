@@ -9,6 +9,7 @@ from vaspy.iter import AniFile
 lattice_const = [7.70441, 7.70441, 21]
 orders = [1, 6, 11, 16]
 max_x = 5.5
+max_y = max_x
 
 ani = AniFile("OUT.ANI")
 
@@ -30,6 +31,9 @@ if __name__ == "__main__":
     for traj in trajs:
         traj = np.array(traj)
         ax.scatter(traj[:, 0], traj[:, 1], alpha=0.3, facecolor="#93989A", edgecolor="#000000", s=60)
+
+    ax.set_xlim(0.0, max_x)
+    ax.set_ylim(0.0, max_y)
 
     plt.show()
 
