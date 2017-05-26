@@ -12,6 +12,7 @@ from poscar_test import PosCarTest
 from xyzfile_test import XyzFileTest
 from cif_test import CifFileTest
 from ani_test import AniFileTest
+from xdatcar_test import XdatCarTest
 
 def suite():
     suite = unittest.TestSuite([
@@ -25,6 +26,7 @@ def suite():
         unittest.TestLoader().loadTestsFromTestCase(XyzFileTest),
         unittest.TestLoader().loadTestsFromTestCase(CifFileTest),
         unittest.TestLoader().loadTestsFromTestCase(AniFileTest),
+        unittest.TestLoader().loadTestsFromTestCase(XdatCarTest),
     ])
 
     return suite
