@@ -11,6 +11,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, May 2017
 """
 import logging
 import re
+from collections import namedtuple
 
 import numpy as np
 
@@ -500,7 +501,11 @@ class XdatCar(AtomCo):
             self.natom = sum(self.atom_numbers)
 
     def __iter__(self):
-        "generator which yield step number and iterative data."
+        """ Make the XdatCar object iterable.
+        """
+        # Define namedtuple for the item in iteration.
+        XdatCarItem = namedtuple("XdatCarItem", ["step", "coordinates"])
+
         with open(self.filename, 'r') as f:
             # pass info lines
             for i in range(self.info_nline):
@@ -514,7 +519,7 @@ class XdatCar(AtomCo):
                     data.append(line2list(data_line))
                 prompt = f.readline().strip()
 
-                yield step, np.array(data)
+                yield XdatCarItem._make([step, np.array(data)])
 
 
 class CifFile(AtomCo):
