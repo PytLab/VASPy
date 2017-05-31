@@ -124,9 +124,9 @@ Manipulate XDATCAR:
     >>> from vaspy.atomco import XdatCar
     >>> xdatcar = XdatCar()
     >>> # Get Cartisan coordinates and step number in XDATCAR.
-    >>> for step, data in xdatcar:
-    >>>     print(step)
-    >>>     print(xdatcar.dir2cart(xdatcar.bases, data))
+    >>> for item in xdatcar:
+    >>>     print(item.step)
+    >>>     print(xdatcar.dir2cart(xdatcar.bases, item.coordinates))
 
     >>> python xdatcar_to_arc.py
 
