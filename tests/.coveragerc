@@ -7,5 +7,4 @@ exclude_lines =
     raise NotImplementedError
     if __name__ == .__main__.:
 ignore_errors = True
-omit =
-    /home/travis/virtualenv/python3.5.2/lib/python3.5/site-packages/*
+
