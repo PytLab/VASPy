@@ -14,7 +14,7 @@ matplotlib.use('Agg')
 
 from vaspy.matstudio import XsdFile
 
-from tests import abs_path
+from tests import path
 
 
 class XsdTest(unittest.TestCase):
@@ -25,7 +25,7 @@ class XsdTest(unittest.TestCase):
 
     def test_construction_query(self):
         " Test OutCar construction and query functions. "
-        filename = abs_path + "/testdata/h_top_c_fcc_far.xsd"
+        filename = path + "/h_top_c_fcc_far.xsd"
         xsd = XsdFile(filename)
 
         # Check query functions.
@@ -46,7 +46,7 @@ class XsdTest(unittest.TestCase):
 
     def test_get_name_info(self):
         " Make sure we can get correct info from Name property. "
-        filename = abs_path + "/testdata/h_top_c_fcc_far_noname.xsd"
+        filename = path + "/h_top_c_fcc_far_noname.xsd"
         xsd = XsdFile(filename)
 
         self.assertEqual(xsd.force, 0.0)
@@ -56,7 +56,7 @@ class XsdTest(unittest.TestCase):
 
     def test_update_name(self):
         "Make sure we can update Name info."
-        filename = abs_path + "/testdata/h_top_c_fcc_far_noname.xsd"
+        filename = path + "/h_top_c_fcc_far_noname.xsd"
         xsd = XsdFile(filename)
 
         xsd.update_name()
@@ -72,7 +72,7 @@ class XsdTest(unittest.TestCase):
 
     def test_bulk_construction(self):
         " Test XsdFile construction for a bulk. "
-        filename = abs_path + "/testdata/bulk.xsd"
+        filename = path + "/bulk.xsd"
         xsd = XsdFile(filename)
 
         # Check the default coordinate value for the Atom3d tag without XYZ.
@@ -81,7 +81,7 @@ class XsdTest(unittest.TestCase):
         self.assertListEqual(ref_origin_coord, ret_origin_coord)
 
         # Check atom info update in new xsd file.
-        temp_file = "{}/temp.xsd".format(abs_path)
+        temp_file = "{}/temp.xsd".format(path)
         xsd.tofile(temp_file)
         tree = ET.parse(temp_file)
         for atom3d in tree.iter('Atom3d'):

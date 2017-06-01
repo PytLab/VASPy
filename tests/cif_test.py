@@ -6,7 +6,7 @@ CifFile单元测试
 import unittest
 
 from vaspy.atomco import CifFile
-from tests import abs_path
+from tests import path
 
 
 class CifFileTest(unittest.TestCase):
@@ -15,7 +15,7 @@ class CifFileTest(unittest.TestCase):
         self.maxDiff = True
 
     def test_construction(self):
-        filename = abs_path + '/testdata/ceo2-111.cif'
+        filename = path + '/ceo2-111.cif'
         cif = CifFile(filename)
 
 if "__main__" == __name__: 

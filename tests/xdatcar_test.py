@@ -6,14 +6,14 @@ XdatCar单元测试
 import unittest
 
 from vaspy.iter import XdatCar
-from tests import abs_path
+from tests import path
 
 
 class XdatCarTest(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = True
-        self.filename = 'tests/testdata/XDATCAR'
+        self.filename = path + '/XDATCAR'
 
     def test_construction(self):
         xdatcar = XdatCar(self.filename)

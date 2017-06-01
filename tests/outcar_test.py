@@ -14,7 +14,7 @@ matplotlib.use('Agg')
 from vaspy.atomco import PosCar
 from vaspy.iter import OutCar
 
-from tests import abs_path
+from tests import path
 
 
 class OutCarTest(unittest.TestCase):
@@ -25,8 +25,8 @@ class OutCarTest(unittest.TestCase):
 
     def test_construction_query(self):
         " Test OutCar construction and query functions. "
-        filename = abs_path + "/testdata/OUTCAR"
-        poscar = abs_path + "/testdata/POSCAR"
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         # Check query functions.
@@ -47,8 +47,8 @@ class OutCarTest(unittest.TestCase):
     def test_forces(self):
         " Make sure we can get correct forces data."
         # {{{
-        filename = abs_path + "/testdata/OUTCAR"
-        poscar = abs_path + "/testdata/POSCAR"
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
         outcar = OutCar(filename=filename,
                         poscar=poscar)
 
@@ -135,8 +135,8 @@ class OutCarTest(unittest.TestCase):
 
     def test_mask_forces(self):
         " Test private helper function __mask_forces()."
-        filename = abs_path + "/testdata/OUTCAR"
-        poscar = abs_path + "/testdata/POSCAR"
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         tfs = [["T", "T", "T"],
@@ -155,8 +155,8 @@ class OutCarTest(unittest.TestCase):
 
     def test_fmax(self):
         " Make sure we can get correct max forces. "
-        filename = abs_path + "/testdata/OUTCAR"
-        poscar = abs_path + "/testdata/POSCAR"
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         coords, forces = outcar.forces()
@@ -169,8 +169,8 @@ class OutCarTest(unittest.TestCase):
 
     def test_freq_iterator(self):
         " Make sure we can get correct frequency iterator. "
-        filename = abs_path + "/testdata/OUTCAR_freq"
-        poscar = abs_path + "/testdata/POSCAR_freq"
+        filename = path + "/OUTCAR_freq"
+        poscar = path + "/POSCAR_freq"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         freq_iter = outcar.freq_iterator
@@ -211,8 +211,8 @@ class OutCarTest(unittest.TestCase):
 
     def test_zpe(self):
         " Make sure we can get correct ZPE. "
-        filename = abs_path + "/testdata/OUTCAR_freq"
-        poscar = abs_path + "/testdata/POSCAR_freq"
+        filename = path + "/OUTCAR_freq"
+        poscar = path + "/POSCAR_freq"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         ref_zpe = 0.1117761635
@@ -220,16 +220,16 @@ class OutCarTest(unittest.TestCase):
         self.assertEqual(ref_zpe, ret_zpe)
 
         # Check OUTCAR without freq info.
-        filename = abs_path + "/testdata/OUTCAR"
-        poscar = abs_path + "/testdata/POSCAR"
+        filename = path + "/OUTCAR"
+        poscar = path + "/POSCAR"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         self.assertFalse(hasattr(outcar, "zpe"))
 
     def test_freq_types(self):
         " Make sure we can get correct frequency types. "
-        filename = abs_path + "/testdata/OUTCAR_freq"
-        poscar = abs_path + "/testdata/POSCAR_freq"
+        filename = path + "/OUTCAR_freq"
+        poscar = path + "/POSCAR_freq"
         outcar = OutCar(filename=filename, poscar=poscar)
 
         ref_freq_types = [["f", "f", "f"],

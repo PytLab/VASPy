@@ -8,7 +8,7 @@ import os
 import unittest
 
 from vaspy.incar import InCar
-from tests import abs_path
+from tests import path
 
 
 class InCarTest(unittest.TestCase):
@@ -19,7 +19,7 @@ class InCarTest(unittest.TestCase):
 
     def test_rdata(self):
         " Test data line in INCAR can be read correctly. "
-        filename = abs_path + "/testdata/INCAR"
+        filename = path + "/INCAR"
         incar = InCar(filename)
 
         # Test integer parameter.
@@ -47,7 +47,7 @@ class InCarTest(unittest.TestCase):
 
     def test_load(self):
         " Test all data in INCAR can be loaded. "
-        filename = abs_path + "/testdata/INCAR"
+        filename = path + "/INCAR"
         incar = InCar(filename)
 
         ref_pnames = ['SYSTEM', 'ISTART', 'ISPIN', 'PREC', 'ENCUT',
@@ -64,7 +64,7 @@ class InCarTest(unittest.TestCase):
 
     def test_parameter_set(self):
         " Test existed parameter can be set correctly. "
-        filename = abs_path + "/testdata/INCAR"
+        filename = path + "/INCAR"
         incar = InCar(filename)
 
         self.assertTrue(incar.ISIF, "2")
@@ -73,7 +73,7 @@ class InCarTest(unittest.TestCase):
 
     def test_parameter_add(self):
         " Test new parameter can be added correctly. "
-        filename = abs_path + "/testdata/INCAR"
+        filename = path + "/INCAR"
         incar = InCar(filename)
 
         self.assertFalse(hasattr(incar, "TEST_zjshao"))
@@ -82,7 +82,7 @@ class InCarTest(unittest.TestCase):
 
     def test_parameter_del(self):
         " Make sure we can remove parameters correctly. "
-        filename = abs_path + "/testdata/INCAR"
+        filename = path + "/INCAR"
         incar = InCar(filename)
 
         # Check before deletion.
@@ -100,8 +100,8 @@ class InCarTest(unittest.TestCase):
     def test_compare(self):
         " Make sure we can compare two InCar objects correctly. "
         # Two equal INCAR.
-        filename1 = abs_path + "/testdata/INCAR"
-        filename2 = abs_path + "/testdata/INCAR2"
+        filename1 = path + "/INCAR"
+        filename2 = path + "/INCAR2"
         incar1 = InCar(filename1)
         incar2 = InCar(filename1)
         a_dict, b_dict = incar1.compare(incar2)
@@ -120,8 +120,8 @@ class InCarTest(unittest.TestCase):
     def test_eq(self):
         " Test __eq__() function."
         # Two equal INCAR.
-        filename1 = abs_path + "/testdata/INCAR"
-        filename2 = abs_path + "/testdata/INCAR2"
+        filename1 = path + "/INCAR"
+        filename2 = path + "/INCAR2"
         incar1 = InCar(filename1)
         incar2 = InCar(filename1)
         self.assertTrue(incar1 == incar2)
@@ -134,8 +134,8 @@ class InCarTest(unittest.TestCase):
     def test_ne(self):
         " Test __ne__() function."
         # Two equal INCAR.
-        filename1 = abs_path + "/testdata/INCAR"
-        filename2 = abs_path + "/testdata/INCAR2"
+        filename1 = path + "/INCAR"
+        filename2 = path + "/INCAR2"
         incar1 = InCar(filename1)
         incar2 = InCar(filename1)
         self.assertFalse(incar1 != incar2)
