@@ -1,0 +1,11 @@
+[run]
+branch = True
+source = ../vaspy
+
+[report]
+exclude_lines =
+    raise NotImplementedError
+    if __name__ == .__main__.:
+ignore_errors = True
+omit =
+    /Users/zjshao/.pyenv/versions/3.5.3/envs/vaspy-py3/lib/python3.5/site-packages/*
