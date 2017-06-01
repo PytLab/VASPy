@@ -191,7 +191,12 @@ class AtomCo(VasPy):
         x = np.matrix(data).T
         b = A*x
 
-        return np.array(b.T)
+        b = np.array(b.T)
+
+        if b.shape[0] == 1:
+            b = b.reshape(3, )
+
+        return b
 
     @staticmethod
     def cart2dir(bases, data):

@@ -57,6 +57,17 @@ class XdatCarTest(unittest.TestCase):
                      [0.135366921, 0.09576100900000001, 0.8097950000000002]]
         self.assertListEqual(dir_coord.tolist(), ref_coord)
 
+    def test_dir2cart(self):
+        " Make sure we can convert cartesian to direct"
+        xdatcar = XdatCar(self.filename)
+        dir_coord = [0.5, 0.5, 0.5]
+        cart_coord = xdatcar.dir2cart(xdatcar.bases, dir_coord).tolist()
+        self.assertListEqual(cart_coord, [5.0, 5.0, 5.0])
+
+        dir_coord = [[0.5, 0.5, 0.5], [0.5, 0.5, 0.5]]
+        cart_coord = xdatcar.dir2cart(xdatcar.bases, dir_coord).tolist()
+        self.assertListEqual(cart_coord, [[5.0, 5.0, 5.0], [5.0, 5.0, 5.0]])
+
 if "__main__" == __name__: 
     suite = unittest.TestLoader().loadTestsFromTestCase(XdatCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite) 
