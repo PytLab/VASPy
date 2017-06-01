@@ -1,5 +1,6 @@
 [run]
-source = ../vaspy
+branch = True
+source = vaspy
 
 [report]
 exclude_lines =
