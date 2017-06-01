@@ -6,36 +6,24 @@ import numpy as np
 from scipy.interpolate import interp2d
 from mayavi import mlab
 
-from vaspy.iter import XdatCar
+from vaspy.iter import XdatCar, AniFile
+from traj import get_trajectories
 
 orders = [2, 6, 10, 14, 18, 22, 26, 30, 34]
 max_x = 0.7
-max_y = 0.7
+max_y = 0.8
 grid_resolution = 60
 interp_resolution = 100
-
-xdatcar = XdatCar()
-trajs = [[]]*len(orders)
-for item in xdatcar:
-    for j in range(len(orders)):
-        data = item.coordinates[orders[j]]
-        new_data = [0]*3
-        for i, c in enumerate(data):
-            if (i == 0 and c >= max_x) or (i == 1 and c > max_y):
-                c -= 1.0
-            new_data[i] = c
-
-        cart_data = xdatcar.dir2cart(xdatcar.bases, new_data)
-        trajs[j].append(cart_data.tolist()[0])
-
-# Merge all positions.
-positions = np.concatenate(trajs)
 
 def locate(x, y, position):
     i, j = position
     return bisect(x, i)-1, bisect(y, j)-1
 
 if __name__ == "__main__":
+    # Merge all positions.
+    trajs = get_trajectories()
+    positions = np.concatenate(trajs)
+
     # Get limits.
     all_data = np.concatenate((positions[:, 0], positions[:, 1]))
     left, right = np.min(all_data), np.max(all_data)
