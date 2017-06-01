@@ -31,7 +31,7 @@ install:
 
 # command to run tests
 script:
-  - coverage run tests/vaspy_test.py
+  - coverage run tests/xdatcar_test.py
 
 after_success:
   - codecov

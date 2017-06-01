@@ -13,7 +13,7 @@ class XdatCarTest(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = True
-        self.filename = abs_path + '/testdata/XDATCAR'
+        self.filename = 'tests/testdata/XDATCAR'
 
     def test_construction(self):
         xdatcar = XdatCar(self.filename)
