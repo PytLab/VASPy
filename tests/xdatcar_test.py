@@ -38,6 +38,25 @@ class XdatCarTest(unittest.TestCase):
                      [ 0.68726824,  0.50910242,  0.52968761]]
         self.assertListEqual(item.coordinates.tolist(), ref_coord)
 
+    # Test interfaces in AtomCo class.
+
+    def test_cart2dir(self):
+        " Make sure we can convert direct coordinates to cartesian coordinates."
+        xdatcar = XdatCar(self.filename)
+        cart_coord = [1.35366921,  0.95761009,  8.09795]
+        dir_coord = xdatcar.cart2dir(xdatcar.bases, cart_coord)
+        self.assertListEqual(dir_coord.tolist(), [0.135366921,
+                                                  0.09576100900000001,
+                                                  0.8097950000000002])
+
+        # Test 2x3 array.
+        cart_coord = [[1.35366921,  0.95761009,  8.09795],
+                      [1.35366921,  0.95761009,  8.09795]]
+        dir_coord = xdatcar.cart2dir(xdatcar.bases, cart_coord)
+        ref_coord = [[0.135366921, 0.09576100900000001, 0.8097950000000002],
+                     [0.135366921, 0.09576100900000001, 0.8097950000000002]]
+        self.assertListEqual(dir_coord.tolist(), ref_coord)
+
 if "__main__" == __name__: 
     suite = unittest.TestLoader().loadTestsFromTestCase(XdatCarTest)
     unittest.TextTestRunner(verbosity=2).run(suite) 
