@@ -9,7 +9,7 @@ import unittest
 
 from vaspy.matstudio import ArcFile
 
-from tests import path
+from tests import abs_path
 
 
 class ArcTest(unittest.TestCase):
@@ -19,7 +19,7 @@ class ArcTest(unittest.TestCase):
 
     def test_construction_query(self):
         " Test ArcFile construction and query function. "
-        filename = path + "/00-04.arc" 
+        filename = abs_path + "/testdata/00-04.arc" 
         arc = ArcFile(filename)
 
         # Check query functions.
@@ -33,7 +33,7 @@ class ArcTest(unittest.TestCase):
 
     def test_coords_iterator(self):
         " Make sure we can get coordinates correctly. "
-        filename = path + "/00-04.arc" 
+        filename = abs_path + "/testdata/00-04.arc" 
         arc = ArcFile(filename)
 
         for ret_coords in arc.coords_iterator:
@@ -85,7 +85,7 @@ class ArcTest(unittest.TestCase):
 
     def test_elements(self):
         " Test query function elements(). "
-        filename = path + "/00-04.arc" 
+        filename = abs_path + "/testdata/00-04.arc" 
         arc = ArcFile(filename)
 
         ref_elements = ['Pt', 'Pt', 'Pt', 'Pt', 'Pt',

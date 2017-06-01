@@ -7,14 +7,14 @@ import unittest
 
 from vaspy.iter import AniFile
 from vaspy.atomco import XyzFile
-from tests import path
+from tests import abs_path
 
 
 class AniFileTest(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = True
-        self.filename = path + '/OUT.ANI'
+        self.filename = abs_path + '/testdata/OUT.ANI'
 
     def test_construction(self):
         ani = AniFile(self.filename)

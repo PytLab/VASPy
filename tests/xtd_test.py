@@ -6,7 +6,7 @@ XtdFile类单元测试
 import unittest
 
 from vaspy.matstudio import ArcFile, XtdFile
-from tests import path
+from tests import abs_path
 
 
 class XtdTest(unittest.TestCase):
@@ -16,8 +16,8 @@ class XtdTest(unittest.TestCase):
 
     def test_construction_query(self):
         " Test XtdFile object construction and query functions. "
-        filename = path + "/00-04.xtd"
-        arcname = path + "/00-04.arc"
+        filename = abs_path + "/testdata/00-04.xtd"
+        arcname = abs_path + "/testdata/00-04.arc"
         xtd = XtdFile(filename, arcname)
 
         self.assertTrue(isinstance(xtd.arcfile, ArcFile))
@@ -28,8 +28,8 @@ class XtdTest(unittest.TestCase):
 
     def test_coords_iterator(self):
         " Make sure we can get correct direct coordinates. "
-        filename = path + "/00-04.xtd"
-        arcname = path + "/00-04.arc"
+        filename = abs_path + "/testdata/00-04.xtd"
+        arcname = abs_path + "/testdata/00-04.arc"
         xtd = XtdFile(filename, arcname)
 
         ref_coords = [[0.05100029522154211, 0.39850231693493543, 0.11064568869218162],

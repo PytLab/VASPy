@@ -12,7 +12,7 @@ matplotlib.use('Agg')
 
 from vaspy.iter import OsziCar
 
-from tests import path
+from tests import abs_path
 
 
 class OsziCarTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class OsziCarTest(unittest.TestCase):
 
     def test_attrs(self):
         "Make sure load() effects"
-        filename = path + "/OSZICAR"
+        filename = abs_path + "/testdata/OSZICAR"
         oszicar = OsziCar(filename) 
         for var in oszicar.vars:
             self.assertTrue(hasattr(oszicar, var))
@@ -33,7 +33,7 @@ class OsziCarTest(unittest.TestCase):
 
     def test_esort(self):
         "Make sure the esort() effects"
-        filename = path + "/OSZICAR"
+        filename = abs_path + "/testdata/OSZICAR"
         oszicar = OsziCar(filename) 
         srted = oszicar.esort('E0', 2)
         shouldbe = np.array([(-101.21186, 326), (-101.21116, 324)],
@@ -45,7 +45,7 @@ class OsziCarTest(unittest.TestCase):
 
     def test_plot(self):
         "Make sure object could plot"
-        filename = path + "/OSZICAR"
+        filename = abs_path + "/testdata/OSZICAR"
         oszicar = OsziCar(filename) 
         plot = oszicar.plot('E0', mode='save')
         self.assertTrue(isinstance(plot, matplotlib.figure.Figure))
