@@ -32,7 +32,7 @@ def get_trajectories():
 
             # Convert direct coordinates to cartesian coordiantes.
             cart_data = xdatcar.dir2cart(xdatcar.bases, new_data)
-            trajs[j].append(cart_data.tolist()[0])
+            trajs[j].append(cart_data.tolist())
 
     return trajs
 
@@ -43,6 +43,7 @@ if __name__ == "__main__":
     trajs = get_trajectories()
     for traj in trajs:
         traj = np.array(traj)
+#        import ipdb; ipdb.set_trace()
         ax.scatter(traj[:, 0], traj[:, 1],
                    alpha=0.3, s=60,
                    facecolor="#93989A",
