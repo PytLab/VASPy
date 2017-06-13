@@ -209,10 +209,7 @@ class AtomCo(VasPy):
 
         data: The Cartisan coordinate data, Nx3 numpy.array or a single 3D vector.
         """
-        # For the 1D vector case, like [1.0, 2.0, 2.3].
-        data = np.array(data).reshape(-1, 3)
-
-        b = np.matrix(data.T)
+        b = np.matrix(data).T
         A = np.matrix(bases).T
         x = A.I*b
 
