@@ -25,9 +25,9 @@ try:
 except ImportError:
     mayavi_installed = False
 
-from plotter import DataPlotter
-from atomco import PosCar
-from functions import line2list
+from vaspy.plotter import DataPlotter
+from vaspy.atomco import PosCar
+from vaspy.functions import line2list
 
 
 class DosX(DataPlotter):

@@ -11,7 +11,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
 import numpy as np
 import matplotlib.pyplot as plt
 
-from functions import line2list
+from vaspy.functions import line2list
 
 
 class DataPlotter(object):
