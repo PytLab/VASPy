@@ -173,8 +173,7 @@ class OutCarTest(unittest.TestCase):
         poscar = path + "/POSCAR_freq"
         outcar = OutCar(filename=filename, poscar=poscar)
 
-        freq_iter = outcar.freq_iterator
-        ret_freq_dict = next(freq_iter)
+        ret_freq_dict = next(outcar.ifreq)
 
         # Check.
         ref_meV = "93.954209"

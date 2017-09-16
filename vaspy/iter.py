@@ -9,6 +9,7 @@ Updated by PytLab <shaozhengjiang@gmail.com>, March 2017
 
 """
 import re
+from collections import namedtuple
 from string import whitespace
 
 import numpy as np
@@ -212,7 +213,7 @@ class OutCar(VasPy):
         Private helper function to check consistency of POSCAR and OUTCAR.
         """
         # Coordinates in OUTCAR.
-        _, coords, _ = next(self.force_iterator)
+        _, coords, _ = next(self.iforces)
         coords_outcar = np.array(coords)
         shape_outcar = coords_outcar.shape
 
@@ -226,13 +227,16 @@ class OutCar(VasPy):
             raise ValueError(msg)
 
     @property
-    def force_iterator(self):
+    def iforces(self):
         """
         返回每个离子步迭代的步数，坐标和每个原子受力信息。
         Return a generator yield ionic_step, coordinates, forces on atoms.
 
         NOTE: ionic step starts from 1 **NOT 0**.
         """
+        # Define namedtuple for item in force iteration.
+        ForceItem = namedtuple('ForceItem', ['step', 'coordinates', 'forces'])
+
         with open(self.filename, "r") as f:
             ion_step = 0
 
@@ -255,7 +259,7 @@ class OutCar(VasPy):
                     if "-"*6 in line:
                         collecting = False
                         collect_begin = False
-                        yield ion_step, coordinates, forces
+                        yield ForceItem._make([ion_step, coordinates, forces])
                     else:
                         x, y, z, fx, fy, fz = line2list(line)
                         coordinates.append([x, y, z])
@@ -322,7 +326,7 @@ class OutCar(VasPy):
         -------
         Coordinates and forces for that step.
         """
-        for i, coord, forces in self.force_iterator:
+        for i, coord, forces in self.iforces:
             if step != -1 and i == step:
                 return coord, forces
 
@@ -338,7 +342,7 @@ class OutCar(VasPy):
         Function to get max force for every ionic step.
         """
         max_forces = []
-        for _, _, forces in self.force_iterator:
+        for _, _, forces in self.iforces:
             _, fvector = self.fmax(forces)
             max_force = np.linalg.norm(fvector)
             max_forces.append(max_force)
@@ -380,7 +384,7 @@ class OutCar(VasPy):
         return atom_number
 
     @property
-    def freq_iterator(self):
+    def ifreq(self):
         """
         返回频率信息字典的迭代器。
         Return frequency iterator to generating frequency related data.
@@ -421,7 +425,7 @@ class OutCar(VasPy):
         """
         def wrapper(self):
             try:
-                next(self.freq_iterator)
+                next(self.ifreq)
             except StopIteration:
                 msg = "'{}' has no attribtue '{}'".format(self.__class__.__name__, "zpe")
                 raise AttributeError(msg)
@@ -438,7 +442,7 @@ class OutCar(VasPy):
         Function to get Zero Point Energy(ZPE) in eV.
         """
         E = [float(freq_dict["meV"])
-             for freq_dict in self.freq_iterator if freq_dict["freq_type"] == "f"]
+             for freq_dict in self.ifreq if freq_dict["freq_type"] == "f"]
 
         return sum(E)/2000.0
 
@@ -449,7 +453,7 @@ class OutCar(VasPy):
         获取频率类型列表。
         Function to get frequency types.
         """
-        freq_types = [freq_dict["freq_type"] for freq_dict in self.freq_iterator]
+        freq_types = [freq_dict["freq_type"] for freq_dict in self.ifreq]
 
         # Reshape.
         try:
