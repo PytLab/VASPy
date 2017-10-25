@@ -9,7 +9,14 @@ Updated by PytLab <shaozhengjiang@gmail.com>, September 2015
 
 """
 import numpy as np
-import matplotlib.pyplot as plt
+
+# whether pyplot installed
+try:
+    import matplotlib.pyplot as plt
+    plt_installed = True
+except ImportError:
+    print('Warning: Module matplotlib.pyplot is not installed')
+    plt_installed = False
 
 from vaspy.functions import line2list
 

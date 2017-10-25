@@ -13,7 +13,12 @@ from collections import namedtuple
 from string import whitespace
 
 import numpy as np
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+    plt_installed = True
+except ImportError:
+    print('Warning: Module matplotlib.pyplot is not installed')
+    plt_installed = False
 
 from vaspy import VasPy, PY2
 from vaspy import LazyProperty

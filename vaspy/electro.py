@@ -17,7 +17,15 @@ import numpy as np
 from scipy.integrate import simps
 from scipy.interpolate import interp2d
 import mpl_toolkits.mplot3d
-import matplotlib.pyplot as plt
+
+# whether pyplot installed
+try:
+    import matplotlib.pyplot as plt
+    plt_installed = True
+except ImportError:
+    print('Warning: Module matplotlib.pyplot is not installed')
+    plt_installed = False
+
 #whether mayavi installed
 try:
     from mayavi import mlab
