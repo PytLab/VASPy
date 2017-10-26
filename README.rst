@@ -31,6 +31,8 @@ You can use VASPy to manipulate VASP files in command lins or write your own pyt
 
 In `/scripts <https://github.com/PytLab/VASPy/tree/master/scripts>`_ , there are some scripts written by me for daily use.
 
+More interfaces examples in Jupyter Notebook format are in `/examples <https://github.com/PytLab/VASPy/tree/master/examples>`_. **Any contribution is welcomed!**
+
 Installation
 ------------
 1. Via pip(recommend)::
