@@ -79,3 +79,6 @@ tags
 .DS_Store
 Thumbs.db
 
+# Jupyter notebook
+.ipynb_checkpoints/
+
