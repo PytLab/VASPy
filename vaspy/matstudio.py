@@ -202,7 +202,10 @@ class XsdFile(AtomCo):
         """
         # Get info string.
         for elem in self.tree.iter("SymmetrySystem"):
-            info = elem.attrib["Name"]
+            info = elem.attrib.get('Name')
+            if info is None:
+                self.__logger.warning('No Name attribute in SymmetrySystem')
+                return
             break
 
         # Get thermo data.
