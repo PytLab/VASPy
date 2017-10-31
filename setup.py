@@ -23,14 +23,14 @@ VASPy
     :target: https://landscape.io/github/PytLab/VASPy/master
     :alt: Code Health
 
-.. image:: https://coveralls.io/repos/github/PytLab/VASPy/badge.svg?branch=master
-    :target: https://coveralls.io/github/PytLab/VASPy?branch=master
+.. image:: https://codecov.io/gh/PytLab/VASPy/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/PytLab/VASPy
 
 .. image:: https://img.shields.io/badge/python-3.5, 2.7-green.svg
     :target: https://www.python.org/downloads/release/python-351/
     :alt: platform
 
-.. image:: https://img.shields.io/badge/pypi-v0.8.5-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.8.6-blue.svg
     :target: https://pypi.python.org/pypi/vaspy/
     :alt: versions
 
