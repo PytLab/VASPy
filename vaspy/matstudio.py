@@ -4,7 +4,7 @@
 Provide Material Studio markup file class which do operations on these files.
 =============================================================================
 Written by PytLab <shaozhengjiang@gmail.com>, August 2015
-Updated by PytLab <shaozhengjiang@gmail.com>, October 2016
+Updated by PytLab <shaozhengjiang@gmail.com>, Novermber 2016
 ==============================================================
 
 """
@@ -298,7 +298,7 @@ class XsdFile(AtomCo):
         """
         value = ""
         for key, attr in zip(['E', 'F', 'M'], ["energy", "force", "magnetism"]):
-            data = getattr(self, attr)
+            data = getattr(self, attr, 0.0)
             value += "{}:{} ".format(key, data)
         value = value.strip()
 
