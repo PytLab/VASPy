@@ -30,7 +30,7 @@ VASPy
     :target: https://www.python.org/downloads/release/python-351/
     :alt: platform
 
-.. image:: https://img.shields.io/badge/pypi-v0.8.6-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.8.7-blue.svg
     :target: https://pypi.python.org/pypi/vaspy/
     :alt: versions
 
