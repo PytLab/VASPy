@@ -437,6 +437,46 @@ class PosCar(AtomCo):
         content = self.get_poscar_content()
         return content
 
+    def add_atom(self, atom_type, coordinate, fix=['T', 'T', 'T']):
+        """
+        Add a new atom to coordinate file.
+
+        Parameters:
+        -----------
+        atom_type: element type of the atom, str.
+        coordinate: position of the added atom, list of float.
+        fix: flags for fixed atom in three directions, list of str.
+
+        Example:
+        --------
+        >>> poscar.add_atom('C', [0.5, 0.5, 0.3])
+        """
+        atomco_dict = self.atomco_dict
+        tf_dict = self.tf_dict
+
+        self.natom += 1
+        self.totline += 1
+
+        if atom_type in self.atom_types:
+            atomco_dict[atom_type].append(coordinate)
+            tf_dict[atom_type].append(fix)
+            idx = self.atom_types.index(atom_type)
+            self.atom_numbers[idx] += 1
+        else:
+            self.atom_types.append(atom_type)
+            atomco_dict[atom_type] = [coordinate]
+            tf_dict[atom_type] = [fix]
+            self.atom_numbers.append(1)
+
+        # New data and fix info.
+        data, tf = [], []
+        for atom_type in self.atom_types:
+            data += atomco_dict[atom_type]
+            tf += tf_dict[atom_type]
+
+        self.data = np.float64(np.array(data))
+        self.tf = np.array(tf)
+
     def tofile(self, filename='POSCAR_c'):
         "生成文件"
         "PosCar object to POSCAR or CONTCAR."
