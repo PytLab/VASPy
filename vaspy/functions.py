@@ -62,9 +62,9 @@ def atomdict2str(atomco_dict, keys):
     """
     Convert atomco_dict to content_str.
     from
-    {'C' : [['2.01115823704755', '2.33265069974919', '10.54948252493041']],
-     'Co': [['0.28355818414485', '2.31976779057375', '2.34330019781397'],
-            ['2.76900337448991', '0.88479534087197', '2.34330019781397']]}
+    {'C' : [[2.01115823704755, 2.33265069974919, 10.54948252493041]],
+     'Co': [[0.28355818414485, 2.31976779057375, 2.34330019781397],
+            [2.76900337448991, 0.88479534087197, 2.34330019781397]]}
     to
     'C   2.01115823704755   2.33265069974919   10.54948252493041\n
      Co  0.28355818414485   2.31976779057375   2.34330019781397 \n
@@ -74,8 +74,8 @@ def atomdict2str(atomco_dict, keys):
     for atom in keys:
         n = len(atomco_dict[atom])
         for i in range(n):
-            line_tuple = tuple([atom] + atomco_dict[atom][i])
-            content_str += '%-3s%16s%16s%16s\n' % line_tuple
+            data = [atom] + atomco_dict[atom][i]
+            content_str += '{:<3s}{:>16.7f}{:>16.7f}{:>16.7f}\n'.format(*data)
 
     return content_str
 

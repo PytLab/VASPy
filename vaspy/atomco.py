@@ -81,7 +81,7 @@ class AtomCo(VasPy):
 
         return tf_dict
 
-    def get_xyz_content(self, step=None):
+    def get_xyz_content(self, step=None, bases=None):
 
         """
         Get xyz file content.
@@ -90,6 +90,9 @@ class AtomCo(VasPy):
         Parameters:
         -----------
         step: The step number, int, optional, 1 by default.
+        bases: If the bases is provided, default data is regarded as direct
+               coordinates and would be converted to Cartesian coordinates using
+               bases.
         """
         natom = "{:12d}\n".format(self.natom)
         try:
@@ -98,6 +101,17 @@ class AtomCo(VasPy):
             step = 1
         step = "STEP ={:9d}\n".format(step)
         data = atomdict2str(self.atomco_dict, self.atom_types)
+        data = ''
+        for atom in self.atom_types:
+            if bases is not None:
+                coords = self.dir2cart(bases, np.array(self.atomco_dict[atom]))
+                coords = coords.tolist()
+            else:
+                coords = self.atomco_dict[atom]
+
+            template = '{:<3s}{:>16.7f}{:>16.7f}{:>16.7}\n'
+            for i in range(len(coords)):
+                data += template.format(atom, *coords[i])
         content = natom + step + data
 
         return content
@@ -139,8 +153,8 @@ class AtomCo(VasPy):
 
         # atom info
         types, numbers = self.atom_types, self.atom_numbers
-        atom_types = ("{:5s}"*len(types) + "\n").format(*types)
-        atom_numbers = ("{:5d}"*len(numbers) + "\n").format(*numbers)
+        atom_types = ("{:>5s}"*len(types) + "\n").format(*types)
+        atom_numbers = ("{:>5d}"*len(numbers) + "\n").format(*numbers)
 
         # string
         info = "Selective Dynamics\nDirect\n"
