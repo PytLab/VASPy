@@ -154,7 +154,7 @@ class AtomCo(VasPy):
             tf = kwargs.get("tf", default_tf)
         data_tf = ''
         for data, tf in zip(self.data.tolist(), tf.tolist()):
-            data_tf += ("{:18.12f}"*3+"{:5s}"*3+"\n").format(*(data+tf))
+            data_tf += ("{:18.12f}"*3 + " " + "{:5s}"*3 + "\n").format(*(data+tf))
 
         # merge all strings
         content += (bases_const + bases + atom_types + atom_numbers +
