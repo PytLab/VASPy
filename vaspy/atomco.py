@@ -12,6 +12,8 @@ Updated by PytLab <shaozhengjiang@gmail.com>, May 2017
 import logging
 import re
 from collections import namedtuple
+from math import acos, degrees
+from itertools import combinations
 
 import numpy as np
 
@@ -173,6 +175,56 @@ class AtomCo(VasPy):
         # merge all strings
         content += (bases_const + bases + atom_types + atom_numbers +
                     info + data_tf)
+
+        return content
+
+    def get_cif_content(self):
+        """
+        Get the cif file content.
+        """
+        content = 'data_VESTA_phase_1\n\n'
+
+        # Phase name
+        phase_name = ('xyz {}'*len(self.atom_types)).format(*self.atom_types)
+        content += "{:<40s}'{}'\n".format('_pd_phase_name', phase_name)
+
+        # Basis vectors lengths.
+        length_a, length_b, length_c = [np.linalg.norm(basis) for basis in self.bases]
+        content += '{:<40s}{:<.5f}\n'.format('_cell_length_a', length_a)
+        content += '{:<40s}{:<.5f}\n'.format('_cell_length_b', length_b)
+        content += '{:<40s}{:<.5f}\n'.format('_cell_length_c', length_c)
+
+        # Angles between basis vectors.
+        angle = lambda X, Y: degrees(acos(np.dot(X, Y)/(np.linalg.norm(X)*np.linalg.norm(Y))))
+        alpha, beta, gamma = [angle(X, Y) for X, Y in combinations(self.bases, 2)]
+        content += '{:<40s}{:<.2f}\n'.format('_cell_angle_alpha', alpha)
+        content += '{:<40s}{:<.2f}\n'.format('_cell_angle_beta', beta)
+        content += '{:<40s}{:<.2f}\n'.format('_cell_angle_gamma', gamma)
+
+        # Other info.
+        content += "{:<40s}'P 1'\n".format('_symmetry_space_group_name_H-M')
+        content += '{:<40s}1\n\n'.format('_symmetry_Int_Tables_number')
+        content += "loop_\n_symmetry_equiv_pos_as_xyz\n   'x, y, z'\n\n"
+
+        # Atom info.
+        content += ('loop_\n' +
+                    '   _atom_site_label\n' +
+                    '   _atom_site_occupancy\n' +
+                    '   _atom_site_fract_x\n' +
+                    '   _atom_site_fract_y\n' +
+                    '   _atom_site_fract_z\n' +
+                    '   _atom_site_adp_type\n' +
+                    '   _atom_site_B_iso_or_equiv\n' +
+                    '   _atom_site_type_symbol\n')
+
+        # Atom coordinates.
+        line_template = '   {:<9s}{:<7.1}{:<13.5f}{:<13.5f}{:<13.5f}{:<6s}{:<7.3f}{:s}\n'
+        atom_count = 0
+        for atom_type, coordinates in self.atomco_dict.items():
+            for x, y, z in coordinates:
+                atom_count += 1
+                name = '{}{}'.format(atom_type, atom_count)
+                content += line_template.format(name, 1.0, x, y, z, 'Biso', 1.0, atom_type)
 
         return content
 
