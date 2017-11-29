@@ -85,7 +85,7 @@ if "__main__" == __name__:
         f.write(kpt_content)
 
     # Get content line list.
-    jobname = output.split('.')[0]
+    jobname = ".".join(output.split('.')[: -1])
     with open('vasp.script', 'r') as f:
         content_list = f.readlines()
 
