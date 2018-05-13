@@ -10,7 +10,7 @@ VASPy
     :target: https://landscape.io/github/PytLab/VASPy/master
     :alt: Code Health
 
-.. image:: https://codecov.io/gh/PytLab/VASPy/branch/master/graph/badge.svg
+.. image:: https://img.shields.io/codecov/c/github/PytLab/VASPy/master.svg
     :target: https://codecov.io/gh/PytLab/VASPy
 
 .. image:: https://img.shields.io/badge/python-3.5, 2.7-green.svg
