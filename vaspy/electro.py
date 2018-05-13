@@ -93,6 +93,7 @@ class DosX(DataPlotter):
     def reset_data(self):
         "Reset data array to zeros."
         self.data[:, 1:] = 0.0
+        return self
 
     def plotsum(self, xcol, ycols, **kwargs):
         '''
@@ -205,13 +206,14 @@ class DosX(DataPlotter):
 
         Parameters:
         -----------
-        d_cols: The column number range for d orbitals, tuple of int.
+        d_cols: The column number range for d orbitals, int or tuple of int.
 
         Examples:
         ---------
         # The 5 - 9 columns are state density for d orbitals.
         >>> dos.get_dband_center(d_cols=(5, 10))
         """
+        d_cols = (d_cols, d_cols+1) if type(d_cols) is int else d_cols
 
         # 合并d轨道DOS
         start, end = d_cols
