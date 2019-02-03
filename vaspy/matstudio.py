@@ -120,6 +120,7 @@ class XsdFile(AtomCo):
         tf = []
         tf_dict = {}
         atom_names = []
+        atom_components = []
         atom_name_dict = {}
 
         identity_mappings = self.__get_identity_mappings()
@@ -131,6 +132,7 @@ class XsdFile(AtomCo):
             for elem in identity_mapping.iter('Atom3d'):
                 # Atom name and number
                 atom = elem.attrib['Components']
+                atom_components.append(atom)
                 if atom not in natoms_dict:
                     natoms_dict.setdefault(atom, 1)
                     atom_types.append(atom)
@@ -193,6 +195,7 @@ class XsdFile(AtomCo):
         self.atom_types = atom_types
         self.tf = np.array(tf)
         self.atom_names = atom_names
+        self.atom_components = atom_components
         self.atom_names_dict = atom_name_dict
         self.data = np.array(coordinates)
 
