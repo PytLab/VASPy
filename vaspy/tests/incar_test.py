@@ -7,8 +7,8 @@ import inspect
 import os
 import unittest
 
-from vaspy.incar import InCar
-from tests import path
+from ..incar import InCar
+from . import path
 
 
 class InCarTest(unittest.TestCase):
@@ -149,8 +149,4 @@ class InCarTest(unittest.TestCase):
         " Test INCAR content can be write to file. "
         # NEED IMPLEMENTATIN
         pass
-
-if "__main__" == __name__: 
-    suite = unittest.TestLoader().loadTestsFromTestCase(InCarTest)
-    unittest.TextTestRunner(verbosity=2).run(suite) 
 

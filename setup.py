@@ -95,9 +95,6 @@ license = 'LICENSE'
 #        long_description += line
 
 name = 'vaspy'
-packages = [
-    'vaspy',
-]
 platforms = ['linux']
 url = 'https://github.com/PytLab/VASPy'
 download_url = ''
@@ -110,6 +107,8 @@ classifiers = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.5',
 ]
+
+test_suite = 'vaspy.tests.test_all'
 
 setup(author=author,
       author_email=author_email,
@@ -124,6 +123,6 @@ setup(author=author,
       url=url,
       download_url=download_url,
       version=version,
-#      test_suite="tests",
+      test_suite=test_suite,
       classifiers=classifiers)
 

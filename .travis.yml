@@ -31,10 +31,6 @@ install:
 
 # command to run tests
 script:
-  - cd tests
-  - coverage run vaspy_test.py
-
-after_success:
-  - cd tests 
+  - coverage run -m vaspy.tests.test_all
   - codecov
 

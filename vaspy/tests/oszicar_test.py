@@ -10,9 +10,9 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 
-from vaspy.iter import OsziCar
+from ..iter import OsziCar
 
-from tests import path
+from . import path
 
 
 class OsziCarTest(unittest.TestCase):
@@ -51,8 +51,4 @@ class OsziCarTest(unittest.TestCase):
         self.assertTrue(isinstance(plot, matplotlib.figure.Figure))
         # Remove picture.
         os.remove("E0_vs_step.png")
-
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(OsziCarTest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
 

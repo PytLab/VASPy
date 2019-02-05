@@ -5,8 +5,8 @@ XyzFile单元测试
 
 import unittest
 
-from vaspy.atomco import XyzFile
-from tests import path
+from ..atomco import XyzFile
+from . import path
 
 
 class XyzFileTest(unittest.TestCase):
@@ -52,8 +52,4 @@ class XyzFileTest(unittest.TestCase):
         xyz = XyzFile(content_list=content_list)
         ret_content = xyz.get_xyz_content()
         self.assertEqual(ret_content, content+"\n")
-
-if "__main__" == __name__: 
-    suite = unittest.TestLoader().loadTestsFromTestCase(XyzFileTest)
-    unittest.TextTestRunner(verbosity=2).run(suite) 
 

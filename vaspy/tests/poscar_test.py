@@ -5,8 +5,8 @@ PosCar单元测试
 
 import unittest
 
-from vaspy.atomco import PosCar
-from tests import path
+from ..atomco import PosCar
+from . import path
 
 
 class PosCarTest(unittest.TestCase):
@@ -39,8 +39,4 @@ class PosCarTest(unittest.TestCase):
                              poscar.data.tolist())
         self.assertListEqual(ori_tf.tolist() + [['T', 'T', 'T']],
                              poscar.tf.tolist())
-
-if "__main__" == __name__: 
-    suite = unittest.TestLoader().loadTestsFromTestCase(PosCarTest)
-    unittest.TextTestRunner(verbosity=2).run(suite) 
 
