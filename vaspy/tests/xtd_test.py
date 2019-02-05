@@ -5,8 +5,8 @@ XtdFile类单元测试
 
 import unittest
 
-from vaspy.matstudio import ArcFile, XtdFile
-from tests import path
+from ..matstudio import ArcFile, XtdFile
+from . import path
 
 
 class XtdTest(unittest.TestCase):

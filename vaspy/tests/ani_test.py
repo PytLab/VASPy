@@ -5,9 +5,9 @@ AniFile单元测试
 
 import unittest
 
-from vaspy.iter import AniFile
-from vaspy.atomco import XyzFile
-from tests import path
+from ..iter import AniFile
+from ..atomco import XyzFile
+from . import path
 
 
 class AniFileTest(unittest.TestCase):
@@ -28,8 +28,4 @@ class AniFileTest(unittest.TestCase):
         self.assertTrue(isinstance(xyz, XyzFile))
         self.assertListEqual(xyz.atom_types, ["Pt", "C", "O"])
         self.assertListEqual(xyz.atom_numbers, [40, 1, 1])
-
-if "__main__" == __name__: 
-    suite = unittest.TestLoader().loadTestsFromTestCase(AniFileTest)
-    unittest.TextTestRunner(verbosity=2).run(suite) 
 

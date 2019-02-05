@@ -7,9 +7,9 @@ import inspect
 import os
 import unittest
 
-from vaspy.matstudio import ArcFile
+from ..matstudio import ArcFile
 
-from tests import path
+from . import path
 
 
 class ArcTest(unittest.TestCase):
@@ -100,8 +100,4 @@ class ArcTest(unittest.TestCase):
         ret_elements = arc.elements
 
         self.assertListEqual(ref_elements, ret_elements)
-
-if "__main__" == __name__:
-    suite = unittest.TestLoader().loadTestsFromTestCase(ArcTest)
-    unittest.TextTestRunner(verbosity=2).run(suite) 
 

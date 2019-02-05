@@ -11,10 +11,10 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 
-from vaspy.atomco import PosCar
-from vaspy.iter import OutCar
+from ..atomco import PosCar
+from ..iter import OutCar
 
-from tests import path
+from . import path
 
 
 class OutCarTest(unittest.TestCase):
@@ -236,8 +236,4 @@ class OutCarTest(unittest.TestCase):
         ret_freq_types = outcar.freq_types
 
         self.assertListEqual(ref_freq_types, ret_freq_types)
-
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(OutCarTest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
 

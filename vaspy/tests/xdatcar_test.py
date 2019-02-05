@@ -5,8 +5,8 @@ XdatCar单元测试
 
 import unittest
 
-from vaspy.iter import XdatCar
-from tests import path
+from ..iter import XdatCar
+from . import path
 
 
 class XdatCarTest(unittest.TestCase):

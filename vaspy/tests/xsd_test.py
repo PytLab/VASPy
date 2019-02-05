@@ -12,9 +12,9 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 
-from vaspy.matstudio import XsdFile
+from ..matstudio import XsdFile
 
-from tests import path
+from . import path
 
 
 class XsdTest(unittest.TestCase):
@@ -88,8 +88,4 @@ class XsdTest(unittest.TestCase):
             break
         self.assertEqual(atom3d.get('XYZ'), '0.0,0.0,0.0')
         os.remove(temp_file)
-
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(XsdTest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
 

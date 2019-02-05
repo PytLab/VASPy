@@ -17,9 +17,10 @@ from itertools import combinations
 
 import numpy as np
 
-from vaspy import VasPy
-from vaspy.errors import CarfileValueError
-from vaspy.functions import *
+from . import VasPy
+from .errors import CarfileValueError
+from .functions import *
+from .elements import chem_elements
 
 
 class AtomCo(VasPy):
@@ -225,6 +226,38 @@ class AtomCo(VasPy):
                 atom_count += 1
                 name = '{}{}'.format(atom_type, atom_count)
                 content += line_template.format(name, 1.0, x, y, z, 'Biso', 1.0, atom_type)
+
+        return content
+
+    def get_reaxff_content(self):
+        """
+        Get ReaxFF data file content
+        """
+        content = '# Created by VASPy\n\n'
+
+        # Info
+        content += '{} atoms\n{} atom types\n\n'.format(len(self.data),
+                                                        len(self.atom_types))
+        content += '0 25.000 xlo xhi\n0 25.000 ylo yhi\n0 25.000 zlo zhi\n\n'
+
+        # Masses
+        content += 'Masses\n\n'
+        for i, element in enumerate(self.atom_types):
+            if element not in chem_elements:
+                raise ValueError('element {} not in elements.py'.format(element))
+            mass = chem_elements[element]['mass']
+            content += '{} {:.4f}\n'.format(i+1, mass)
+
+        # Coordinate
+        content += '\nAtoms\n\n'
+        cart_coords = self.dir2cart(self.bases, self.data).tolist()
+
+        for i, (component, coord) in enumerate(zip(self.atom_components, cart_coords)):
+            template = '{:>4d}{:>2d}{:>4.1f}{:>9.5f}{:>11.5f}{:>11.5f}\n'
+            idx = i+1
+            type_idx = self.atom_types.index(component) + 1
+            x, y, z = coord
+            content += template.format(idx, type_idx, 0.0, x, y, z)
 
         return content
 
