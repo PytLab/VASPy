@@ -229,16 +229,24 @@ class AtomCo(VasPy):
 
         return content
 
-    def get_reaxff_content(self):
+    def get_lmp_content(self):
         """
-        Get ReaxFF data file content
+        Get lammps data file content
         """
         content = '# Created by VASPy\n\n'
 
         # Info
         content += '{} atoms\n{} atom types\n\n'.format(len(self.data),
                                                         len(self.atom_types))
-        content += '0 25.000 xlo xhi\n0 25.000 ylo yhi\n0 25.000 zlo zhi\n\n'
+
+        # Basis info
+        x, y, z = self.bases
+        xhi, yhi, zhi = [np.linalg.norm(i) for i in self.bases]
+        content += '0 {:.9f} xlo xhi\n0 {:.9f} ylo yhi\n0 {:.9f} zlo zhi\n'.format(xhi, yhi, zhi)
+        xy = np.dot(x, y)/np.linalg.norm(x)
+        xz = np.dot(x, z)/np.linalg.norm(x)
+        yz = np.dot(y, z)/np.linalg.norm(y)
+        content += '{}   {}   {} xy xz yz\n\n'.format(xy, xz, yz)
 
         # Masses
         content += 'Masses\n\n'
