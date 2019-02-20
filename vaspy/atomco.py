@@ -159,8 +159,14 @@ class AtomCo(VasPy):
         atom_types = ("{:>5s}"*len(types) + "\n").format(*types)
         atom_numbers = ("{:>5d}"*len(numbers) + "\n").format(*numbers)
 
+        # Direct or Cartesian
+        coord_type = kwargs.get('coord_type', 'direct')
+
         # string
-        info = "Selective Dynamics\nDirect\n"
+        if coord_type == 'direct':
+            info = "Selective Dynamics\nDirect\n"
+        else:
+            info = "Cartensian\n"
 
         # data and tf
         try:
@@ -170,7 +176,12 @@ class AtomCo(VasPy):
             default_tf = np.full(self.data.shape, 'T', dtype=np.str)
             tf = kwargs.get("tf", default_tf)
         data_tf = ''
-        for data, tf in zip(self.data.tolist(), tf.tolist()):
+        if coord_type == 'direct':
+            data = self.data.tolist()
+        else:
+            data = self.dir2cart(self.bases, self.data).tolist()
+
+        for data, tf in zip(data, tf.tolist()):
             data_tf += ("{:18.12f}"*3 + "{:>5s}"*3 + "\n").format(*(data+tf))
 
         # merge all strings
