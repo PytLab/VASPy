@@ -59,7 +59,7 @@ class XsdFile(AtomCo):
         self.tree = tree
 
         # MS version info
-        root = tree.getroot()
+        root = self.root = tree.getroot()
         ms_version = root.get('Version')
         if ms_version:
             self.ms_version = ms_version
@@ -107,7 +107,9 @@ class XsdFile(AtomCo):
 
         if not identity_mappings:
             msg = 'No IdentityMapping tag found.'
-            raise ValueError(msg)
+            self.__logger.warning(msg)
+            return
+            #raise ValueError(msg)
 
         return identity_mappings
 
@@ -125,58 +127,60 @@ class XsdFile(AtomCo):
 
         identity_mappings = self.__get_identity_mappings()
 
-        # For each IdentityMapping tag.
-        for identity_mapping in identity_mappings:
+        if identity_mappings is None:
+            atom3d_iter = self.root.findall('.//Atom3d')
+        else:
+            atom3d_iter = identity_mappings[0].iter('Atom3d')
 
-            # For each Atom3d tag in IdentityMapping.
-            for elem in identity_mapping.iter('Atom3d'):
-                # Atom name and number
-                atom = elem.attrib['Components']
-                atom_components.append(atom)
-                if atom not in natoms_dict:
-                    natoms_dict.setdefault(atom, 1)
-                    atom_types.append(atom)
-                else:
-                    natoms_dict[atom] += 1
+        # For each Atom3d tag
+        for elem in atom3d_iter:
+            # Atom name and number
+            atom = elem.attrib['Components']
+            atom_components.append(atom)
+            if atom not in natoms_dict:
+                natoms_dict.setdefault(atom, 1)
+                atom_types.append(atom)
+            else:
+                natoms_dict[atom] += 1
 
-                # Coordinates
-                # NOTE: In bulk the origin point may not have coordinate,
-                #       so use '0.0,0.0,0.0' as default value.
-                if 'XYZ' not in elem.attrib:
-                    xyz = '0.0,0.0,0.0'
-                    msg = ("Found an Atom3d tag without 'XYZ' attribute" +
-                           ", set to {}").format(xyz)
-                    self.__logger.info(msg)
-                else:
-                    xyz = elem.attrib['XYZ']
+            # Coordinates
+            # NOTE: In bulk the origin point may not have coordinate,
+            #       so use '0.0,0.0,0.0' as default value.
+            if 'XYZ' not in elem.attrib:
+                xyz = '0.0,0.0,0.0'
+                msg = ("Found an Atom3d tag without 'XYZ' attribute" +
+                       ", set to {}").format(xyz)
+                self.__logger.info(msg)
+            else:
+                xyz = elem.attrib['XYZ']
 
-                coordinate = [float(i.strip()) for i in xyz.split(',')]
-                if atom not in atomco_dict:
-                    atomco_dict.setdefault(atom, [coordinate])
-                else:
-                    atomco_dict[atom].append(coordinate)
+            coordinate = [float(i.strip()) for i in xyz.split(',')]
+            if atom not in atomco_dict:
+                atomco_dict.setdefault(atom, [coordinate])
+            else:
+                atomco_dict[atom].append(coordinate)
 
-                # T&F info
-                if 'RestrictedProperties' in elem.attrib:
-                    tf_info = ['F', 'F', 'F']
-                else:
-                    tf_info = ['T', 'T', 'T']
-                if atom not in tf_dict:
-                    tf_dict.setdefault(atom, [tf_info])
-                else:
-                    tf_dict[atom].append(tf_info)
+            # T&F info
+            if 'RestrictedProperties' in elem.attrib:
+                tf_info = ['F', 'F', 'F']
+            else:
+                tf_info = ['T', 'T', 'T']
+            if atom not in tf_dict:
+                tf_dict.setdefault(atom, [tf_info])
+            else:
+                tf_dict[atom].append(tf_info)
 
-                # atom name
-                atom_name = elem.attrib.get('Name')
-                # Damn, sometimes tag has no Name attr,
-                # so customize it
-                # 有可能个别原子是从其他文件复制过来的原因
-                if not atom_name:
-                    atom_name = atom + '_custom'
-                if atom not in atom_name_dict:
-                    atom_name_dict.setdefault(atom, [atom_name])
-                else:
-                    atom_name_dict[atom].append(atom_name)
+            # atom name
+            atom_name = elem.attrib.get('Name')
+            # Damn, sometimes tag has no Name attr,
+            # so customize it
+            # 有可能个别原子是从其他文件复制过来的原因
+            if not atom_name:
+                atom_name = atom + '_custom'
+            if atom not in atom_name_dict:
+                atom_name_dict.setdefault(atom, [atom_name])
+            else:
+                atom_name_dict[atom].append(atom_name)
 
         atom_numbers = [natoms_dict[atm] for atm in atom_types]
 
@@ -204,11 +208,12 @@ class XsdFile(AtomCo):
         获取文件中能量，力等数据.
         """
         # Get info string.
+        info = None
         for elem in self.tree.iter("SymmetrySystem"):
             info = elem.attrib.get('Name')
-            if info is None:
-                return
             break
+        if info is None:
+            return
 
         # Get thermo data.
         fieldnames = ["energy", "force", "magnetism", "path"]
