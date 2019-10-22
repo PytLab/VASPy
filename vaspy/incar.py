@@ -326,7 +326,7 @@ class Params(VasPy):
 
 
 class InCar(Params):
-    def __init__(self, src=None):
+    def __init__(self, src='INCAR'):
         """
         Create a INCAR file class.
 
