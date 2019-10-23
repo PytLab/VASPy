@@ -342,6 +342,10 @@ class InCar(Params):
           ============  =======================================
         """
         # super(self.__class__, self).__init__(src)
+        if src == 'INCAR':
+            if not os.path.exists('INCAR'):
+                src = None
+
         if src is None:
             self.paras = ()
         else:
@@ -352,7 +356,8 @@ class InCar(Params):
             elif isinstance(src, Params):
                 self.paras = src.paras
 
-        self.paras = self.remove_duplicates(self.paras)
+        if self.paras != ():
+            self.paras = self.remove_duplicates(self.paras)
         self.parasets = None
 
         # set logger
