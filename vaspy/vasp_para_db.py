@@ -73,9 +73,20 @@ INCAR_PARAMETERS = {
         "TEEND"         :  ["300"          , (),
             "end temperature"],
         "SMASS"         :  ["3"            , (-3, -2, -1, 0, 3),
-            "controls velocities during AIMD"],
+            "controls velocities in MD, -3 | -2 | -1 | >=0 Nosé"],
         "NBLOCK"        :  ["10"           , (),
             "update XDATCAR every NBLOCK fs"],
+        # Advanced Molecualr Dynamics
+        "MDALGO"        :  ["21"           , (0, 1, 2, 3, 11, 21, 13),
+            "0 standard MD | 21 meta Nose-Hoover"],
+        "LBLUEOUT"      :  [".FALSE."      , (".TRUE.", ".FALSE."),
+                "print out free-energy gradient"],
+        # US
+        "HILLS_BIN"     :  ["15000"        , (),
+                "bias potential update interval"],
+        # slow-grownth
+        "INCREM"        :  ["0"            , (),
+                "increment in slow-grownth algo"],
         # Smearing
         "ISMEAR"        :  ["0"            , (-5, 0, 1),
             "-5 DOS | 0 large cell | 1 metal"],
@@ -90,6 +101,28 @@ INCAR_PARAMETERS = {
                 "if calculation done in real spcae"],
         "ISYM"          :  ["2"            , (0, 1, 2, 3),
                 "0 off | 1 on | 2 charge | 3 no charge"],
+        "NSIM"          :  ["4"            , (),
+                "blocked band update"],
+        # ALGO-Mixing
+        "IMIX"          :  ["4"            , (),
+                "0 no mix | 1 Kerker | 2 Tchebycheff | 4 Broyden2"],
+        "AMIX"          :  ["0.4"          , (),
+                "linear mixing parameter"],
+        "AMIN"
+        "BMIX"          :  ["1.0"          , (),
+                "cutoff wave vector for Kerker mixing scheme"],
+        "AMIX_MAG"      :  ["1.6"          , (),
+                "linear mixing parameter for magnetization"],
+        "BMIX_MAG"      :  ["1.0"          , (),
+                ""],
+        "WC"            :  ["1000"             , (),
+                "weight factor in each step in Broyden"],
+        "INIMIX"        :  ["1"            , (),
+                "initial mixing in Broyden"],
+        "MIXPRE"        :  ["1"            , (),
+                "preconditioning in Broyden"],
+        "MAXMIX"        :  ["-45"          , (),
+                "maximum number steps stored in Broyden mixer"],
         # BAND
         "LORBIT"        :  ["11"           , (),
                 "PAW radii for projected DOS"],
@@ -110,7 +143,8 @@ INCAR_PARAMETERS = {
         "LDAU"          :  [".TRUE."       , (".TRUE.", ".FALSE."),
                 "Enable DFTU calculation"],
         "LDAUTYPE"      :  ["2"            , (1, 2, 4),
-                "1 Liechtenstein | *2 Dudarev | 4"], "LDAUL"         :  [""             , (),
+                "1 Liechtenstein | *2 Dudarev | 4"], 
+        "LDAUL"         :  [""             , (),
                 "-1 off | 1 p | 2 d | 3 f"],
         "LDAUU"         :  [""             , (),
                 "coulomb interaction"],
@@ -133,7 +167,13 @@ INCAR_PARAMETERS = {
                 "HSE06"],
         "TIME"          :  ["0.4"          , (),
                 ""],
-
+        # POTCAR related
+        "POMASS"        :  [""             , (),
+                "mass each atomic species in a.u."],
+        "ZVAL"          :  [""             , (),
+                "valence for each atomic species"],
+        "RWIGS"         :  [""             , (),
+                "Wigner-Seitz radius"],
         }
 
 INCAR_PARACATEGORIES = {
@@ -161,8 +201,10 @@ BUILTIN_PARASETS = {
         'SC'       :    [BASIC_PARAS    , 
             []],
         'MD'       :    [["MD"]         , 
-            [('IBRION', 0), ('ISIF', 0), ('POTIM', 1.0), ('NSW', 15000),
-             ('ALGO', 'Very Fast'), ('NELM', '60')]],
+            [('IBRION', 0), ('ISIF', 0), ('POTIM', 1.0), ('NSW', 15000), 
+             ('PREC', 'Normal'), ('EDIFFG', -0.01), 
+             ('ALGO', 'Very Fast'), ('ISYM', 0), 
+             ('NELM', '120')]],
         'BAND'     :    [["BAND"]       , []],
         'VDW'      :    [["VDW"]        , []],
         'VDWBJ'    :    [["VDWBJ"]      , []],
