@@ -30,7 +30,9 @@ INCAR_PARAMETERS = {
             "0 orbital | 1 CHGCAR | *2 superposition | 4 POT"],
         # parallel
         "NPAR"          :  ["6"            , (),
-                ""],
+                "NCORE=ncores/NPAR"],
+        "NCORE"         :  ["8"            , (),
+                "cores/orbital, Better use NPAR"],
         # MAGNETIC
         "ISPIN"         :  ["2"            , (1, 2),
             "*1 no | 2 yes"],
@@ -39,11 +41,12 @@ INCAR_PARAMETERS = {
         # WAVEFUNC
         "INIWAV"        :  ["1"            , (0, 1),
             "0 jellium | *1 random"],
-        "LWAVE"         :  [".FALSE."      , (".TRUE.", ".FALSE."),
-            "if write WAVECAR"],
         # CHARGE
+        # Writing
         "LCHARG"        :  [".FALSE."      , (".TRUE.", ".FALSE."),
             "if write CHGCAR"],
+        "LWAVE"         :  [".FALSE."      , (".TRUE.", ".FALSE."),
+            "if write WAVECAR"],
         # ELECTRONIC
         "ENCUT"         :  ["450"          , (),
             "energy cutoff"],
@@ -56,6 +59,12 @@ INCAR_PARAMETERS = {
             "maximium number of ionic updates"],
         "NELMIN"        :  ["6"            , (),
             "minimium number of ionic updates"],
+        # dipole correction
+        "IDIPOL"        :  ["3"            , (),
+            "surface 3"],
+        # hole/electron
+        "NELECT"        :  ["0"            , (),
+            "number of electrons"],
         # IONIC
         "EDIFFG"        :  ["-0.05"        , (),
             "stopping criterion for ionic updates"],
@@ -179,9 +188,9 @@ INCAR_PARAMETERS = {
 INCAR_PARACATEGORIES = {
         # catname paranames
         "GENERAL"   :  ["SYSTEM", "NWRITE", "ISTART"],
+        "WRITING"   :  ["LCHARG", "LWAVE"],
         "PARALLEL"  :  ["NPAR"],
-        "WAVEFUNC"  :  ["INIWAV", "LWAVE"],
-        "CHARGE"    :  ["LCHARG"],
+        "WAVEFUNC"  :  ["INIWAV"],
         "MAGNETIC"  :  ["ISPIN"],
         "ELECTRONIC":  ["ENCUT", "PREC", "EDIFF", "NELM", "NELMIN"],
         "IONIC"     :  ["EDIFFG", "NSW", "IBRION", "ISIF", "POTIM"],
@@ -190,11 +199,11 @@ INCAR_PARACATEGORIES = {
         "VDW"       :  ["IVDW"],
         "VDWBJ"     :  ["IVDW", "VDW_s6", "VDW_s8", "VDW_a1", "VDW_a2"],
         "ALGO"      :  ["ALGO", "LREAL", "ISYM"],
-        "UJ"        :  ["LDAU", "LDAUTYPE", "LDAUU", "LDAUJ", "LDAUPRINT", "LMAXMIX"],
+        "UJ"        :  ["LDAU", "LDAUTYPE", "LDAUL", "LDAUU", "LDAUJ", "LDAUPRINT", "LMAXMIX"],
         "HF"        :  ["LHFCALC", "AEXX", "PREFOCK", "LMAXFOCK", "HFSCREEN", "TIME"],
         }
 
-BASIC_PARAS = ["GENERAL", "PARALLEL", "ELECTRONIC", "MAGNETIC", \
+BASIC_PARAS = ["GENERAL", "WRITING", "PARALLEL", "ELECTRONIC", "MAGNETIC", \
                 "SMEARING", "ALGO", "IONIC"]
 BUILTIN_PARASETS = {
         # task           paras          specail settings

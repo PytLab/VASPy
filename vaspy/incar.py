@@ -426,10 +426,12 @@ class InCar(Params):
         """Quick generation of INCAR with built-in parameters."""
         # check task
         tasks = tasks.strip().split('-')
+
+        # check if SC in tasks
         task_basic = ['SC']
         if 'SC' not in tasks:
             task_basic.extend(tasks)
-        tasks = task_basic
+            tasks = task_basic
 
         parasets = []
         for task in tasks:
