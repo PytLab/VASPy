@@ -33,10 +33,10 @@ for step, data in xdatcar:
     data = xdatcar.dir2cart(xdatcar.bases, data)
 
     atom_names = []
-    for n, atom in zip(xdatcar.atoms_num, xdatcar.atoms):
+    for n, atom in zip(xdatcar.atom_numbers, xdatcar.atom_types):
         atom_names.extend([atom]*n)
     for atom_name, coord in zip(atom_names, data):
-        coord = coord.tolist()[0]
+        coord = coord.tolist()
         content += '%2s%16.9f%16.9f%16.9f%5s%2d%8s%8s%7.3f\n' %\
                    (atom_name, coord[0], coord[1], coord[2],
                     'XXXX', 1, 'xx', atom_name, 0.0)
