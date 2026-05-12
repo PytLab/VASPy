@@ -14,7 +14,10 @@ import logging
 from string import whitespace
 
 import numpy as np
-from scipy.integrate import simps
+try:
+    from scipy.integrate import simpson as simps
+except ImportError:
+    from scipy.integrate import simps
 from scipy.interpolate import interp2d
 import mpl_toolkits.mplot3d
 
