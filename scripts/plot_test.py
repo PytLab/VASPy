@@ -1,7 +1,7 @@
 from plotter import *
 import numpy as np
 from scipy.interpolate import interp2d
-from mayavi import mlab
+import pyvista as pv
 import mpl_toolkits.mplot3d
 import matplotlib.pyplot as plt
 
@@ -17,20 +17,14 @@ newx = np.linspace(0, np.max(x), 1000)
 newy = np.linspace(0, np.max(y), 1000)
 newz = interpfunc(newx, newy)
 
-#extent = [np.min(newx), np.max(newx), np.min(newy), np.max(newy)]
-#plt.contourf(newx.reshape(-1), newy.reshape(-1), newz, 20, extent=extent)
-#plt.colorbar()
-#
-##3d plot
-#fig3d = plt.figure()
-#ax3d = fig3d.add_subplot(111, projection='3d')
-#ax3d.plot_surface(newx, newy, newz, cmap=plt.cm.RdBu_r)
-#
-#plt.show()
+# PyVista surface plot
+nx, ny = len(newx), len(newy)
+X, Y = np.meshgrid(newx, newy, indexing='ij')
+Z = newz.T
+surface = pv.StructuredGrid(X[:, :, None], Y[:, :, None], Z[:, :, None])
+surface.point_data['scalars'] = Z[:, :, None].flatten(order='F')
 
-#mlab
-face = mlab.surf(newx, newy, newz, warp_scale=2)
-mlab.axes(xlabel='x', ylabel='y', zlabel='z')
-mlab.outline(face)
-
-mlab.show()
+pl = pv.Plotter()
+pl.add_mesh(surface, scalars='scalars', cmap='viridis', show_scalar_bar=True)
+pl.add_axes(xlabel='x', ylabel='y', zlabel='z')
+pl.show()

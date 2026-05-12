@@ -4,7 +4,7 @@ from bisect import bisect
 
 import numpy as np
 from scipy.interpolate import interp2d
-from mayavi import mlab
+import pyvista as pv
 
 from vaspy.iter import XdatCar, AniFile
 from traj import get_trajectories
@@ -43,11 +43,15 @@ if __name__ == "__main__":
     newy = np.linspace(left, right, interp_resolution)
     newz = interp_func(newx, newy)
 
-    newy, newx = np.meshgrid(newx, newy)
+    # PyVista surface plot
+    nx, ny = len(newx), len(newy)
+    X, Y = np.meshgrid(newx, newy, indexing='ij')
+    Z = newz.T
+    surface = pv.StructuredGrid(X[:, :, None], Y[:, :, None], Z[:, :, None])
+    surface.point_data['scalars'] = Z[:, :, None].flatten(order='F')
 
-    face = mlab.surf(newx, newy, newz, warp_scale=40)
-    mlab.axes(xlabel="x", ylabel="y", zlabel="z")
-    mlab.outline(face)
-
-    mlab.show()
-
+    pl = pv.Plotter()
+    pl.add_mesh(surface, scalars='scalars', cmap='viridis',
+                show_scalar_bar=True)
+    pl.add_axes(xlabel='x', ylabel='y', zlabel='z')
+    pl.show()

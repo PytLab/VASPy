@@ -58,20 +58,13 @@ Installation
 
     python setup.py install
 
-If you want to use **mayavi** to visualize VASP data, it is recommened to install `Canopy environment <https://store.enthought.com/downloads/#default>`_ on your device instead of installing it manually.
+3D visualization is done via **PyVista**, which is installed automatically as a dependency::
 
-After installing canopy, you can set corresponding aliases, for example:
+    pip install vaspy
 
-.. code-block:: shell
+Or install PyVista separately::
 
-    alias canopy='/Users/<yourname>/Library/Enthought/Canopy/edm/envs/User/bin/python'
-    alias canopy-pip='/Users/zjshao/Library/Enthought/Canopy/edm/envs/User/bin/pip'
-    alias canopy-ipython='/Users/<yourname>/Library/Enthought/Canopy/edm/envs/User/bin/ipython'
-    alias canopy-jupyter='/Users/<yourname>/Library/Enthought/Canopy/edm/envs/User/bin/jupyter'
-
-Then you can install VASPy to canopy::
-
-    canopy-pip install vaspy
+    pip install pyvista
 
 """
 
@@ -79,6 +72,7 @@ install_requires = [
     'numpy>=1.11.1',
     'matplotlib>=1.5.2',
     'scipy>=0.18.0',
+    'pyvista>=0.42.0',
 ]
 
 license = 'LICENSE'

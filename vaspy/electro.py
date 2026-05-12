@@ -26,12 +26,12 @@ except ImportError:
     print('Warning: Module matplotlib.pyplot is not installed')
     plt_installed = False
 
-#whether mayavi installed
+#whether pyvista installed
 try:
-    from mayavi import mlab
-    mayavi_installed = True
+    import pyvista as pv
+    pyvista_installed = True
 except ImportError:
-    mayavi_installed = False
+    pyvista_installed = False
 
 from vaspy.plotter import DataPlotter
 from vaspy.atomco import PosCar
@@ -262,8 +262,8 @@ class ElfCar(PosCar):
           -------------    ame as PosCar ------------
           elf_data         3d array
           plot_contour     method, use matplotlib to plot contours
-          plot_mcontours   method, use Mayavi.mlab to plot beautiful contour
-          plot_contour3d   method, use mayavi.mlab to plot 3d contour
+          plot_mcontours   method, use PyVista to plot beautiful contour
+          plot_contour3d   method, use PyVista to plot 3d contour
           plot_field       method, plot scalar field for elf data
           ==============  =============================================
         """
@@ -331,6 +331,28 @@ class ElfCar(PosCar):
             expanded_data = np.append(expanded_data, added_data, axis=2)
 
         return expanded_data, expanded_grid
+
+    def _build_structured_grid(self, data, grid):
+        """
+        Build a pyvista.StructuredGrid from 3D data and POSCAR lattice vectors.
+
+        This properly handles non-orthogonal (e.g. hexagonal) cells by mapping
+        fractional grid coordinates to Cartesian space using the lattice bases.
+        """
+        nx, ny, nz = grid
+        x_frac = np.linspace(0, 1, nx, endpoint=False)
+        y_frac = np.linspace(0, 1, ny, endpoint=False)
+        z_frac = np.linspace(0, 1, nz, endpoint=False)
+        X, Y, Z = np.meshgrid(x_frac, y_frac, z_frac, indexing='ij')
+
+        bases = self.bases * self.bases_const
+        cart_X = X * bases[0, 0] + Y * bases[1, 0] + Z * bases[2, 0]
+        cart_Y = X * bases[0, 1] + Y * bases[1, 1] + Z * bases[2, 1]
+        cart_Z = X * bases[0, 2] + Y * bases[1, 2] + Z * bases[2, 2]
+
+        pvgrid = pv.StructuredGrid(cart_X, cart_Y, cart_Z)
+        pvgrid.point_data['values'] = data.flatten(order='F')
+        return pvgrid
 
     # 装饰器
     def contour_decorator(func):
@@ -437,29 +459,34 @@ class ElfCar(PosCar):
 
     @contour_decorator
     def plot_mcontour(self, ndim0, ndim1, z, show_mode):
-        "use mayavi.mlab to plot contour."
-        if not mayavi_installed:
-            self.__logger.info("Mayavi is not installed on your device.")
+        "use PyVista to plot surface contour."
+        if not pyvista_installed:
+            self.__logger.info("PyVista is not installed on your device.")
             return
         #do 2d interpolation
-        #get slice object
         s = np.s_[0:ndim0:1, 0:ndim1:1]
         x, y = np.ogrid[s]
-        mx, my = np.mgrid[s]
         #use cubic 2d interpolation
         interpfunc = interp2d(x, y, z, kind='cubic')
         newx = np.linspace(0, ndim0, 600)
         newy = np.linspace(0, ndim1, 600)
-        newz = interpfunc(newx, newy)
-        #mlab
-        face = mlab.surf(newx, newy, newz, warp_scale=2)
-        mlab.axes(xlabel='x', ylabel='y', zlabel='z')
-        mlab.outline(face)
+        newz = interpfunc(newx, newy)  # shape: (len(newy), len(newx))
+        # Build structured surface (3D grid with thickness 1)
+        nx, ny = len(newx), len(newy)
+        X, Y = np.meshgrid(newx, newy, indexing='ij')  # (nx, ny)
+        Z = newz.T  # transpose to (nx, ny)
+        surface = pv.StructuredGrid(X[:, :, None], Y[:, :, None], Z[:, :, None])
+        surface.point_data['scalars'] = Z[:, :, None].flatten(order='F')
+        # Plot
+        pl = pv.Plotter()
+        pl.add_mesh(surface, scalars='scalars', cmap='viridis',
+                    show_scalar_bar=True)
+        pl.add_axes(xlabel='x', ylabel='y', zlabel='z')
         #save or show
         if show_mode == 'show':
-            mlab.show()
+            pl.show()
         elif show_mode == 'save':
-            mlab.savefig('mlab_contour3d.png')
+            pl.screenshot('pyvista_contour3d.png')
         else:
             raise ValueError('Unrecognized show mode parameter : ' +
                              show_mode)
@@ -468,7 +495,7 @@ class ElfCar(PosCar):
 
     def plot_contour3d(self, **kwargs):
         '''
-        use mayavi.mlab to plot 3d contour.
+        use PyVista to plot 3d isosurface contour.
 
         Parameter
         ---------
@@ -480,61 +507,61 @@ class ElfCar(PosCar):
                         number of replication on x, y, z axis,
         }
         '''
-        if not mayavi_installed:
-            self.__logger.warning("Mayavi is not installed on your device.")
+        if not pyvista_installed:
+            self.__logger.warning("PyVista is not installed on your device.")
             return
         # set parameters
         widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
         elf_data, grid = self.expand_data(self.elf_data, self.grid, widths)
-#        import pdb; pdb.set_trace()
         maxdata = np.max(elf_data)
         maxct = kwargs['maxct'] if 'maxct' in kwargs else maxdata
-        # check maxct
         if maxct > maxdata:
             self.__logger.warning("maxct is larger than %f", maxdata)
         opacity = kwargs['opacity'] if 'opacity' in kwargs else 0.6
         nct = kwargs['nct'] if 'nct' in kwargs else 5
-        # plot surface
-        surface = mlab.contour3d(elf_data)
-        # set surface attrs
-        surface.actor.property.opacity = opacity
-        surface.contour.maximum_contour = maxct
-        surface.contour.number_of_contours = nct
-        # reverse axes labels
-        mlab.axes(xlabel='z', ylabel='y', zlabel='x')  # 是mlab参数顺序问题?
-        mlab.outline()
-        mlab.show()
+        # Build StructuredGrid with proper cell geometry
+        pvgrid = self._build_structured_grid(elf_data, grid)
+        # Extract isosurfaces
+        contours = pvgrid.contour(nct, scalars='values',
+                                  rng=(0, maxct) if maxct < maxdata else None)
+        # Plot
+        pl = pv.Plotter()
+        pl.add_mesh(contours, opacity=opacity, cmap='viridis',
+                    show_scalar_bar=True)
+        pl.add_axes(xlabel='a', ylabel='b', zlabel='c')
+        pl.show()
 
         return
 
     def plot_field(self, **kwargs):
-        "plot scalar field for elf data"
-        if not mayavi_installed:
-            self.__logger.warning("Mayavi is not installed on your device.")
+        "Plot scalar field volume with interactive cut plane."
+        if not pyvista_installed:
+            self.__logger.warning("PyVista is not installed on your device.")
             return
         # set parameters
         vmin = kwargs['vmin'] if 'vmin' in kwargs else 0.0
         vmax = kwargs['vmax'] if 'vmax' in kwargs else 1.0
-        axis_cut = kwargs['axis_cut'] if 'axis_cut' in kwargs else 'z'
+        axis_cut = kwargs.get('axis_cut', 'z')
         nct = kwargs['nct'] if 'nct' in kwargs else 5
         widths = kwargs['widths'] if 'widths' in kwargs else (1, 1, 1)
         elf_data, grid = self.expand_data(self.elf_data, self.grid, widths)
-        #create pipeline
-        field = mlab.pipeline.scalar_field(elf_data)  # data source
-        mlab.pipeline.volume(field, vmin=vmin, vmax=vmax)  # put data into volumn to visualize
-        #cut plane
-        if axis_cut in ['Z', 'z']:
-            plane_orientation = 'z_axes'
-        elif axis_cut in ['Y', 'y']:
-            plane_orientation = 'y_axes'
-        elif axis_cut in ['X', 'x']:
-            plane_orientation = 'x_axes'
-        cut = mlab.pipeline.scalar_cut_plane(
-            field.children[0], plane_orientation=plane_orientation)
-        cut.enable_contours = True  # 开启等值线显示
-        cut.contour.number_of_contours = nct
-        mlab.show()
-        #mlab.savefig('field.png', size=(2000, 2000))
+        # Build StructuredGrid with proper cell geometry
+        pvgrid = self._build_structured_grid(elf_data, grid)
+        # Determine cut plane normal
+        normals = {'x': (1, 0, 0), 'y': (0, 1, 0), 'z': (0, 0, 1)}
+        normal = normals.get(axis_cut.lower(), (0, 0, 1))
+        # Slice through center
+        center = pvgrid.center
+        single_slice = pvgrid.slice(normal=normal, origin=center)
+        # Contours on the slice
+        edges = single_slice.contour(nct, scalars='values')
+        # Plot
+        pl = pv.Plotter()
+        pl.add_volume(pvgrid, scalars='values', clim=(vmin, vmax),
+                      cmap='viridis', opacity='linear')
+        pl.add_mesh(edges, color='black', line_width=1)
+        pl.add_axes(xlabel='a', ylabel='b', zlabel='c')
+        pl.show()
 
         return
 
