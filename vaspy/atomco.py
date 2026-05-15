@@ -173,7 +173,7 @@ class AtomCo(VasPy):
             tf = self.tf
         except AttributeError:
             # Initialize tf with 'T's.
-            default_tf = np.full(self.data.shape, 'T', dtype=np.str)
+            default_tf = np.full(self.data.shape, 'T', dtype=str)
             tf = kwargs.get("tf", default_tf)
         data_tf = ''
         if coord_type == 'direct':
