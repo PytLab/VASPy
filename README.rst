@@ -156,6 +156,7 @@ Important update log
 .. csv-table::
     :header: "Date", "Version", "Description"
 
+    "2026-05-15", "0.9.0", "PyVista 3D backend, non-orthogonal cell support, scipy 1.14+ fix"
     "2016-08-08", "0.7.0", "Enhance universality"
     "2016-07-15", "0.6.0", "Compatible with python 3"
     "2015-08-04", "0.1.0", "Initial version"

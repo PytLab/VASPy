@@ -8,7 +8,7 @@ else:
     PY2 = True
 
 
-__version__ = '0.8.12'
+__version__ = '0.9.0'
 __all__ = ['atomco', 'electro', 'iter', 'matstudio', 'plotter', 'incar']
 
 
