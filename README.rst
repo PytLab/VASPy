@@ -2,24 +2,21 @@
 VASPy
 =====
 
-.. image:: https://travis-ci.org/PytLab/VASPy.svg?branch=master
-    :target: https://travis-ci.org/PytLab/VASPy
+.. image:: https://github.com/PytLab/VASPy/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/PytLab/VASPy/actions
     :alt: Build Status
-
-.. image:: https://landscape.io/github/PytLab/VASPy/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/PytLab/VASPy/master
-    :alt: Code Health
 
 .. image:: https://img.shields.io/codecov/c/github/PytLab/VASPy/master.svg
     :target: https://codecov.io/gh/PytLab/VASPy
+    :alt: Coverage
 
-.. image:: https://img.shields.io/badge/python-3.5, 2.7-green.svg
-    :target: https://www.python.org/downloads/release/python-351/
-    :alt: platform
+.. image:: https://img.shields.io/badge/python-3.8+-green.svg
+    :target: https://www.python.org/downloads/
+    :alt: Python
 
-.. image:: https://img.shields.io/badge/pypi-v0.8.12-blue.svg
-    :target: https://pypi.python.org/pypi/vaspy/
-    :alt: versions
+.. image:: https://img.shields.io/badge/pypi-v0.9.0-blue.svg
+    :target: https://pypi.org/project/vaspy/
+    :alt: PyPI
 
 Introduction
 ------------
